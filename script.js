@@ -334,18 +334,12 @@ async function saveRSVP(data) {
 }
 
 async function sendConfirmationEmail(nombre, email) {
-  /* Verificar que el usuario haya configurado EmailJS */
-  if (EMAILJS_PUBLIC_KEY === 'TU_PUBLIC_KEY') {
-    console.info('EmailJS no configurado aún — omitiendo envío de correo.');
-    return;
-  }
-
   try {
     await emailjs.send(
       EMAILJS_SERVICE_ID,
       EMAILJS_TEMPLATE_ID,
       { to_name: nombre, to_email: email },
-      EMAILJS_PUBLIC_KEY
+      { publicKey: EMAILJS_PUBLIC_KEY }   /* formato correcto v4 */
     );
     console.log('Correo de confirmación enviado a', email);
   } catch (err) {
