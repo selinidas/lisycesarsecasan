@@ -9,6 +9,17 @@ import {
   ref, onValue, increment, update,
 } from './firebase.js';
 
+
+/* ============================================================
+   EMAILJS — Envío automático del folleto de confirmación
+   ─────────────────────────────────────────────────────────────
+   Rellena estos tres valores después de configurar EmailJS.
+   Ver README.md → sección "Configurar EmailJS".
+   ============================================================ */
+const EMAILJS_PUBLIC_KEY  = 'TU_PUBLIC_KEY';   /* ← de EmailJS → Account → API Keys */
+const EMAILJS_SERVICE_ID  = 'TU_SERVICE_ID';   /* ← de EmailJS → Email Services */
+const EMAILJS_TEMPLATE_ID = 'TU_TEMPLATE_ID';  /* ← de EmailJS → Email Templates */
+
 /* ── Helpers ─────────────────────────────────────────────── */
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
@@ -295,6 +306,11 @@ function initRSVP() {
       await incrementConfirmed(1 + data.acompanantes);
     }
 
+    /* Enviar correo de confirmación si asiste */
+    if (data.asistencia === 'si') {
+      await sendConfirmationEmail(data.nombre, data.email);
+    }
+
     /* Mostrar mensaje de éxito */
     showSuccess(form, successEl, data.asistencia === 'no');
   }
@@ -315,6 +331,27 @@ async function saveRSVP(data) {
   const list = JSON.parse(localStorage.getItem('wedding_rsvps') || '[]');
   list.push(data);
   localStorage.setItem('wedding_rsvps', JSON.stringify(list));
+}
+
+async function sendConfirmationEmail(nombre, email) {
+  /* Verificar que el usuario haya configurado EmailJS */
+  if (EMAILJS_PUBLIC_KEY === 'TU_PUBLIC_KEY') {
+    console.info('EmailJS no configurado aún — omitiendo envío de correo.');
+    return;
+  }
+
+  try {
+    await emailjs.send(
+      EMAILJS_SERVICE_ID,
+      EMAILJS_TEMPLATE_ID,
+      { to_name: nombre, to_email: email },
+      EMAILJS_PUBLIC_KEY
+    );
+    console.log('Correo de confirmación enviado a', email);
+  } catch (err) {
+    /* El correo es opcional — no bloqueamos el flujo si falla */
+    console.warn('No se pudo enviar el correo de confirmación:', err);
+  }
 }
 
 function showSuccess(form, successEl, declined = false) {
