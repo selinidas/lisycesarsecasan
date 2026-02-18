@@ -251,13 +251,6 @@ function initRSVP() {
 
   if (!form) return;
 
-  /* Si ya respondió, mostrar éxito directamente */
-  if (localStorage.getItem('wedding_rsvp_done')) {
-    const attending = localStorage.getItem('wedding_rsvp_attending');
-    showSuccess(form, successEl, attending === 'no');
-    return;
-  }
-
   /* Ocultar/atenuar acompañantes cuando dice "No" */
   const acompGroup = $('#acompanantes-group');
   $$('input[name="asistencia"]', form).forEach(radio => {
@@ -302,10 +295,6 @@ function initRSVP() {
       await incrementConfirmed(1 + data.acompanantes);
     }
 
-    /* Guardar para no mostrar el form de nuevo */
-    localStorage.setItem('wedding_rsvp_done',       'true');
-    localStorage.setItem('wedding_rsvp_attending', data.asistencia);
-
     /* Mostrar mensaje de éxito */
     showSuccess(form, successEl, data.asistencia === 'no');
   }
@@ -329,6 +318,7 @@ async function saveRSVP(data) {
 }
 
 function showSuccess(form, successEl, declined = false) {
+  form.reset();
   form.hidden = true;
   if (!successEl) return;
 
