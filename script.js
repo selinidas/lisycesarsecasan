@@ -731,6 +731,64 @@ function showQRPlaceholder(imgEl) {
 
 
 /* ============================================================
+   9. REPRODUCTOR DE MÚSICA
+   ─────────────────────────────────────────────────────────────
+   Coloca tu canción en:  musica/cancion.mp3
+   Cambia el tooltip en:  index.html → .music-player__tooltip
+
+   Formatos recomendados: MP3 (compatible con todos los navegadores)
+   Duración ideal: canción completa, se reproduce en bucle (loop).
+
+   Nota sobre autoplay:
+   Los navegadores modernos bloquean el autoplay con sonido hasta
+   que el usuario interactúa con la página. La función intenta
+   arrancar automáticamente; si el navegador lo bloquea, el botón
+   flotante invita al usuario a pulsar play.
+   ============================================================ */
+function initMusicPlayer() {
+  const audio     = $('#wedding-audio');
+  const btn       = $('#music-btn');
+  const iconPlay  = $('#music-icon-play');
+  const iconPause = $('#music-icon-pause');
+  const tooltip   = $('#music-tooltip');
+
+  if (!audio || !btn) return;
+
+  audio.volume = 0.55;
+
+  /* ── Estado ── */
+  function setPlaying(playing) {
+    btn.classList.toggle('playing', playing);
+    if (iconPlay)  iconPlay.hidden  = playing;
+    if (iconPause) iconPause.hidden = !playing;
+    btn.setAttribute('aria-label',
+      playing ? 'Pausar música' : 'Reproducir música de la boda');
+  }
+
+  /* ── Intentar autoplay al cargar ── */
+  audio.play()
+    .then(() => setPlaying(true))
+    .catch(() => {
+      /* Bloqueado por el navegador — el usuario verá el botón */
+      setPlaying(false);
+    });
+
+  /* ── Play / Pause al hacer clic ── */
+  btn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().then(() => setPlaying(true));
+    } else {
+      audio.pause();
+      setPlaying(false);
+    }
+  });
+
+  /* ── Si la pista termina (no debería con loop, por si acaso) ── */
+  audio.addEventListener('ended', () => setPlaying(false));
+}
+
+
+/* ============================================================
    INIT — Arrancar todo cuando el DOM esté listo
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
@@ -742,6 +800,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initConfirmedCounter();
   initGallery();
   initQR();
+  initMusicPlayer();
 
   /* Easter egg en consola */
   console.log(

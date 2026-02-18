@@ -1505,7 +1505,90 @@ textarea {
 }
 
 
-/* ── 17. RESPONSIVE ───────────────────────────────────────── */
+/* ── 17. REPRODUCTOR DE MÚSICA FLOTANTE ──────────────────── */
+
+.music-player {
+  position: fixed;
+  bottom: 1.8rem;
+  left: 2rem;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.music-player__btn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--rust);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(155, 74, 46, 0.38);
+  transition: background var(--t-fast), transform var(--t-fast),
+              box-shadow var(--t-fast);
+  flex-shrink: 0;
+}
+
+.music-player__btn:hover {
+  background-color: var(--rust-hover);
+  transform: scale(1.08);
+  box-shadow: 0 6px 28px rgba(155, 74, 46, 0.5);
+}
+
+.music-player__btn:active {
+  transform: scale(0.96);
+}
+
+.music-player__btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Pulso suave cuando está reproduciendo */
+.music-player__btn.playing {
+  animation: musicPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes musicPulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(155, 74, 46, 0.38); }
+  50%       { box-shadow: 0 4px 32px rgba(155, 74, 46, 0.65); }
+}
+
+/* Tooltip con nombre de la canción */
+.music-player__tooltip {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: var(--ink-mid);
+  background-color: rgba(250, 248, 244, 0.95);
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-xs);
+  border: 1px solid var(--mauve-light);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity var(--t-base), transform var(--t-base);
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+}
+
+/* Mostrar tooltip al hacer hover sobre el player */
+.music-player:hover .music-player__tooltip,
+.music-player__btn.playing ~ .music-player__tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+/* ── 18. RESPONSIVE ───────────────────────────────────────── */
 
 /* ── Tablet ── */
 @media (max-width: 860px) {
@@ -1612,6 +1695,13 @@ textarea {
   }
 }
 
+
+/* Reproductor en mobile */
+@media (max-width: 580px) {
+  .music-player { bottom: 1.2rem; left: 1.2rem; }
+  .music-player__btn { width: 44px; height: 44px; }
+  .music-player__tooltip { display: none; }
+}
 
 /* ── 16. ACCESIBILIDAD ────────────────────────────────────── */
 

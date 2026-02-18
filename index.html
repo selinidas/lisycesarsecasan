@@ -57,7 +57,7 @@
       <a href="#rsvp">RSVP</a>
       <a href="#galeria">Galería</a>
       <a href="#album">Álbum</a>
-      <a href="#guia-rd">República Dom.</a>
+      <a href="#guia-rd">Rep. Dominicana</a>
     </nav>
   </div>
 
@@ -484,39 +484,6 @@
   </section>
 
 
-  <!-- ══════════════════════════════════════════
-       8. PLAYLIST SPOTIFY
-  ══════════════════════════════════════════ -->
-  <section id="playlist" class="playlist" aria-label="Playlist de boda">
-    <div class="container">
-      <p class="section-label reveal">nuestra música</p>
-      <h2 class="section-title reveal">Playlist de Boda</h2>
-      <p class="section-subtitle reveal">Las canciones que acompañan nuestra historia</p>
-
-      <div class="playlist__embed reveal">
-        <!--
-          ── Cómo obtener tu playlist ID ───────────────────────────
-          1. Abre Spotify (web o app).
-          2. Ve a tu playlist → tres puntos → Compartir → Copiar enlace.
-          3. El enlace tendrá este formato:
-             https://open.spotify.com/playlist/XXXXXXXXXXXXXXXX
-          4. Copia solo la parte XXXXXXXXXXXXXXXX (el ID).
-          5. Reemplaza PLAYLIST_ID en el src de abajo.
-
-          El parámetro theme=0 usa el tema oscuro de Spotify.
-          Cambia a theme=1 para tema claro.
-          ──────────────────────────────────────────────────────────
-        -->
-        <iframe
-          src="https://open.spotify.com/embed/playlist/PLAYLIST_ID?utm_source=generator&theme=0"
-          title="Playlist de boda Cesar &amp; Lissette"
-          loading="lazy"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          frameborder="0">
-        </iframe>
-      </div>
-    </div>
-  </section>
 
 
   <!-- ══════════════════════════════════════════
@@ -783,6 +750,45 @@
 
     </div>
   </footer>
+
+  <!-- ══════════════════════════════════════════
+       MÚSICA — Reproductor flotante
+       ──────────────────────────────────────────
+       Pon tu canción en la carpeta del proyecto:
+         musica/cancion.mp3
+       y actualiza el src del <source> de abajo.
+  ══════════════════════════════════════════ -->
+  <audio id="wedding-audio" loop preload="auto">
+    <source src="musica/cancion.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- Botón flotante de música -->
+  <div class="music-player" id="music-player" aria-label="Reproductor de música">
+    <button
+      class="music-player__btn"
+      id="music-btn"
+      aria-label="Reproducir música de la boda"
+      title="Música de la boda">
+
+      <!-- Icono: nota musical (estado pausado) -->
+      <svg id="music-icon-play" viewBox="0 0 24 24" fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6Z"/>
+      </svg>
+
+      <!-- Icono: pause (estado reproduciendo, oculto por defecto) -->
+      <svg id="music-icon-pause" viewBox="0 0 24 24" fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg" aria-hidden="true" hidden>
+        <rect x="6"  y="4" width="4" height="16" rx="1"/>
+        <rect x="14" y="4" width="4" height="16" rx="1"/>
+      </svg>
+    </button>
+
+    <!-- Tooltip con nombre de la canción -->
+    <span class="music-player__tooltip" id="music-tooltip" aria-hidden="true">
+      ♪ A Pedir Su Mano — Juan Luis Guerra
+    </span>
+  </div>
 
   <script src="script.js"></script>
 </body>
