@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Cesar & Lissette se casan — 17 de Abril 2027 · La Vega, República Dominicana. Confirma tu asistencia." />
+  <meta name="theme-color" content="#FAF8F4" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Cesar & Lissette — 17.04.2027" />
+  <meta property="og:description" content="Nos casamos el 17 de Abril de 2027 en La Vega, República Dominicana." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.lisycesarsecasan.com" />
+
+  <title>Cesar &amp; Lissette — 17.04.2027</title>
+
+  <!-- Google Fonts: Cormorant Garamond (serif) + Jost (sans-serif) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       NAVEGACIÓN
+  ══════════════════════════════════════════ -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Navegación principal">
+    <div class="nav__logo">C &amp; L</div>
+
+    <ul class="nav__links" role="list">
+      <li><a href="#countdown">La fecha</a></li>
+      <li><a href="#ubicacion">El lugar</a></li>
+      <li><a href="#rsvp">RSVP</a></li>
+      <li><a href="#galeria">Galería</a></li>
+      <li><a href="#album">Álbum</a></li>
+      <li><a href="#guia-rd">República Dom.</a></li>
+    </ul>
+
+    <button class="nav__toggle" aria-label="Abrir menú" aria-expanded="false" id="nav-toggle">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Navigation Overlay -->
+  <div class="nav__mobile" id="nav-mobile" role="dialog" aria-modal="true" aria-label="Menú móvil">
+    <button class="nav__mobile-close" id="nav-mobile-close" aria-label="Cerrar menú">×</button>
+    <nav>
+      <a href="#countdown">La fecha</a>
+      <a href="#ubicacion">El lugar</a>
+      <a href="#rsvp">RSVP</a>
+      <a href="#galeria">Galería</a>
+      <a href="#album">Álbum</a>
+      <a href="#guia-rd">República Dom.</a>
+    </nav>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       1. HERO
+  ══════════════════════════════════════════ -->
+  <section id="hero" class="hero" aria-label="Portada">
+
+    <!-- Decoraciones botánicas en SVG -->
+    <svg class="hero__botanical hero__botanical--left" viewBox="0 0 120 300" fill="none"
+      xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M60 300 C60 220 40 160 55 80 C65 30 60 0 60 0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+      <ellipse cx="32" cy="200" rx="28" ry="11" transform="rotate(-35 32 200)" fill="currentColor" opacity="0.35"/>
+      <ellipse cx="82" cy="165" rx="24" ry="10" transform="rotate(25 82 165)" fill="currentColor" opacity="0.30"/>
+      <ellipse cx="28" cy="130" rx="22" ry="9"  transform="rotate(-50 28 130)" fill="currentColor" opacity="0.25"/>
+      <ellipse cx="78" cy="100" rx="18" ry="8"  transform="rotate(15 78 100)"  fill="currentColor" opacity="0.20"/>
+      <ellipse cx="40" cy="70"  rx="15" ry="7"  transform="rotate(-40 40 70)"  fill="currentColor" opacity="0.18"/>
+    </svg>
+
+    <svg class="hero__botanical hero__botanical--right" viewBox="0 0 120 300" fill="none"
+      xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M60 300 C60 220 80 160 65 80 C55 30 60 0 60 0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+      <ellipse cx="88" cy="200" rx="28" ry="11" transform="rotate(35 88 200)" fill="currentColor" opacity="0.35"/>
+      <ellipse cx="38" cy="165" rx="24" ry="10" transform="rotate(-25 38 165)" fill="currentColor" opacity="0.30"/>
+      <ellipse cx="92" cy="130" rx="22" ry="9"  transform="rotate(50 92 130)"  fill="currentColor" opacity="0.25"/>
+      <ellipse cx="42" cy="100" rx="18" ry="8"  transform="rotate(-15 42 100)" fill="currentColor" opacity="0.20"/>
+      <ellipse cx="80" cy="70"  rx="15" ry="7"  transform="rotate(40 80 70)"   fill="currentColor" opacity="0.18"/>
+    </svg>
+
+    <!-- Orbes de fondo -->
+    <div class="hero__orb hero__orb--1" aria-hidden="true"></div>
+    <div class="hero__orb hero__orb--2" aria-hidden="true"></div>
+
+    <!-- Contenido principal -->
+    <div class="hero__content">
+
+      <p class="hero__eyebrow">con amor, los invitamos a celebrar</p>
+
+      <h1 class="hero__names">
+        <span class="hero__name">Cesar</span>
+        <span class="hero__ampersand" aria-hidden="true">&</span>
+        <span class="hero__name">Lissette</span>
+      </h1>
+
+      <div class="hero__ornament" aria-hidden="true">
+        <span class="hero__ornament-line"></span>
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+        <span class="hero__ornament-line"></span>
+      </div>
+
+      <p class="hero__quote">
+        <em>"Dos almas, un mismo destino."</em>
+      </p>
+
+      <div class="hero__date" aria-label="Fecha: 17 de Abril de 2027">
+        <span>17</span>
+        <span class="hero__date-dot" aria-hidden="true">·</span>
+        <span>Abril</span>
+        <span class="hero__date-dot" aria-hidden="true">·</span>
+        <span>2027</span>
+      </div>
+
+      <p class="hero__meta">18:00 hrs &nbsp;·&nbsp; La Vega, República Dominicana</p>
+
+      <a href="#rsvp" class="btn btn--rust hero__cta">Confirmar asistencia</a>
+
+    </div>
+
+    <!-- Guiño tech sutil -->
+    <span class="hero__badge" aria-hidden="true">Wedding v1.0</span>
+
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       2. CUENTA ATRÁS
+  ══════════════════════════════════════════ -->
+  <section id="countdown" class="countdown" aria-label="Cuenta atrás para la boda">
+    <div class="container">
+      <p class="section-label reveal">faltan</p>
+      <h2 class="section-title reveal">El gran día se acerca</h2>
+
+      <div class="countdown__timer reveal" role="timer" aria-live="polite" aria-atomic="true">
+        <div class="countdown__unit">
+          <span class="countdown__number" id="cd-days">365</span>
+          <span class="countdown__label">días</span>
+        </div>
+        <span class="countdown__sep" aria-hidden="true">:</span>
+        <div class="countdown__unit">
+          <span class="countdown__number" id="cd-hours">00</span>
+          <span class="countdown__label">horas</span>
+        </div>
+        <span class="countdown__sep" aria-hidden="true">:</span>
+        <div class="countdown__unit">
+          <span class="countdown__number" id="cd-minutes">00</span>
+          <span class="countdown__label">minutos</span>
+        </div>
+        <span class="countdown__sep" aria-hidden="true">:</span>
+        <div class="countdown__unit">
+          <span class="countdown__number" id="cd-seconds">00</span>
+          <span class="countdown__label">segundos</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       3. UBICACIÓN
+  ══════════════════════════════════════════ -->
+  <section id="ubicacion" class="ubicacion" aria-label="Ubicación del evento">
+    <div class="container">
+      <p class="section-label reveal">¿dónde?</p>
+      <h2 class="section-title reveal">El Lugar</h2>
+      <p class="section-subtitle reveal">La Vega, República Dominicana</p>
+
+      <div class="ubicacion__map reveal">
+        <!--
+          Si tienes una dirección exacta del salón, reemplaza la query:
+          q=Nombre+del+Salon,+La+Vega,+Dominican+Republic
+        -->
+        <iframe
+          src="https://maps.google.com/maps?q=La+Vega,+Dominican+Republic&output=embed&hl=es&z=13"
+          title="Ubicación: La Vega, República Dominicana"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <div class="ubicacion__actions reveal">
+        <a
+          href="https://maps.google.com/?q=La+Vega,+Dominican+Republic"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn--rust"
+          aria-label="Abrir indicaciones en Google Maps">
+          Cómo llegar
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       4. RSVP
+  ══════════════════════════════════════════ -->
+  <section id="rsvp" class="rsvp" aria-label="Confirmación de asistencia">
+    <div class="container">
+      <p class="section-label reveal">¿vendrás?</p>
+      <h2 class="section-title reveal">Confirma tu Asistencia</h2>
+      <p class="section-subtitle reveal">Por favor confirma antes del 17 de enero de 2027</p>
+
+      <!-- Formulario -->
+      <form class="rsvp__form reveal" id="rsvp-form" novalidate aria-label="Formulario de confirmación">
+
+        <div class="form__row">
+          <div class="form__group">
+            <label for="nombre" class="form__label">Nombre completo</label>
+            <input
+              type="text"
+              id="nombre"
+              name="nombre"
+              class="form__input"
+              placeholder="Tu nombre completo"
+              autocomplete="name"
+              required />
+          </div>
+
+          <div class="form__group">
+            <label for="email" class="form__label">Correo electrónico</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form__input"
+              placeholder="tu@correo.com"
+              autocomplete="email"
+              required />
+          </div>
+        </div>
+
+        <div class="form__row">
+          <div class="form__group">
+            <p class="form__label" id="asistencia-label">¿Asistirás?</p>
+            <div class="form__radio-group" role="radiogroup" aria-labelledby="asistencia-label">
+              <label class="form__radio-label">
+                <input type="radio" name="asistencia" value="si" />
+                <span class="form__radio-custom" aria-hidden="true"></span>
+                Sí, estaré ahí
+              </label>
+              <label class="form__radio-label">
+                <input type="radio" name="asistencia" value="no" />
+                <span class="form__radio-custom" aria-hidden="true"></span>
+                No podré asistir
+              </label>
+            </div>
+          </div>
+
+          <div class="form__group" id="acompanantes-group">
+            <label for="acompanantes" class="form__label">Número de acompañantes</label>
+            <select id="acompanantes" name="acompanantes" class="form__input form__select">
+              <option value="0">Solo yo</option>
+              <option value="1">+ 1 acompañante</option>
+              <option value="2">+ 2 acompañantes</option>
+              <option value="3">+ 3 acompañantes</option>
+              <option value="4">+ 4 acompañantes</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form__group">
+          <label for="mensaje" class="form__label">
+            Mensaje para los novios
+            <span class="form__label-optional">(opcional)</span>
+          </label>
+          <textarea
+            id="mensaje"
+            name="mensaje"
+            class="form__input form__textarea"
+            placeholder="Comparte tus buenos deseos con Cesar y Lissette..."
+            rows="4">
+          </textarea>
+        </div>
+
+        <button type="submit" class="btn btn--rust form__submit" id="rsvp-submit">
+          <span class="btn__text">Enviar confirmación</span>
+          <span class="btn__loading" aria-hidden="true" hidden>Enviando…</span>
+        </button>
+
+      </form>
+
+      <!-- Mensaje de éxito post-envío -->
+      <div class="rsvp__success" id="rsvp-success" hidden aria-live="polite">
+        <div class="rsvp__success-card">
+          <span class="rsvp__success-icon" aria-hidden="true">♡</span>
+          <h3>¡Gracias!</h3>
+          <p id="rsvp-success-msg">Tu respuesta ha sido registrada. ¡Nos vemos el 17 de Abril!</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       5. CONFIRMADOS
+  ══════════════════════════════════════════ -->
+  <section id="confirmados" class="confirmados" aria-label="Personas confirmadas">
+    <div class="container">
+      <p class="section-label reveal">celebrando juntos</p>
+
+      <div class="confirmados__card reveal">
+        <span class="confirmados__number" id="confirmed-count" aria-live="polite">0</span>
+        <p class="confirmados__label">personas confirmadas</p>
+        <p class="confirmados__sub">y contando&hellip;</p>
+      </div>
+
+      <!--
+        ── Migración a Firebase Realtime Database ──────────────────
+        Para mostrar el contador en tiempo real a todos los visitantes:
+
+        1. Activa Realtime Database en tu proyecto Firebase.
+        2. Usa el SDK (ver script.js para más detalles).
+        3. Con onValue() del SDK, el número se actualizará automáticamente
+           en tiempo real para TODOS los usuarios conectados.
+        ──────────────────────────────────────────────────────────── -->
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       6. GALERÍA
+  ══════════════════════════════════════════ -->
+  <section id="galeria" class="galeria" aria-label="Galería de fotos">
+    <div class="container">
+      <p class="section-label reveal">nuestra historia</p>
+      <h2 class="section-title reveal">Galería</h2>
+      <p class="section-subtitle reveal">Momentos que nos trajeron hasta aquí</p>
+
+      <!--
+        ── Cómo agregar tus fotos ──────────────────────────────────
+        Reemplaza cada <div class="galeria__photo galeria__photo--N">
+        por un <img> con tu foto:
+
+        <img src="fotos/foto1.jpg" alt="Descripción de la foto" />
+
+        Para una carga óptima, agrega loading="lazy" a todas las imágenes.
+        ──────────────────────────────────────────────────────────── -->
+
+      <div class="galeria__grid reveal">
+
+        <!-- Foto destacada (2 col × 2 filas) -->
+        <button class="galeria__item galeria__item--featured" data-index="0"
+          aria-label="Ver foto 1 en pantalla completa">
+          <div class="galeria__photo galeria__photo--1">
+            <span class="galeria__placeholder">C &amp; L</span>
+          </div>
+        </button>
+
+        <!-- Fila derecha superior -->
+        <button class="galeria__item" data-index="1" aria-label="Ver foto 2">
+          <div class="galeria__photo galeria__photo--2">
+            <span class="galeria__placeholder">2024</span>
+          </div>
+        </button>
+
+        <button class="galeria__item" data-index="2" aria-label="Ver foto 3">
+          <div class="galeria__photo galeria__photo--3">
+            <span class="galeria__placeholder">♡</span>
+          </div>
+        </button>
+
+        <!-- Fila inferior -->
+        <button class="galeria__item" data-index="3" aria-label="Ver foto 4">
+          <div class="galeria__photo galeria__photo--4">
+            <span class="galeria__placeholder">La Vega</span>
+          </div>
+        </button>
+
+        <button class="galeria__item" data-index="4" aria-label="Ver foto 5">
+          <div class="galeria__photo galeria__photo--5">
+            <span class="galeria__placeholder">17.04</span>
+          </div>
+        </button>
+
+        <button class="galeria__item" data-index="5" aria-label="Ver foto 6">
+          <div class="galeria__photo galeria__photo--6">
+            <span class="galeria__placeholder">2027</span>
+          </div>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Visor de foto" hidden>
+      <button class="lightbox__close" id="lightbox-close" aria-label="Cerrar visor">×</button>
+      <button class="lightbox__nav lightbox__nav--prev" id="lightbox-prev" aria-label="Foto anterior">‹</button>
+      <div class="lightbox__stage" id="lightbox-stage"></div>
+      <button class="lightbox__nav lightbox__nav--next" id="lightbox-next" aria-label="Foto siguiente">›</button>
+    </div>
+
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       7. QR — ÁLBUM COMPARTIDO DE FOTOS
+  ══════════════════════════════════════════ -->
+  <section id="album" class="album" aria-label="Álbum compartido de la boda">
+    <div class="container">
+      <p class="section-label reveal">recuerdos para siempre</p>
+      <h2 class="section-title reveal">Comparte tus Fotos</h2>
+      <p class="section-subtitle reveal">
+        Escanea el código con la cámara de tu teléfono y sube tus fotos<br />
+        al álbum compartido de la boda
+      </p>
+
+      <div class="album__card reveal">
+
+        <!-- Columna izquierda: QR -->
+        <div class="album__qr-col">
+          <div class="album__qr-frame">
+            <img
+              id="qr-image"
+              class="album__qr-img"
+              alt="Código QR para acceder al álbum compartido de la boda"
+              width="220"
+              height="220" />
+          </div>
+          <p class="album__qr-hint">
+            <span aria-hidden="true">📱</span>
+            Apunta la cámara al código
+          </p>
+        </div>
+
+        <!-- Columna derecha: Info -->
+        <div class="album__info-col">
+          <h3 class="album__title">Álbum de Boda</h3>
+          <p class="album__desc">
+            Queremos ver la boda a través de tus ojos. Sube tus fotos y videos
+            favoritos de este día tan especial para que todos podamos revivir
+            cada momento juntos.
+          </p>
+
+          <ol class="album__steps" aria-label="Pasos para subir fotos">
+            <li class="album__step">
+              <span class="album__step-num" aria-hidden="true">1</span>
+              <span>Escanea el código QR con la cámara</span>
+            </li>
+            <li class="album__step">
+              <span class="album__step-num" aria-hidden="true">2</span>
+              <span>Accede al álbum compartido</span>
+            </li>
+            <li class="album__step">
+              <span class="album__step-num" aria-hidden="true">3</span>
+              <span>Sube tus fotos y videos — ¡sin límite!</span>
+            </li>
+          </ol>
+
+          <a
+            href="#"
+            id="album-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn--rust album__btn">
+            Abrir álbum
+          </a>
+
+          <p class="album__note">
+            <!--
+              Cambia ALBUM_URL en script.js para usar tu álbum compartido.
+              Compatible con Google Fotos, iCloud, Dropbox y OneDrive.
+            -->
+            Compatible con Google Fotos · iCloud · Dropbox
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       8. PLAYLIST SPOTIFY
+  ══════════════════════════════════════════ -->
+  <section id="playlist" class="playlist" aria-label="Playlist de boda">
+    <div class="container">
+      <p class="section-label reveal">nuestra música</p>
+      <h2 class="section-title reveal">Playlist de Boda</h2>
+      <p class="section-subtitle reveal">Las canciones que acompañan nuestra historia</p>
+
+      <div class="playlist__embed reveal">
+        <!--
+          ── Cómo obtener tu playlist ID ───────────────────────────
+          1. Abre Spotify (web o app).
+          2. Ve a tu playlist → tres puntos → Compartir → Copiar enlace.
+          3. El enlace tendrá este formato:
+             https://open.spotify.com/playlist/XXXXXXXXXXXXXXXX
+          4. Copia solo la parte XXXXXXXXXXXXXXXX (el ID).
+          5. Reemplaza PLAYLIST_ID en el src de abajo.
+
+          El parámetro theme=0 usa el tema oscuro de Spotify.
+          Cambia a theme=1 para tema claro.
+          ──────────────────────────────────────────────────────────
+        -->
+        <iframe
+          src="https://open.spotify.com/embed/playlist/PLAYLIST_ID?utm_source=generator&theme=0"
+          title="Playlist de boda Cesar &amp; Lissette"
+          loading="lazy"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          frameborder="0">
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       9. GUÍA — REPÚBLICA DOMINICANA EN ABRIL
+  ══════════════════════════════════════════ -->
+  <section id="guia-rd" class="guia-rd" aria-label="Guía de República Dominicana en abril">
+    <div class="container">
+      <p class="section-label reveal">para nuestros invitados</p>
+      <h2 class="section-title reveal">República Dominicana en Abril</h2>
+      <p class="section-subtitle reveal">
+        Todo lo que necesitas saber para aprovechar al máximo tu visita
+      </p>
+
+      <div class="rd-grid">
+
+        <!-- ─ Clima ─ -->
+        <article class="rd-card rd-card--featured reveal" aria-label="Clima en abril">
+          <div class="rd-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="24" cy="24" r="10" fill="currentColor"/>
+              <line x1="24" y1="4"  x2="24" y2="10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="24" y1="38" x2="24" y2="44" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="4"  y1="24" x2="10" y2="24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="38" y1="24" x2="44" y2="24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="8.7"  y1="8.7"  x2="12.9" y2="12.9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="35.1" y1="35.1" x2="39.3" y2="39.3" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="39.3" y1="8.7"  x2="35.1" y2="12.9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="12.9" y1="35.1" x2="8.7"  y2="39.3" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="rd-card__title">Clima Ideal ☀️</h3>
+          <p class="rd-card__body">
+            Abril es uno de los mejores meses para visitar la República Dominicana.
+            Temperaturas entre <strong>27–32 °C</strong>, cielos despejados y muy
+            poca lluvia. Perfectas condiciones para una boda al aire libre.
+          </p>
+          <ul class="rd-card__list">
+            <li>Sol durante casi todo el día</li>
+            <li>Agua del mar a ~27 °C</li>
+            <li>Fuera de temporada de huracanes (jun–nov)</li>
+            <li>Brisas del Caribe suaves por las noches</li>
+          </ul>
+        </article>
+
+        <!-- ─ Jarabacoa ─ -->
+        <article class="rd-card reveal" aria-label="Jarabacoa">
+          <div class="rd-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 40 L16 16 L24 28 L32 12 L44 40Z" fill="currentColor" opacity="0.9"/>
+            </svg>
+          </div>
+          <h3 class="rd-card__title">Jarabacoa</h3>
+          <p class="rd-card__distance">⏱ ~40 min de La Vega</p>
+          <p class="rd-card__body">
+            La capital de la aventura dominicana, en plena Cordillera Central.
+            Clima fresco y paisajes que quitan el aliento.
+          </p>
+          <ul class="rd-card__list">
+            <li>Rafting en el Río Yaque del Norte</li>
+            <li>Saltos de Jimaní y de Baiguate</li>
+            <li>Senderismo y rappel</li>
+            <li>Temperatura de 18–25 °C</li>
+          </ul>
+        </article>
+
+        <!-- ─ Constanza ─ -->
+        <article class="rd-card reveal" aria-label="Constanza">
+          <div class="rd-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 4 C16 16 10 20 10 28 a14 14 0 0 0 28 0 C38 20 32 16 24 4Z" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3 class="rd-card__title">Constanza</h3>
+          <p class="rd-card__distance">⏱ ~1.5h de La Vega</p>
+          <p class="rd-card__body">
+            "El Jardín de la República Dominicana". Un valle donde crecen fresas,
+            rosas y verduras imposibles en el Caribe. Frío sorprendente.
+          </p>
+          <ul class="rd-card__list">
+            <li>Flores y fresas de temporada en abril</li>
+            <li>Mercado de productores locales</li>
+            <li>Clima fresco: 15–22 °C</li>
+            <li>Vistas panorámicas de la Cordillera</li>
+          </ul>
+        </article>
+
+        <!-- ─ Santiago ─ -->
+        <article class="rd-card reveal" aria-label="Santiago de los Caballeros">
+          <div class="rd-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6"  y="28" width="10" height="14" fill="currentColor"/>
+              <rect x="19" y="20" width="10" height="22" fill="currentColor"/>
+              <rect x="32" y="24" width="10" height="18" fill="currentColor"/>
+              <rect x="2"  y="40" width="44" height="3" fill="currentColor" opacity="0.4"/>
+            </svg>
+          </div>
+          <h3 class="rd-card__title">Santiago</h3>
+          <p class="rd-card__distance">⏱ ~30 min de La Vega</p>
+          <p class="rd-card__body">
+            La Sultana del Yaque. Segunda ciudad del país, con historia, cultura
+            y la mejor vida nocturna fuera de Santo Domingo.
+          </p>
+          <ul class="rd-card__list">
+            <li>Monumento a los Héroes de la Restauración</li>
+            <li>Centro Histórico y Catedral Santiago Apóstol</li>
+            <li>Zona Rosa — restaurantes y vida nocturna</li>
+            <li>Mercado Modelo y artesanías típicas</li>
+          </ul>
+        </article>
+
+        <!-- ─ Puerto Plata ─ -->
+        <article class="rd-card reveal" aria-label="Puerto Plata">
+          <div class="rd-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 32 Q12 20 24 28 Q36 36 44 24" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <path d="M4 38 Q12 26 24 34 Q36 42 44 30" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+            </svg>
+          </div>
+          <h3 class="rd-card__title">Puerto Plata</h3>
+          <p class="rd-card__distance">⏱ ~1.5h de La Vega</p>
+          <p class="rd-card__body">
+            La Costa Ámbar: playa, historia colonial del siglo XVI y el único
+            teleférico del Caribe con vistas al Atlántico.
+          </p>
+          <ul class="rd-card__list">
+            <li>Teleférico al Pico Isabel de Torres</li>
+            <li>Fortaleza San Felipe (s. XVI)</li>
+            <li>Playas de Sosúa y Cabarete</li>
+            <li>Kitesurf en Cabarete</li>
+          </ul>
+        </article>
+
+        <!-- ─ Samaná ─ -->
+        <article class="rd-card reveal" aria-label="Península de Samaná">
+          <div class="rd-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Ballena jorobada estilizada -->
+              <path d="M4 30 Q10 18 22 20 Q34 22 42 16" stroke="currentColor" stroke-width="2.5"
+                fill="none" stroke-linecap="round"/>
+              <path d="M4 30 Q8 36 16 34 Q24 32 30 36 Q36 40 42 34"
+                fill="currentColor" opacity="0.85"/>
+              <path d="M38 16 L42 10 L46 17" fill="currentColor" opacity="0.5"/>
+              <!-- Aleta caudal -->
+              <path d="M4 30 L2 24 M4 30 L0 32" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="rd-card__title">Samaná</h3>
+          <p class="rd-card__distance">⏱ ~2.5h de La Vega</p>
+          <p class="rd-card__body">
+            La joya escondida del Caribe dominicano. Una península de naturaleza
+            exuberante, playas vírgenes y la majestuosa Cascada El Limón, solo
+            accesible a caballo entre la selva tropical.
+          </p>
+          <ul class="rd-card__list">
+            <li>Avistamiento de ballenas jorobadas (ene–mar)</li>
+            <li>Cascada El Limón — ruta a caballo por la jungla</li>
+            <li>Playa Rincón — considerada la más bella de RD</li>
+            <li>Las Terrenas — ambiente bohemio y restaurantes</li>
+            <li>Las Galeras — bahías cristalinas y snorkel</li>
+          </ul>
+        </article>
+
+        <!-- ─ Gastronomía ─ -->
+        <article class="rd-card reveal" aria-label="Gastronomía dominicana">
+          <div class="rd-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="24" cy="32" rx="18" ry="8" fill="currentColor" opacity="0.25"/>
+              <path d="M10 28 Q14 12 24 10 Q34 12 38 28Z" fill="currentColor"/>
+              <rect x="22" y="6" width="4" height="8" rx="2" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3 class="rd-card__title">Gastronomía</h3>
+          <p class="rd-card__body">
+            La cocina dominicana es un abrazo de sabores caribeños. No te vayas
+            sin probar estos imprescindibles.
+          </p>
+          <ul class="rd-card__list">
+            <li><strong>Mangú</strong> — plátano majado, el rey del desayuno</li>
+            <li><strong>Sancocho</strong> — el festín nacional</li>
+            <li><strong>La Bandera</strong> — arroz, habichuelas y carne</li>
+            <li><strong>Tostones</strong> — plátano verde frito</li>
+            <li><strong>Morir Soñando</strong> — bebida de naranja y leche</li>
+            <li><strong>Ron Barceló / Brugal</strong> — orgullo nacional</li>
+          </ul>
+        </article>
+
+        <!-- ─ Música y Cultura ─ -->
+        <article class="rd-card reveal" aria-label="Música y cultura dominicana">
+          <div class="rd-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="14" cy="38" rx="8" ry="5" fill="currentColor"/>
+              <ellipse cx="34" cy="33" rx="8" ry="5" fill="currentColor"/>
+              <path d="M22 38 L22 14 L42 9 L42 33" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <line x1="22" y1="14" x2="42" y2="9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="rd-card__title">Merengue &amp; Bachata</h3>
+          <p class="rd-card__body">
+            El merengue y la bachata son Patrimonio Cultural de la UNESCO.
+            En la República Dominicana, la música no se escucha: <em>se vive</em>.
+          </p>
+          <ul class="rd-card__list">
+            <li>La Vega — cuna del Carnaval más famoso del Caribe</li>
+            <li>Merengue: ritmo nacional desde el siglo XIX</li>
+            <li>Bachata: Romeo Santos es de aquí</li>
+            <li>¡Ven preparado para bailar toda la noche! 💃</li>
+          </ul>
+        </article>
+
+        <!-- ─ Tips Prácticos ─ -->
+        <article class="rd-card reveal" aria-label="Tips prácticos para visitantes">
+          <div class="rd-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="2.5" fill="none"/>
+              <line x1="24" y1="22" x2="24" y2="34" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="24" cy="16" r="2.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <h3 class="rd-card__title">Tips Prácticos</h3>
+          <p class="rd-card__body">
+            Pequeños detalles para que tu visita sea perfecta desde el primer momento.
+          </p>
+          <ul class="rd-card__list">
+            <li><strong>Moneda:</strong> Peso Dominicano (DOP). USD muy aceptado.</li>
+            <li><strong>Electricidad:</strong> 110V / 60Hz (igual que EE.UU.)</li>
+            <li><strong>Transporte:</strong> InDriver y Uber funcionan en ciudades</li>
+            <li><strong>Propina:</strong> 10–18 % en restaurantes</li>
+            <li><strong>Sunscreen:</strong> FPS 50+ — el sol caribeño es intenso</li>
+            <li><strong>Idioma:</strong> Español dominicano 🇩🇴</li>
+          </ul>
+        </article>
+
+      </div><!-- /.rd-grid -->
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+
+      <p class="footer__names">Cesar &amp; Lissette</p>
+
+      <div class="footer__ornament" aria-hidden="true">
+        <span class="footer__ornament-line"></span>
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+        <span class="footer__ornament-line"></span>
+      </div>
+
+      <p class="footer__date">17 · IV · MMXXVII</p>
+      <p class="footer__location">La Vega, República Dominicana</p>
+
+      <div class="footer__divider" aria-hidden="true"></div>
+
+      <p class="footer__made">Hecho con amor</p>
+
+      <!-- Guiño tech elegante -->
+      <p class="footer__tech" aria-label="Versión del sitio">Deployment: Wedding v1.0</p>
+
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
