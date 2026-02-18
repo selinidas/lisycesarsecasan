@@ -177,25 +177,47 @@
       <h2 class="section-title reveal">El Lugar</h2>
       <p class="section-subtitle reveal">Villa Guerrero · La Vega, República Dominicana</p>
 
-      <div class="ubicacion__map reveal">
-        <iframe
-          src="https://maps.google.com/maps?q=19.2484118,-70.5391279&output=embed&hl=es&z=16"
-          title="Ubicación: Villa Guerrero, La Vega, República Dominicana"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          allowfullscreen>
-        </iframe>
-      </div>
+      <!-- Descripción del lugar -->
+      <p class="ubicacion__desc reveal">
+        ✏️ Cuéntale a tus invitados por qué elegisteis este lugar.
+        Por ejemplo: "Elegimos Villa Guerrero porque..."
+        Puedes hablar del ambiente, los jardines, lo que significa para vosotros, etc.
+      </p>
 
-      <div class="ubicacion__actions reveal">
-        <a
-          href="https://maps.google.com/?q=19.2484118,-70.5391279"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn--rust"
-          aria-label="Abrir indicaciones en Google Maps — Villa Guerrero">
-          Cómo llegar
-        </a>
+      <div class="ubicacion__grid">
+
+        <!-- Foto de la villa -->
+        <div class="ubicacion__photo reveal">
+          <img
+            src="fotos/villa.jpg"
+            alt="Villa Guerrero, La Vega — lugar de la boda"
+            loading="lazy" />
+        </div>
+
+        <!-- Mapa + botón -->
+        <div class="ubicacion__right reveal">
+          <div class="ubicacion__map">
+            <iframe
+              src="https://maps.google.com/maps?q=19.2484118,-70.5391279&output=embed&hl=es&z=16"
+              title="Ubicación: Villa Guerrero, La Vega, República Dominicana"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen>
+            </iframe>
+          </div>
+
+          <div class="ubicacion__actions">
+            <a
+              href="https://maps.google.com/?q=19.2484118,-70.5391279"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn--rust"
+              aria-label="Abrir indicaciones en Google Maps — Villa Guerrero">
+              Cómo llegar
+            </a>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
