@@ -791,8 +791,22 @@ function initMusicPlayer() {
   audio.play()
     .then(() => setPlaying(true))
     .catch(() => {
-      /* Bloqueado por el navegador — el usuario verá el botón */
+      /* Bloqueado por el navegador — esperar primera interacción del usuario */
       setPlaying(false);
+
+      function startOnInteraction() {
+        audio.play().then(() => {
+          setPlaying(true);
+          /* Limpiar todos los listeners una vez que arranca */
+          ['click', 'scroll', 'touchstart', 'keydown'].forEach(ev =>
+            document.removeEventListener(ev, startOnInteraction)
+          );
+        }).catch(() => {});
+      }
+
+      ['click', 'scroll', 'touchstart', 'keydown'].forEach(ev =>
+        document.addEventListener(ev, startOnInteraction, { passive: true })
+      );
     });
 
   /* ── Play / Pause al hacer clic ── */
