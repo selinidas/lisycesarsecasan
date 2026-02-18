@@ -59,9 +59,9 @@ git commit -m "Wedding v1.0 — initial commit"
 
 ### Paso 2 — Subir a GitHub
 ```bash
-# Crea un repo en github.com llamado: lisycesarsecasan
+# Crea un repo en github.com llamado: lissycesarsecasan
 # Luego conecta y sube:
-git remote add origin https://github.com/TU_USUARIO/lisycesarsecasan.git
+git remote add origin https://github.com/TU_USUARIO/lissycesarsecasan.git
 git branch -M main
 git push -u origin main
 ```
@@ -73,16 +73,16 @@ git push -u origin main
 4. Branch: `main` / Folder: `/ (root)`
 5. Haz clic en **Save**
 6. En 2-3 minutos tu sitio estará en:
-   `https://TU_USUARIO.github.io/lisycesarsecasan/`
+   `https://TU_USUARIO.github.io/lissycesarsecasan/`
 
 ---
 
-## Conectar dominio propio (www.lisycesarsecasan.com)
+## Conectar dominio propio (www.lissycesarsecasan.com)
 
 ### Paso 1 — Archivo CNAME
 Crea un archivo llamado `CNAME` (sin extensión) en la raíz del proyecto con solo esta línea:
 ```
-www.lisycesarsecasan.com
+www.lissycesarsecasan.com
 ```
 Haz commit y push de ese archivo.
 
@@ -94,7 +94,7 @@ En el panel de tu registrador (GoDaddy, Namecheap, Cloudflare, etc.), agrega est
 |-------|------|-----------------------------|
 | CNAME | www  | TU_USUARIO.github.io        |
 
-**Para el dominio raíz (`lisycesarsecasan.com` sin www):**
+**Para el dominio raíz (`lissycesarsecasan.com` sin www):**
 | Tipo | Host | Valor          |
 |------|------|----------------|
 | A    | @    | 185.199.108.153 |
@@ -104,7 +104,7 @@ En el panel de tu registrador (GoDaddy, Namecheap, Cloudflare, etc.), agrega est
 
 ### Paso 3 — Activar HTTPS
 1. En GitHub → Settings → Pages
-2. Ingresa tu dominio en **Custom domain**: `www.lisycesarsecasan.com`
+2. Ingresa tu dominio en **Custom domain**: `www.lissycesarsecasan.com`
 3. Activa **Enforce HTTPS** ✓
 4. Espera 15-30 minutos para que el certificado SSL se emita.
 
