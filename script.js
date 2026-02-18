@@ -1,9 +1,13 @@
 /* ============================================================
    CESAR & LISSETTE — script.js
-   Wedding v1.0 | LocalStorage + Firebase migration ready
+   Wedding v1.0 | Firebase + LocalStorage
    ============================================================ */
 
-'use strict';
+import {
+  db, rtdb,
+  collection, addDoc, serverTimestamp,
+  ref, onValue, increment, update,
+} from './firebase.js';
 
 /* ── Helpers ─────────────────────────────────────────────── */
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
@@ -290,15 +294,12 @@ function initRSVP() {
     $('.btn__text', submitBtn).hidden = true;
     $('.btn__loading', submitBtn).hidden = false;
 
-    /* Simula latencia de red (0.8s) antes de guardar */
-    await new Promise(r => setTimeout(r, 800));
-
-    /* Guardar en LocalStorage */
-    saveLocally(data);
+    /* Guardar en Firebase + LocalStorage */
+    await saveRSVP(data);
 
     /* Actualizar contador si asiste */
     if (data.asistencia === 'si') {
-      incrementConfirmed(1 + data.acompanantes);
+      await incrementConfirmed(1 + data.acompanantes);
     }
 
     /* Guardar para no mostrar el form de nuevo */
@@ -310,7 +311,18 @@ function initRSVP() {
   }
 }
 
-function saveLocally(data) {
+async function saveRSVP(data) {
+  /* 1. Firestore — fuente principal */
+  try {
+    await addDoc(collection(db, 'rsvps'), {
+      ...data,
+      timestamp: serverTimestamp(),
+    });
+  } catch (err) {
+    console.warn('Firestore no disponible, guardando solo en localStorage:', err);
+  }
+
+  /* 2. LocalStorage — respaldo offline */
   const list = JSON.parse(localStorage.getItem('wedding_rsvps') || '[]');
   list.push(data);
   localStorage.setItem('wedding_rsvps', JSON.stringify(list));
@@ -439,27 +451,47 @@ function initConfirmedCounter() {
   const countEl = $('#confirmed-count');
   if (!countEl) return;
 
-  const stored = parseInt(localStorage.getItem('wedding_confirmed') || '0', 10);
+  let animated = false;
 
-  /* Animar cuando entra en viewport */
-  const observer = new IntersectionObserver(
-    entries => {
-      if (!entries[0].isIntersecting) return;
-      animateNumber(countEl, 0, stored, 1600);
-      observer.disconnect();
-    },
-    { threshold: 0.5 }
-  );
-  observer.observe(countEl);
+  /* Escuchar el contador en tiempo real desde Firebase */
+  onValue(ref(rtdb, 'confirmedCount'), (snapshot) => {
+    const count = snapshot.val() || 0;
+
+    /* Animar solo la primera vez que entra en viewport */
+    const observer = new IntersectionObserver(
+      entries => {
+        if (!entries[0].isIntersecting) return;
+        if (!animated) {
+          animateNumber(countEl, 0, count, 1600);
+          animated = true;
+        } else {
+          countEl.textContent = count;
+        }
+        observer.disconnect();
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(countEl);
+
+    /* Si ya es visible, actualizar directamente */
+    if (animated) countEl.textContent = count;
+  });
 }
 
-function incrementConfirmed(amount) {
-  const current = parseInt(localStorage.getItem('wedding_confirmed') || '0', 10);
-  const next    = current + amount;
-  localStorage.setItem('wedding_confirmed', String(next));
-
-  const el = $('#confirmed-count');
-  if (el) animateNumber(el, current, next, 1000);
+async function incrementConfirmed(amount) {
+  /* Incrementar en Realtime Database (todos los visitantes lo ven) */
+  try {
+    await update(ref(rtdb), {
+      confirmedCount: increment(amount),
+    });
+  } catch (err) {
+    /* Fallback a localStorage si Firebase no está disponible */
+    console.warn('RTDB no disponible:', err);
+    const current = parseInt(localStorage.getItem('wedding_confirmed') || '0', 10);
+    localStorage.setItem('wedding_confirmed', String(current + amount));
+    const el = $('#confirmed-count');
+    if (el) animateNumber(el, current, current + amount, 1000);
+  }
 }
 
 /* Animación de número con easing */
