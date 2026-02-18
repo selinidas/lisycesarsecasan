@@ -16,9 +16,9 @@ import {
    Rellena estos tres valores después de configurar EmailJS.
    Ver README.md → sección "Configurar EmailJS".
    ============================================================ */
-const EMAILJS_PUBLIC_KEY  = 'TU_PUBLIC_KEY';   /* ← de EmailJS → Account → API Keys */
-const EMAILJS_SERVICE_ID  = 'TU_SERVICE_ID';   /* ← de EmailJS → Email Services */
-const EMAILJS_TEMPLATE_ID = 'TU_TEMPLATE_ID';  /* ← de EmailJS → Email Templates */
+const EMAILJS_PUBLIC_KEY  = 'SAAmLPQB_I9_7kltt';   /* ← de EmailJS → Account → API Keys */
+const EMAILJS_SERVICE_ID  = 'service_hlonfmp';   /* ← de EmailJS → Email Services */
+const EMAILJS_TEMPLATE_ID = 'template_ctpsni6';  /* ← de EmailJS → Email Templates */
 
 /* ── Helpers ─────────────────────────────────────────────── */
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
