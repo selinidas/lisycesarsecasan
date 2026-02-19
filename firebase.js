@@ -23,6 +23,9 @@
            request.resource.data.email  is string;
          allow read, update, delete: if false;
        }
+       match /invitados/{id} {
+         allow read, write: if true;
+       }
      }
    }
 

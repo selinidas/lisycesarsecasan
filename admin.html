@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Cesar &amp; Lissette</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rust:       #9B4A2E;
+      --rust-light: #C4714F;
+      --mauve:      #C4A5B5;
+      --sage:       #8FAF8A;
+      --peach:      #D4956A;
+      --off-white:  #FAF8F4;
+      --bg:         #F5F0EB;
+      --text:       #3D2B2B;
+      --text-muted: #7A5C5C;
+      --border:     #E8DDD8;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans:  'Jost', Arial, sans-serif;
+      --r:          10px;
+      --shadow:     0 2px 16px rgba(60,30,20,.08);
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Login ── */
+    #login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .login-card {
+      background: var(--off-white);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+
+    .login-card h1 {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--rust);
+      margin-bottom: .25rem;
+    }
+
+    .login-card p {
+      font-size: .85rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      letter-spacing: .05em;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: .75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      font-family: var(--font-sans);
+      font-size: .95rem;
+      background: white;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+      margin-bottom: 1rem;
+      text-align: center;
+      letter-spacing: .1em;
+    }
+
+    .login-card input:focus { border-color: var(--rust); }
+
+    .login-card button {
+      width: 100%;
+      padding: .85rem;
+      background: var(--rust);
+      color: var(--off-white);
+      border: none;
+      border-radius: var(--r);
+      font-family: var(--font-sans);
+      font-size: .85rem;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .login-card button:hover { background: var(--rust-light); }
+
+    .login-error {
+      margin-top: .75rem;
+      font-size: .82rem;
+      color: #c0392b;
+      display: none;
+    }
+
+    /* ── Dashboard ── */
+    #dashboard { display: none; }
+
+    .admin-header {
+      background: var(--off-white);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .admin-header__brand {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      color: var(--rust);
+    }
+
+    .admin-header__brand span {
+      font-family: var(--font-sans);
+      font-size: .7rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: -2px;
+    }
+
+    .btn-logout {
+      background: none;
+      border: 1.5px solid var(--border);
+      padding: .4rem .9rem;
+      border-radius: 6px;
+      font-family: var(--font-sans);
+      font-size: .78rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      letter-spacing: .06em;
+      transition: all .2s;
+    }
+
+    .btn-logout:hover { border-color: var(--rust); color: var(--rust); }
+
+    .admin-main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ── Stats ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--off-white);
+      border-radius: var(--r);
+      padding: 1.25rem 1rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+      border-top: 3px solid var(--border);
+    }
+
+    .stat-card--total   { border-top-color: var(--mauve); }
+    .stat-card--confirm { border-top-color: var(--sage); }
+    .stat-card--decline { border-top-color: #c0392b; }
+    .stat-card--pending { border-top-color: var(--peach); }
+
+    .stat-card__num {
+      font-family: var(--font-serif);
+      font-size: 2.4rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .stat-card__label {
+      font-size: .72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-top: .35rem;
+    }
+
+    /* ── Add guest ── */
+    .add-guest-card {
+      background: var(--off-white);
+      border-radius: var(--r);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+    }
+
+    .add-guest-card h2 {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .add-guest-form {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+    }
+
+    .add-guest-form input {
+      flex: 1;
+      min-width: 180px;
+      padding: .65rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font-sans);
+      font-size: .9rem;
+      background: white;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .add-guest-form input:focus { border-color: var(--rust); }
+
+    .add-guest-form input::placeholder { color: #bbb; }
+
+    .btn-add {
+      padding: .65rem 1.5rem;
+      background: var(--rust);
+      color: var(--off-white);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-sans);
+      font-size: .82rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .2s;
+      white-space: nowrap;
+    }
+
+    .btn-add:hover { background: var(--rust-light); }
+    .btn-add:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── Filtros ── */
+    .filters {
+      display: flex;
+      gap: .5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: .4rem .9rem;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: var(--off-white);
+      font-family: var(--font-sans);
+      font-size: .78rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all .2s;
+      letter-spacing: .04em;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--rust);
+      border-color: var(--rust);
+      color: white;
+    }
+
+    /* ── Lista de invitados ── */
+    .guest-table-card {
+      background: var(--off-white);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .guest-table-header {
+      display: grid;
+      grid-template-columns: 1fr 120px 100px 60px 36px;
+      gap: 1rem;
+      padding: .75rem 1.25rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted);
+    }
+
+    .guest-list { list-style: none; }
+
+    .guest-row {
+      display: grid;
+      grid-template-columns: 1fr 120px 100px 60px 36px;
+      gap: 1rem;
+      align-items: center;
+      padding: .85rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+      animation: fadeIn .3s ease both;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .guest-row:last-child { border-bottom: none; }
+    .guest-row:hover { background: #fdf6f2; }
+
+    .guest-name {
+      font-size: .92rem;
+      font-weight: 500;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .guest-email {
+      font-size: .75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      padding: .25rem .7rem;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+
+    .status-chip--confirmed {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status-chip--declined {
+      background: #fce4ec;
+      color: #c62828;
+    }
+
+    .status-chip--pending {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    .guest-companions {
+      font-size: .85rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .btn-delete {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #ccc;
+      font-size: 1.1rem;
+      line-height: 1;
+      padding: .2rem;
+      border-radius: 4px;
+      transition: color .2s;
+    }
+
+    .btn-delete:hover { color: #c0392b; }
+
+    .guest-message {
+      grid-column: 1 / -1;
+      font-size: .78rem;
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 0 0 .5rem;
+      display: none;
+    }
+
+    .guest-row:hover .guest-message { display: block; }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+      font-size: .9rem;
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+      font-size: .85rem;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .guest-table-header { display: none; }
+
+      .guest-row {
+        grid-template-columns: 1fr auto 36px;
+        grid-template-rows: auto auto;
+      }
+
+      .guest-companions { display: none; }
+
+      .admin-header { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Pantalla de login ── -->
+  <div id="login-screen">
+    <div class="login-card">
+      <h1>C &amp; L</h1>
+      <p>Panel de administración · Boda 2027</p>
+      <input
+        type="password"
+        id="login-input"
+        placeholder="Contraseña"
+        autocomplete="current-password" />
+      <button id="login-btn">Entrar</button>
+      <p class="login-error" id="login-error">Contraseña incorrecta</p>
+    </div>
+  </div>
+
+  <!-- ── Dashboard ── -->
+  <div id="dashboard">
+
+    <header class="admin-header">
+      <div class="admin-header__brand">
+        Cesar &amp; Lissette
+        <span>Panel de invitados · 17.04.2027</span>
+      </div>
+      <button class="btn-logout" id="logout-btn">Cerrar sesión</button>
+    </header>
+
+    <main class="admin-main">
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card stat-card--total">
+          <div class="stat-card__num" id="stat-total">—</div>
+          <div class="stat-card__label">Invitados</div>
+        </div>
+        <div class="stat-card stat-card--confirm">
+          <div class="stat-card__num" id="stat-confirmed">—</div>
+          <div class="stat-card__label">Confirmados</div>
+        </div>
+        <div class="stat-card stat-card--decline">
+          <div class="stat-card__num" id="stat-declined">—</div>
+          <div class="stat-card__label">No asisten</div>
+        </div>
+        <div class="stat-card stat-card--pending">
+          <div class="stat-card__num" id="stat-pending">—</div>
+          <div class="stat-card__label">Sin respuesta</div>
+        </div>
+      </div>
+
+      <!-- Añadir invitado -->
+      <div class="add-guest-card">
+        <h2>Añadir invitado</h2>
+        <div class="add-guest-form">
+          <input
+            type="text"
+            id="input-nombre"
+            placeholder="Nombre completo"
+            autocomplete="off" />
+          <input
+            type="email"
+            id="input-email"
+            placeholder="Correo (opcional)"
+            autocomplete="off" />
+          <button class="btn-add" id="btn-add">+ Añadir</button>
+        </div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">Todos</button>
+        <button class="filter-btn" data-filter="confirmed">Confirmados ✓</button>
+        <button class="filter-btn" data-filter="declined">No asisten ✗</button>
+        <button class="filter-btn" data-filter="pending">Sin respuesta ·</button>
+      </div>
+
+      <!-- Tabla -->
+      <div class="guest-table-card">
+        <div class="guest-table-header">
+          <div>Nombre</div>
+          <div>Estado</div>
+          <div>Acompañantes</div>
+          <div></div>
+          <div></div>
+        </div>
+        <ul class="guest-list" id="guest-list">
+          <li class="loading-state">Cargando invitados…</li>
+        </ul>
+      </div>
+
+    </main>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from
+      'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
+    import {
+      getFirestore, collection, addDoc, deleteDoc,
+      doc, onSnapshot, query, orderBy, serverTimestamp,
+    } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
+
+    /* ── Config Firebase (igual que firebase.js) ── */
+    const app = initializeApp({
+      apiKey:            'AIzaSyATR-1uUqpJFZAG9OPOjxYas7DjvEEVRCo',
+      authDomain:        'boda-cesar-lissette.firebaseapp.com',
+      databaseURL:       'https://boda-cesar-lissette-default-rtdb.firebaseio.com',
+      projectId:         'boda-cesar-lissette',
+      storageBucket:     'boda-cesar-lissette.firebasestorage.app',
+      messagingSenderId: '1080316555242',
+      appId:             '1:1080316555242:web:48614150034617521ecc93',
+    });
+    const db = getFirestore(app);
+
+    /* ── Contraseña ── */
+    const PASSWORD = 'boda2027';
+
+    /* ── Estado ── */
+    let allInvitados = [];   /* lista de invitados definida por ti */
+    let allRsvps     = [];   /* RSVPs recibidos del formulario */
+    let activeFilter = 'all';
+
+    /* ══ LOGIN ══ */
+    const loginScreen = document.getElementById('login-screen');
+    const dashboard   = document.getElementById('dashboard');
+    const loginInput  = document.getElementById('login-input');
+    const loginBtn    = document.getElementById('login-btn');
+    const loginError  = document.getElementById('login-error');
+    const logoutBtn   = document.getElementById('logout-btn');
+
+    /* Sesión simple con sessionStorage */
+    if (sessionStorage.getItem('admin_auth') === 'ok') showDashboard();
+
+    loginBtn.addEventListener('click', tryLogin);
+    loginInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('admin_auth');
+      loginInput.value = '';
+      loginError.style.display = 'none';
+      dashboard.style.display = 'none';
+      loginScreen.style.display = 'flex';
+    });
+
+    function tryLogin() {
+      if (loginInput.value === PASSWORD) {
+        sessionStorage.setItem('admin_auth', 'ok');
+        loginError.style.display = 'none';
+        showDashboard();
+      } else {
+        loginError.style.display = 'block';
+        loginInput.value = '';
+        loginInput.focus();
+      }
+    }
+
+    function showDashboard() {
+      loginScreen.style.display = 'none';
+      dashboard.style.display = 'block';
+      initData();
+    }
+
+    /* ══ DATOS ══ */
+    function initData() {
+      /* Escuchar invitados en tiempo real */
+      onSnapshot(
+        query(collection(db, 'invitados'), orderBy('timestamp', 'asc')),
+        snap => {
+          allInvitados = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          render();
+        }
+      );
+
+      /* Escuchar RSVPs en tiempo real */
+      onSnapshot(
+        query(collection(db, 'rsvps'), orderBy('timestamp', 'asc')),
+        snap => {
+          allRsvps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          render();
+        }
+      );
+    }
+
+    /* ══ AÑADIR INVITADO ══ */
+    const btnAdd     = document.getElementById('btn-add');
+    const inputNombre = document.getElementById('input-nombre');
+    const inputEmail  = document.getElementById('input-email');
+
+    btnAdd.addEventListener('click', addGuest);
+    inputNombre.addEventListener('keydown', e => { if (e.key === 'Enter') addGuest(); });
+
+    async function addGuest() {
+      const nombre = inputNombre.value.trim();
+      if (!nombre) { inputNombre.focus(); return; }
+
+      btnAdd.disabled = true;
+      try {
+        await addDoc(collection(db, 'invitados'), {
+          nombre,
+          email: inputEmail.value.trim() || null,
+          timestamp: serverTimestamp(),
+        });
+        inputNombre.value = '';
+        inputEmail.value  = '';
+        inputNombre.focus();
+      } catch (err) {
+        console.error('Error al añadir invitado:', err);
+      }
+      btnAdd.disabled = false;
+    }
+
+    /* ══ BORRAR INVITADO ══ */
+    async function deleteGuest(id) {
+      if (!confirm('¿Eliminar este invitado de la lista?')) return;
+      await deleteDoc(doc(db, 'invitados', id));
+    }
+
+    /* ══ FILTROS ══ */
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.dataset.filter;
+        render();
+      });
+    });
+
+    /* ══ RENDER ══ */
+    function getStatus(invitado) {
+      /* Busca el RSVP que coincida con el nombre del invitado (insensible a mayúsc.) */
+      const normalizar = s => s?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim() || '';
+      const nombreInv  = normalizar(invitado.nombre);
+
+      const rsvp = allRsvps.find(r => {
+        const nombreRsvp = normalizar(r.nombre);
+        /* coincidencia exacta o si el nombre del RSVP contiene el nombre del invitado */
+        return nombreRsvp === nombreInv || nombreRsvp.includes(nombreInv) || nombreInv.includes(nombreRsvp);
+      });
+
+      if (!rsvp) return { estado: 'pending', rsvp: null };
+      return { estado: rsvp.asistencia === 'si' ? 'confirmed' : 'declined', rsvp };
+    }
+
+    function render() {
+      const list = document.getElementById('guest-list');
+
+      /* Calcular stats sobre TODOS los invitados (ignorar filtro activo) */
+      const todos      = allInvitados.map(inv => ({ inv, ...getStatus(inv) }));
+      const confirmed  = todos.filter(x => x.estado === 'confirmed');
+      const declined   = todos.filter(x => x.estado === 'declined');
+      const pending    = todos.filter(x => x.estado === 'pending');
+
+      document.getElementById('stat-total').textContent     = todos.length;
+      document.getElementById('stat-confirmed').textContent = confirmed.length;
+      document.getElementById('stat-declined').textContent  = declined.length;
+      document.getElementById('stat-pending').textContent   = pending.length;
+
+      /* Aplicar filtro */
+      let filtrados = todos;
+      if (activeFilter === 'confirmed') filtrados = confirmed;
+      if (activeFilter === 'declined')  filtrados = declined;
+      if (activeFilter === 'pending')   filtrados = pending;
+
+      if (!filtrados.length) {
+        list.innerHTML = `<li class="empty-state">
+          ${ allInvitados.length === 0
+            ? 'Añade tu primer invitado arriba ↑'
+            : 'No hay invitados en esta categoría' }
+        </li>`;
+        return;
+      }
+
+      const chipMap = {
+        confirmed: `<span class="status-chip status-chip--confirmed">✓ Confirmado</span>`,
+        declined:  `<span class="status-chip status-chip--declined">✗ No asiste</span>`,
+        pending:   `<span class="status-chip status-chip--pending">· Pendiente</span>`,
+      };
+
+      list.innerHTML = filtrados.map(({ inv, estado, rsvp }) => `
+        <li class="guest-row">
+          <div>
+            <div class="guest-name">${escHtml(inv.nombre)}</div>
+            ${inv.email ? `<div class="guest-email">${escHtml(inv.email)}</div>` : ''}
+            ${rsvp?.email && !inv.email ? `<div class="guest-email">${escHtml(rsvp.email)}</div>` : ''}
+          </div>
+          <div>${chipMap[estado]}</div>
+          <div class="guest-companions">
+            ${ rsvp ? (rsvp.acompanantes > 0 ? `+${rsvp.acompanantes}` : '—') : '—' }
+          </div>
+          <div></div>
+          <div>
+            <button class="btn-delete" data-id="${inv.id}" title="Eliminar invitado">✕</button>
+          </div>
+          ${ rsvp?.mensaje ? `<div class="guest-message">💬 "${escHtml(rsvp.mensaje)}"</div>` : '' }
+        </li>
+      `).join('');
+
+      /* Eventos de borrar */
+      list.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', () => deleteGuest(btn.dataset.id));
+      });
+    }
+
+    function escHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+  </script>
+
+</body>
+</html>
