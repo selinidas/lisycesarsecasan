@@ -390,6 +390,9 @@ textarea {
   text-align: center;
   padding: var(--sp-16) var(--sp-4);
   background-color: var(--off-white);
+  background-image: url('botanica-bg.svg');
+  background-size: 600px 600px;
+  background-repeat: repeat;
   overflow: hidden;
 }
 
@@ -430,23 +433,45 @@ textarea {
 }
 
 .hero__botanical--left {
-  left: 2%;
-  bottom: 8%;
-  width: clamp(60px, 8vw, 110px);
+  left: 1.5%;
+  bottom: 5%;
+  width: clamp(75px, 10vw, 158px);
   height: auto;
   color: var(--mauve);
-  opacity: 0.55;
+  opacity: 0.65;
   animation: sway 8s ease-in-out infinite;
 }
 
 .hero__botanical--right {
-  right: 2%;
-  top: 12%;
-  width: clamp(55px, 7vw, 100px);
+  right: 1.5%;
+  top: 8%;
+  width: clamp(70px, 9vw, 148px);
   height: auto;
   color: var(--sage);
-  opacity: 0.50;
+  opacity: 0.58;
   animation: sway 10s ease-in-out infinite reverse;
+}
+
+/* Esquina superior izquierda */
+.hero__botanical--topleft {
+  left: 2%;
+  top: 7%;
+  width: clamp(52px, 7.5vw, 118px);
+  height: auto;
+  color: var(--sage);
+  opacity: 0.44;
+  animation: sway 9s ease-in-out infinite 1s;
+}
+
+/* Esquina inferior derecha */
+.hero__botanical--botright {
+  right: 1.5%;
+  bottom: 5%;
+  width: clamp(48px, 6.5vw, 108px);
+  height: auto;
+  color: var(--peach);
+  opacity: 0.40;
+  animation: sway 11s ease-in-out infinite reverse 0.5s;
 }
 
 @keyframes sway {
@@ -1762,6 +1787,11 @@ textarea {
 
   .hero__botanical {
     opacity: 0.25;
+  }
+
+  .hero__botanical--topleft,
+  .hero__botanical--botright {
+    display: none;
   }
 
   /* Álbum QR mobile */

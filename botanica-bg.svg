@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+
+  <!-- Rama de hojas tropicales — zona derecha -->
+  <g opacity="0.045">
+    <path d="M450 290 C450 215 460 148 450 72" stroke="#8FAF8A" stroke-width="1.5" fill="none"/>
+    <ellipse cx="418" cy="252" rx="50" ry="13" transform="rotate(-38 418 252)" fill="#8FAF8A"/>
+    <ellipse cx="476" cy="216" rx="44" ry="12" transform="rotate(22 476 216)" fill="#8FAF8A"/>
+    <ellipse cx="414" cy="184" rx="38" ry="11" transform="rotate(-42 414 184)" fill="#8FAF8A"/>
+    <ellipse cx="470" cy="152" rx="32" ry="10" transform="rotate(18 470 152)" fill="#8FAF8A"/>
+    <ellipse cx="418" cy="122" rx="26" ry="8"  transform="rotate(-30 418 122)" fill="#8FAF8A"/>
+  </g>
+
+  <!-- Flor hibisco — zona superior izquierda -->
+  <g transform="translate(118,162)" opacity="0.052">
+    <ellipse cy="-22" rx="9" ry="20" fill="#C4A5B5"/>
+    <ellipse cy="-22" rx="9" ry="20" transform="rotate(72)"  fill="#C4A5B5"/>
+    <ellipse cy="-22" rx="9" ry="20" transform="rotate(144)" fill="#C4A5B5"/>
+    <ellipse cy="-22" rx="9" ry="20" transform="rotate(216)" fill="#C4A5B5"/>
+    <ellipse cy="-22" rx="9" ry="20" transform="rotate(288)" fill="#C4A5B5"/>
+    <circle r="9" fill="#9B4A2E"/>
+  </g>
+
+  <!-- Flor melocotón — zona inferior derecha -->
+  <g transform="translate(492,476)" opacity="0.048">
+    <ellipse cy="-18" rx="8" ry="16" fill="#D4956A"/>
+    <ellipse cy="-18" rx="8" ry="16" transform="rotate(72)"  fill="#D4956A"/>
+    <ellipse cy="-18" rx="8" ry="16" transform="rotate(144)" fill="#D4956A"/>
+    <ellipse cy="-18" rx="8" ry="16" transform="rotate(216)" fill="#D4956A"/>
+    <ellipse cy="-18" rx="8" ry="16" transform="rotate(288)" fill="#D4956A"/>
+    <circle r="8" fill="#9B4A2E"/>
+  </g>
+
+  <!-- Ramita mauve — zona inferior izquierda -->
+  <g opacity="0.042">
+    <path d="M98 558 C98 508 106 464 98 420" stroke="#C4A5B5" stroke-width="1" fill="none"/>
+    <ellipse cx="70"  cy="522" rx="28" ry="9" transform="rotate(-42 70 522)"  fill="#C4A5B5"/>
+    <ellipse cx="122" cy="494" rx="24" ry="8" transform="rotate(28 122 494)"  fill="#C4A5B5"/>
+    <ellipse cx="72"  cy="464" rx="22" ry="7" transform="rotate(-32 72 464)"  fill="#C4A5B5"/>
+  </g>
+
+  <!-- Hojitas sage — esquina superior derecha -->
+  <g opacity="0.038">
+    <ellipse cx="530" cy="62" rx="30" ry="8" transform="rotate(-20 530 62)"  fill="#8FAF8A"/>
+    <ellipse cx="558" cy="38" rx="22" ry="7" transform="rotate(-10 558 38)"  fill="#8FAF8A"/>
+    <ellipse cx="508" cy="32" rx="20" ry="6" transform="rotate(-35 508 32)"  fill="#8FAF8A"/>
+  </g>
+
+  <!-- Pequeña flor central — muy sutil -->
+  <g transform="translate(285,365)" opacity="0.030">
+    <ellipse cy="-14" rx="6" ry="12" fill="#C4A5B5"/>
+    <ellipse cy="-14" rx="6" ry="12" transform="rotate(72)"  fill="#C4A5B5"/>
+    <ellipse cy="-14" rx="6" ry="12" transform="rotate(144)" fill="#C4A5B5"/>
+    <ellipse cy="-14" rx="6" ry="12" transform="rotate(216)" fill="#C4A5B5"/>
+    <ellipse cy="-14" rx="6" ry="12" transform="rotate(288)" fill="#C4A5B5"/>
+    <circle r="6" fill="#9B4A2E"/>
+  </g>
+
+</svg>
