@@ -276,8 +276,7 @@ function initRSVP() {
       /* Resetear si cambian a No */
       if (!asiste && selectAcomp) {
         selectAcomp.value = '0';
-        nombresBlock?.classList.remove('open');
-        nombresBlock?.setAttribute('aria-hidden', 'true');
+        if (nombresBlock) nombresBlock.style.display = 'none';
       }
     });
   });
@@ -286,8 +285,7 @@ function initRSVP() {
   selectAcomp?.addEventListener('change', () => {
     if (!nombresBlock) return;
     const conAcomp = parseInt(selectAcomp.value, 10) > 0;
-    nombresBlock.classList.toggle('open', conAcomp);
-    nombresBlock.setAttribute('aria-hidden', String(!conAcomp));
+    nombresBlock.style.display = conAcomp ? 'block' : 'none';
     if (conAcomp) $('#acompanantes-nombres', form)?.focus();
   });
 
