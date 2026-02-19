@@ -33,11 +33,10 @@
     <div class="nav__logo">C &amp; L</div>
 
     <ul class="nav__links" role="list">
+      <li><a href="#galeria">Galería</a></li>
       <li><a href="#countdown">La fecha</a></li>
       <li><a href="#ubicacion">El lugar</a></li>
       <li><a href="#rsvp">RSVP</a></li>
-      <li><a href="#galeria">Galería</a></li>
-      <li><a href="#album">Álbum</a></li>
       <li><a href="#guia-rd">República Dom.</a></li>
     </ul>
 
@@ -52,11 +51,10 @@
   <div class="nav__mobile" id="nav-mobile" role="dialog" aria-modal="true" aria-label="Menú móvil">
     <button class="nav__mobile-close" id="nav-mobile-close" aria-label="Cerrar menú">×</button>
     <nav>
+      <a href="#galeria">Galería</a>
       <a href="#countdown">La fecha</a>
       <a href="#ubicacion">El lugar</a>
       <a href="#rsvp">RSVP</a>
-      <a href="#galeria">Galería</a>
-      <a href="#album">Álbum</a>
       <a href="#guia-rd">Rep. Dominicana</a>
     </nav>
   </div>
@@ -136,7 +134,66 @@
 
 
   <!-- ══════════════════════════════════════════
-       2. CUENTA ATRÁS
+       2. GALERÍA — La pedida
+  ══════════════════════════════════════════ -->
+  <section id="galeria" class="galeria" aria-label="Galería de fotos">
+    <div class="container">
+      <p class="section-label reveal">nuestra historia</p>
+      <h2 class="section-title reveal">Galería</h2>
+      <p class="section-subtitle reveal">Momentos que nos trajeron hasta aquí</p>
+
+      <div class="galeria__grid reveal">
+
+        <!-- Foto destacada (2 col × 2 filas) -->
+        <button class="galeria__item galeria__item--featured" data-index="0"
+          aria-label="Ver foto 1 en pantalla completa">
+          <img src="fotos/IMG_0864.jpeg" alt="Cesar y Lissette" loading="lazy" />
+        </button>
+
+        <!-- Fila derecha superior -->
+        <button class="galeria__item" data-index="1" aria-label="Ver foto 2">
+          <img src="fotos/IMG_7367.jpeg" alt="Cesar y Lissette" loading="lazy" />
+        </button>
+
+        <button class="galeria__item" data-index="2" aria-label="Ver foto 3">
+          <img src="fotos/IMG_9408.jpeg" alt="Cesar y Lissette" loading="lazy" />
+        </button>
+
+        <!-- Fila inferior -->
+        <button class="galeria__item" data-index="3" aria-label="Ver foto 4">
+          <div class="galeria__photo galeria__photo--4">
+            <span class="galeria__placeholder">La Vega</span>
+          </div>
+        </button>
+
+        <button class="galeria__item" data-index="4" aria-label="Ver foto 5">
+          <div class="galeria__photo galeria__photo--5">
+            <span class="galeria__placeholder">17.04</span>
+          </div>
+        </button>
+
+        <button class="galeria__item" data-index="5" aria-label="Ver foto 6">
+          <div class="galeria__photo galeria__photo--6">
+            <span class="galeria__placeholder">2027</span>
+          </div>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Visor de foto" hidden>
+      <button class="lightbox__close" id="lightbox-close" aria-label="Cerrar visor">×</button>
+      <button class="lightbox__nav lightbox__nav--prev" id="lightbox-prev" aria-label="Foto anterior">‹</button>
+      <div class="lightbox__stage" id="lightbox-stage"></div>
+      <button class="lightbox__nav lightbox__nav--next" id="lightbox-next" aria-label="Foto siguiente">›</button>
+    </div>
+
+  </section>
+
+
+  <!-- ══════════════════════════════════════════
+       3. CUENTA ATRÁS
   ══════════════════════════════════════════ -->
   <section id="countdown" class="countdown" aria-label="Cuenta atrás para la boda">
     <div class="container">
@@ -354,78 +411,9 @@
 
 
   <!-- ══════════════════════════════════════════
-       6. GALERÍA
-  ══════════════════════════════════════════ -->
-  <section id="galeria" class="galeria" aria-label="Galería de fotos">
-    <div class="container">
-      <p class="section-label reveal">nuestra historia</p>
-      <h2 class="section-title reveal">Galería</h2>
-      <p class="section-subtitle reveal">Momentos que nos trajeron hasta aquí</p>
-
-      <!--
-        ── Cómo agregar tus fotos ──────────────────────────────────
-        Reemplaza cada <div class="galeria__photo galeria__photo--N">
-        por un <img> con tu foto:
-
-        <img src="fotos/foto1.jpg" alt="Descripción de la foto" />
-
-        Para una carga óptima, agrega loading="lazy" a todas las imágenes.
-        ──────────────────────────────────────────────────────────── -->
-
-      <div class="galeria__grid reveal">
-
-        <!-- Foto destacada (2 col × 2 filas) -->
-        <button class="galeria__item galeria__item--featured" data-index="0"
-          aria-label="Ver foto 1 en pantalla completa">
-          <img src="fotos/IMG_0864.jpeg" alt="Cesar y Lissette" loading="lazy" />
-        </button>
-
-        <!-- Fila derecha superior -->
-        <button class="galeria__item" data-index="1" aria-label="Ver foto 2">
-          <img src="fotos/IMG_7367.jpeg" alt="Cesar y Lissette" loading="lazy" />
-        </button>
-
-        <button class="galeria__item" data-index="2" aria-label="Ver foto 3">
-          <img src="fotos/IMG_9408.jpeg" alt="Cesar y Lissette" loading="lazy" />
-        </button>
-
-        <!-- Fila inferior -->
-        <button class="galeria__item" data-index="3" aria-label="Ver foto 4">
-          <div class="galeria__photo galeria__photo--4">
-            <span class="galeria__placeholder">La Vega</span>
-          </div>
-        </button>
-
-        <button class="galeria__item" data-index="4" aria-label="Ver foto 5">
-          <div class="galeria__photo galeria__photo--5">
-            <span class="galeria__placeholder">17.04</span>
-          </div>
-        </button>
-
-        <button class="galeria__item" data-index="5" aria-label="Ver foto 6">
-          <div class="galeria__photo galeria__photo--6">
-            <span class="galeria__placeholder">2027</span>
-          </div>
-        </button>
-
-      </div>
-    </div>
-
-    <!-- Lightbox -->
-    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Visor de foto" hidden>
-      <button class="lightbox__close" id="lightbox-close" aria-label="Cerrar visor">×</button>
-      <button class="lightbox__nav lightbox__nav--prev" id="lightbox-prev" aria-label="Foto anterior">‹</button>
-      <div class="lightbox__stage" id="lightbox-stage"></div>
-      <button class="lightbox__nav lightbox__nav--next" id="lightbox-next" aria-label="Foto siguiente">›</button>
-    </div>
-
-  </section>
-
-
-  <!-- ══════════════════════════════════════════
        7. QR — ÁLBUM COMPARTIDO DE FOTOS
   ══════════════════════════════════════════ -->
-  <section id="album" class="album" aria-label="Álbum compartido de la boda">
+  <section id="album" class="album" aria-label="Álbum compartido de la boda" hidden>
     <div class="container">
       <p class="section-label reveal">recuerdos para siempre</p>
       <h2 class="section-title reveal">Comparte tus Fotos</h2>
