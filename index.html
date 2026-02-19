@@ -338,37 +338,35 @@
           </div>
         </div>
 
-        <!-- Paso 2: Acompañantes (se muestra solo si asiste) -->
+        <!-- Paso 2: Desplegable acompañantes (se muestra si asiste) -->
         <div class="form__block" id="acompanantes-group" aria-hidden="true">
           <div class="form__block-inner">
-            <div class="form__row">
-              <div class="form__group">
-                <label for="acompanantes" class="form__label">Número de acompañantes</label>
-                <select id="acompanantes" name="acompanantes" class="form__input form__select">
-                  <option value="0">Solo yo</option>
-                  <option value="1">+ 1 acompañante</option>
-                  <option value="2">+ 2 acompañantes</option>
-                  <option value="3">+ 3 acompañantes</option>
-                  <option value="4">+ 4 acompañantes</option>
-                  <option value="5">+ 5 acompañantes</option>
-                </select>
-              </div>
+            <div class="form__group">
+              <label for="acompanantes" class="form__label">Número de acompañantes</label>
+              <select id="acompanantes" name="acompanantes" class="form__input form__select">
+                <option value="0">Solo yo</option>
+                <option value="1">+ 1 acompañante</option>
+                <option value="2">+ 2 acompañantes</option>
+                <option value="3">+ 3 acompañantes</option>
+                <option value="4">+ 4 acompañantes</option>
+                <option value="5">+ 5 acompañantes</option>
+              </select>
             </div>
+          </div>
+        </div>
 
-            <!-- Nombres: se abre si eligen más de 0 -->
-            <div class="form__block" id="nombres-acomp-block" aria-hidden="true">
-              <div class="form__block-inner">
-                <label for="acompanantes-nombres" class="form__label">
-                  Nombres de los acompañantes
-                </label>
-                <textarea
-                  id="acompanantes-nombres"
-                  name="acompanantes-nombres"
-                  class="form__input form__textarea form__textarea--sm"
-                  placeholder="Escribe un nombre por línea:&#10;María García&#10;Juan López"
-                  rows="3"></textarea>
-              </div>
-            </div>
+        <!-- Paso 3: Nombres (se muestra si eligen más de 0) -->
+        <div class="form__block" id="nombres-acomp-block" aria-hidden="true">
+          <div class="form__block-inner">
+            <label for="acompanantes-nombres" class="form__label">
+              Nombres de los acompañantes
+            </label>
+            <textarea
+              id="acompanantes-nombres"
+              name="acompanantes-nombres"
+              class="form__input form__textarea form__textarea--sm"
+              placeholder="Escribe un nombre por línea:&#10;María García&#10;Juan López"
+              rows="3"></textarea>
           </div>
         </div>
 
