@@ -613,6 +613,29 @@ textarea {
 }
 
 
+/* ── Fondo botánico en todas las secciones ────────────────── */
+.galeria,
+.countdown,
+.ubicacion,
+.rsvp,
+.confirmados,
+.guia-rd {
+  background-image: url('botanica-bg.svg');
+  background-size: 600px 600px;
+  background-repeat: repeat;
+}
+
+/* ── Ornamento floral entre label y título de sección ─────── */
+.section-botanical {
+  display: block;
+  width: clamp(100px, 20vw, 180px);
+  height: auto;
+  margin: 0.4rem auto 1.2rem;
+  color: var(--mauve);
+  opacity: 0.52;
+}
+
+
 /* ── 8. COUNTDOWN ─────────────────────────────────────────── */
 
 .countdown {
