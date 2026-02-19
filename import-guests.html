@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Importar invitados — Cesar &amp; Lissette</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --rust: #9B4A2E; --sage: #8FAF8A; --mauve: #C4A5B5;
+      --off-white: #FAF8F4; --bg: #F5F0EB;
+      --text: #3D2B2B; --muted: #7A5C5C; --border: #E8DDD8;
+      --font: 'Jost', Arial, sans-serif;
+    }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); padding: 2rem 1rem; }
+    .wrap { max-width: 680px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; font-weight: 500; color: var(--rust); margin-bottom: .25rem; }
+    .sub { font-size: .85rem; color: var(--muted); margin-bottom: 2rem; }
+
+    .card { background: var(--off-white); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 12px rgba(60,30,20,.07); }
+    .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
+
+    .lado-lis  { background: #e8f0e8; color: #3a7a3a; padding: .15rem .5rem; border-radius: 20px; font-size: .72rem; font-weight: 600; }
+    .lado-cesar { background: #ede6f0; color: #6a3a7a; padding: .15rem .5rem; border-radius: 20px; font-size: .72rem; font-weight: 600; }
+
+    .guest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .5rem; }
+    .guest-item {
+      background: white; border: 1px solid var(--border); border-radius: 8px;
+      padding: .5rem .75rem; font-size: .85rem; display: flex; align-items: center;
+      justify-content: space-between; gap: .5rem;
+    }
+    .guest-item.imported { background: #f0faf0; border-color: #a8d5a8; }
+    .guest-item.error    { background: #fdf0f0; border-color: #d5a8a8; }
+    .guest-note { font-size: .72rem; color: var(--muted); font-style: italic; }
+
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; flex-shrink: 0; }
+    .status-dot.ok  { background: #4caf50; }
+    .status-dot.err { background: #f44336; }
+    .status-dot.loading { background: var(--rust); animation: pulse .8s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .btn-import {
+      display: block; width: 100%; padding: 1rem;
+      background: var(--rust); color: var(--off-white);
+      border: none; border-radius: 10px;
+      font-family: var(--font); font-size: .9rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      cursor: pointer; transition: background .2s;
+      margin-top: 1.5rem;
+    }
+    .btn-import:hover:not(:disabled) { background: #b5603a; }
+    .btn-import:disabled { opacity: .6; cursor: not-allowed; }
+
+    .progress-bar { height: 6px; background: #eee; border-radius: 3px; margin-top: 1rem; overflow: hidden; }
+    .progress-bar__fill { height: 100%; background: var(--sage); width: 0%; transition: width .3s; border-radius: 3px; }
+
+    .result {
+      margin-top: 1rem; padding: 1rem; border-radius: 8px;
+      font-size: .9rem; display: none;
+    }
+    .result.success { background: #e8f5e9; color: #2e7d32; }
+    .result.warning { background: #fff3e0; color: #e65100; }
+
+    .note-box {
+      background: #fff8f0; border: 1px solid #f0ddc0; border-radius: 8px;
+      padding: 1rem; font-size: .82rem; color: #7a5c3a; line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    .note-box strong { color: var(--rust); }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Importar lista de invitados</h1>
+  <p class="sub">Cesar &amp; Lissette · Boda 17.04.2027 · Solo usar una vez</p>
+
+  <div class="note-box">
+    <strong>Importante:</strong> Este archivo importa todos los invitados a Firebase de una vez.
+    Úsalo solo una vez para no duplicar. Después puedes borrar este archivo o simplemente no abrirlo más.
+    Puedes añadir más invitados desde el <a href="admin.html" style="color:var(--rust)">panel admin</a>.
+  </div>
+
+  <!-- Familia Lissette -->
+  <div class="card">
+    <h2><span class="lado-lis">Lissette</span> Familia &amp; amigos — 25 invitados</h2>
+    <div class="guest-grid" id="list-lis"></div>
+  </div>
+
+  <!-- Familia Cesar -->
+  <div class="card">
+    <h2><span class="lado-cesar">Cesar</span> Familia &amp; amigos — 21 invitados</h2>
+    <div class="guest-grid" id="list-cesar"></div>
+  </div>
+
+  <button class="btn-import" id="btn-import">Importar todos los invitados a Firebase</button>
+
+  <div class="progress-bar"><div class="progress-bar__fill" id="progress-fill"></div></div>
+  <div class="result" id="result"></div>
+
+</div>
+
+<script type="module">
+  import { initializeApp } from
+    'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
+  import {
+    getFirestore, collection, addDoc, getDocs,
+    query, where, serverTimestamp,
+  } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
+
+  const app = initializeApp({
+    apiKey:            'AIzaSyATR-1uUqpJFZAG9OPOjxYas7DjvEEVRCo',
+    authDomain:        'boda-cesar-lissette.firebaseapp.com',
+    databaseURL:       'https://boda-cesar-lissette-default-rtdb.firebaseio.com',
+    projectId:         'boda-cesar-lissette',
+    storageBucket:     'boda-cesar-lissette.firebasestorage.app',
+    messagingSenderId: '1080316555242',
+    appId:             '1:1080316555242:web:48614150034617521ecc93',
+  });
+  const db = getFirestore(app);
+
+  /* ── Lista completa de invitados ── */
+  const INVITADOS = [
+    /* ── Familia de Lissette ── */
+    { nombre: 'Lissette',        nota: 'Novia',                lado: 'lissette' },
+    { nombre: 'Lisandro',        nota: 'Hermano de la novia',  lado: 'lissette' },
+    { nombre: 'Nazaret',         nota: 'Madre de la novia',    lado: 'lissette' },
+    { nombre: 'Joaquin',         nota: 'Padre de la novia',    lado: 'lissette' },
+    { nombre: 'Nina',            nota: '',                     lado: 'lissette' },
+    { nombre: 'Celine',          nota: 'Hermana de la novia',  lado: 'lissette' },
+    { nombre: 'Albania',         nota: '',                     lado: 'lissette' },
+    { nombre: 'Wandy',           nota: '',                     lado: 'lissette' },
+    { nombre: 'Alvaro',          nota: '',                     lado: 'lissette' },
+    { nombre: 'Angela',          nota: '',                     lado: 'lissette' },
+    { nombre: 'Tia Tita',        nota: '',                     lado: 'lissette' },
+    { nombre: 'Mabel',           nota: '',                     lado: 'lissette' },
+    { nombre: 'Noemi',           nota: '',                     lado: 'lissette' },
+    { nombre: 'Maria Ester',     nota: '',                     lado: 'lissette' },
+    { nombre: 'Tio Jose Miguel', nota: '',                     lado: 'lissette' },
+    { nombre: 'Carlos',          nota: '',                     lado: 'lissette' },
+    { nombre: 'Lisanna',         nota: '',                     lado: 'lissette' },
+    { nombre: 'Pamela',          nota: '',                     lado: 'lissette' },
+    { nombre: 'Cesarina',        nota: '',                     lado: 'lissette' },
+    { nombre: 'Nathaly',         nota: '',                     lado: 'lissette' },
+    { nombre: 'Natalia',         nota: '',                     lado: 'lissette' },
+    { nombre: 'Andrea',          nota: '',                     lado: 'lissette' },
+    { nombre: 'Maria Antonieta', nota: '',                     lado: 'lissette' },
+    { nombre: 'Diego',           nota: '',                     lado: 'lissette' },
+    { nombre: 'Julian',          nota: '',                     lado: 'lissette' },
+
+    /* ── Familia de Cesar ── */
+    { nombre: 'Cesar',           nota: 'Novio',                lado: 'cesar' },
+    { nombre: 'Charo',           nota: 'Madre del novio',      lado: 'cesar' },
+    { nombre: 'Cesar (padre)',   nota: 'Padre del novio',      lado: 'cesar' },
+    { nombre: 'Alba',            nota: 'Hermana del novio',    lado: 'cesar' },
+    { nombre: 'Cesar (primo)',   nota: '',                     lado: 'cesar' },
+    { nombre: 'Tio Enrique',     nota: '',                     lado: 'cesar' },
+    { nombre: 'Encarna',         nota: '',                     lado: 'cesar' },
+    { nombre: 'Selene',          nota: '',                     lado: 'cesar' },
+    { nombre: 'Ana',             nota: '',                     lado: 'cesar' },
+    { nombre: 'Javier',          nota: '',                     lado: 'cesar' },
+    { nombre: 'Enrique',         nota: '',                     lado: 'cesar' },
+    { nombre: 'Enrique (otro)',  nota: '',                     lado: 'cesar' },
+    { nombre: 'María',           nota: '',                     lado: 'cesar' },
+    { nombre: 'Mónica',          nota: '',                     lado: 'cesar' },
+    { nombre: 'Jose',            nota: '',                     lado: 'cesar' },
+    { nombre: 'Alberto',         nota: '',                     lado: 'cesar' },
+    { nombre: 'Fran',            nota: '',                     lado: 'cesar' },
+    { nombre: 'Loli',            nota: '',                     lado: 'cesar' },
+    { nombre: 'Fernando',        nota: '',                     lado: 'cesar' },
+    { nombre: 'Santi',           nota: '',                     lado: 'cesar' },
+    { nombre: 'Mariangeles',     nota: '',                     lado: 'cesar' },
+  ];
+
+  /* ── Renderizar listas ── */
+  const listLis  = document.getElementById('list-lis');
+  const listCesar = document.getElementById('list-cesar');
+
+  INVITADOS.forEach((inv, i) => {
+    const el = document.createElement('div');
+    el.className = 'guest-item';
+    el.id = `guest-${i}`;
+    el.innerHTML = `
+      <div>
+        <div>${inv.nombre}</div>
+        ${inv.nota ? `<div class="guest-note">${inv.nota}</div>` : ''}
+      </div>
+      <div class="status-dot" id="dot-${i}"></div>
+    `;
+    (inv.lado === 'lissette' ? listLis : listCesar).appendChild(el);
+  });
+
+  /* ── Importar ── */
+  const btnImport   = document.getElementById('btn-import');
+  const progressFill = document.getElementById('progress-fill');
+  const resultEl    = document.getElementById('result');
+
+  btnImport.addEventListener('click', async () => {
+    btnImport.disabled = true;
+    btnImport.textContent = 'Importando…';
+    resultEl.style.display = 'none';
+
+    /* Comprobar cuáles ya existen */
+    const existingSnap = await getDocs(collection(db, 'invitados'));
+    const existingNames = new Set(
+      existingSnap.docs.map(d => d.data().nombre?.toLowerCase().trim())
+    );
+
+    let ok = 0, skipped = 0, errors = 0;
+
+    for (let i = 0; i < INVITADOS.length; i++) {
+      const inv = INVITADOS[i];
+      const dot = document.getElementById(`dot-${i}`);
+      const item = document.getElementById(`guest-${i}`);
+      dot.className = 'status-dot loading';
+
+      /* Saltar si ya existe */
+      if (existingNames.has(inv.nombre.toLowerCase().trim())) {
+        dot.className = 'status-dot ok';
+        item.classList.add('imported');
+        skipped++;
+        progressFill.style.width = `${((i + 1) / INVITADOS.length) * 100}%`;
+        continue;
+      }
+
+      try {
+        await addDoc(collection(db, 'invitados'), {
+          nombre:    inv.nombre,
+          nota:      inv.nota || null,
+          lado:      inv.lado,
+          email:     null,
+          timestamp: serverTimestamp(),
+        });
+        dot.className = 'status-dot ok';
+        item.classList.add('imported');
+        ok++;
+      } catch (err) {
+        dot.className = 'status-dot err';
+        item.classList.add('error');
+        errors++;
+        console.error('Error con', inv.nombre, err);
+      }
+
+      progressFill.style.width = `${((i + 1) / INVITADOS.length) * 100}%`;
+      /* Pequeña pausa para no saturar Firestore */
+      await new Promise(r => setTimeout(r, 120));
+    }
+
+    resultEl.style.display = 'block';
+    if (errors === 0) {
+      resultEl.className = 'result success';
+      resultEl.innerHTML = `✓ Importación completa — ${ok} añadidos, ${skipped} ya existían.<br>
+        Ahora puedes ir al <a href="admin.html" style="color:inherit;font-weight:600">panel admin</a>
+        para ver la lista completa.`;
+    } else {
+      resultEl.className = 'result warning';
+      resultEl.innerHTML = `⚠ ${ok} importados, ${skipped} ya existían, ${errors} errores. Revisa la consola.`;
+    }
+
+    btnImport.textContent = 'Importación completada';
+  });
+</script>
+</body>
+</html>

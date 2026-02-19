@@ -165,10 +165,40 @@
       padding: 2rem 1.5rem 4rem;
     }
 
+    /* ── Lado badges ── */
+    .lado-lis {
+      display: inline-block;
+      padding: .15rem .55rem;
+      border-radius: 20px;
+      font-size: .68rem;
+      font-weight: 600;
+      background: #e8f0e8;
+      color: #3a7a3a;
+      letter-spacing: .03em;
+    }
+
+    .lado-cesar {
+      display: inline-block;
+      padding: .15rem .55rem;
+      border-radius: 20px;
+      font-size: .68rem;
+      font-weight: 600;
+      background: #ede6f0;
+      color: #6a3a7a;
+      letter-spacing: .03em;
+    }
+
     /* ── Stats ── */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .stats-grid--side {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 1rem;
       margin-bottom: 2rem;
     }
@@ -470,7 +500,7 @@
 
     <main class="admin-main">
 
-      <!-- Stats -->
+      <!-- Stats generales -->
       <div class="stats-grid">
         <div class="stat-card stat-card--total">
           <div class="stat-card__num" id="stat-total">—</div>
@@ -490,6 +520,18 @@
         </div>
       </div>
 
+      <!-- Stats por lado -->
+      <div class="stats-grid--side">
+        <div class="stat-card" style="border-top:3px solid #8FAF8A;">
+          <div class="stat-card__num" style="font-size:1.6rem;" id="stat-lis">—</div>
+          <div class="stat-card__label">Lado <span class="lado-lis">Lissette</span></div>
+        </div>
+        <div class="stat-card" style="border-top:3px solid #C4A5B5;">
+          <div class="stat-card__num" style="font-size:1.6rem;" id="stat-cesar">—</div>
+          <div class="stat-card__label">Lado <span class="lado-cesar">Cesar</span></div>
+        </div>
+      </div>
+
       <!-- Añadir invitado -->
       <div class="add-guest-card">
         <h2>Añadir invitado</h2>
@@ -504,6 +546,10 @@
             id="input-email"
             placeholder="Correo (opcional)"
             autocomplete="off" />
+          <select id="input-lado" style="padding:.65rem 1rem;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font-sans);font-size:.9rem;background:white;color:var(--text);outline:none;cursor:pointer;">
+            <option value="lissette">Lado Lissette</option>
+            <option value="cesar">Lado Cesar</option>
+          </select>
           <button class="btn-add" id="btn-add">+ Añadir</button>
         </div>
       </div>
@@ -511,6 +557,8 @@
       <!-- Filtros -->
       <div class="filters">
         <button class="filter-btn active" data-filter="all">Todos</button>
+        <button class="filter-btn" data-filter="lissette">Lissette</button>
+        <button class="filter-btn" data-filter="cesar">Cesar</button>
         <button class="filter-btn" data-filter="confirmed">Confirmados ✓</button>
         <button class="filter-btn" data-filter="declined">No asisten ✗</button>
         <button class="filter-btn" data-filter="pending">Sin respuesta ·</button>
@@ -623,9 +671,10 @@
     }
 
     /* ══ AÑADIR INVITADO ══ */
-    const btnAdd     = document.getElementById('btn-add');
+    const btnAdd      = document.getElementById('btn-add');
     const inputNombre = document.getElementById('input-nombre');
     const inputEmail  = document.getElementById('input-email');
+    const inputLado   = document.getElementById('input-lado');
 
     btnAdd.addEventListener('click', addGuest);
     inputNombre.addEventListener('keydown', e => { if (e.key === 'Enter') addGuest(); });
@@ -638,7 +687,8 @@
       try {
         await addDoc(collection(db, 'invitados'), {
           nombre,
-          email: inputEmail.value.trim() || null,
+          email:     inputEmail.value.trim() || null,
+          lado:      inputLado.value,
           timestamp: serverTimestamp(),
         });
         inputNombre.value = '';
@@ -685,22 +735,28 @@
     function render() {
       const list = document.getElementById('guest-list');
 
-      /* Calcular stats sobre TODOS los invitados (ignorar filtro activo) */
+      /* Calcular stats sobre TODOS los invitados */
       const todos      = allInvitados.map(inv => ({ inv, ...getStatus(inv) }));
       const confirmed  = todos.filter(x => x.estado === 'confirmed');
       const declined   = todos.filter(x => x.estado === 'declined');
       const pending    = todos.filter(x => x.estado === 'pending');
+      const ladoLis    = todos.filter(x => x.inv.lado === 'lissette');
+      const ladoCesar  = todos.filter(x => x.inv.lado === 'cesar');
 
       document.getElementById('stat-total').textContent     = todos.length;
       document.getElementById('stat-confirmed').textContent = confirmed.length;
       document.getElementById('stat-declined').textContent  = declined.length;
       document.getElementById('stat-pending').textContent   = pending.length;
+      document.getElementById('stat-lis').textContent       = ladoLis.length;
+      document.getElementById('stat-cesar').textContent     = ladoCesar.length;
 
       /* Aplicar filtro */
       let filtrados = todos;
       if (activeFilter === 'confirmed') filtrados = confirmed;
       if (activeFilter === 'declined')  filtrados = declined;
       if (activeFilter === 'pending')   filtrados = pending;
+      if (activeFilter === 'lissette')  filtrados = ladoLis;
+      if (activeFilter === 'cesar')     filtrados = ladoCesar;
 
       if (!filtrados.length) {
         list.innerHTML = `<li class="empty-state">
@@ -717,10 +773,20 @@
         pending:   `<span class="status-chip status-chip--pending">· Pendiente</span>`,
       };
 
+      const ladoBadge = lado => lado === 'lissette'
+        ? `<span class="lado-lis">Lis</span>`
+        : lado === 'cesar'
+          ? `<span class="lado-cesar">Cesar</span>`
+          : '';
+
       list.innerHTML = filtrados.map(({ inv, estado, rsvp }) => `
         <li class="guest-row">
           <div>
-            <div class="guest-name">${escHtml(inv.nombre)}</div>
+            <div class="guest-name" style="display:flex;align-items:center;gap:.4rem;">
+              ${escHtml(inv.nombre)}
+              ${ladoBadge(inv.lado)}
+            </div>
+            ${inv.nota ? `<div class="guest-email">${escHtml(inv.nota)}</div>` : ''}
             ${inv.email ? `<div class="guest-email">${escHtml(inv.email)}</div>` : ''}
             ${rsvp?.email && !inv.email ? `<div class="guest-email">${escHtml(rsvp.email)}</div>` : ''}
           </div>
