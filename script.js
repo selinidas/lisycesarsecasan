@@ -284,13 +284,22 @@ function initRSVP() {
 
     /* Recoger datos */
     const checkedRadio = $('input[name="asistencia"]:checked', form);
+
+    /* Parsear nombres de acompañantes (uno por línea o separados por coma) */
+    const acompNombresRaw = $('#acompanantes-nombres', form)?.value || '';
+    const acompNombres = acompNombresRaw
+      .split(/[\n,]/)
+      .map(n => n.trim())
+      .filter(n => n.length > 0);
+
     const data = {
-      nombre:       $('#nombre', form).value.trim(),
-      email:        $('#email', form).value.trim(),
-      asistencia:   checkedRadio?.value || '',
-      acompanantes: parseInt($('#acompanantes', form).value, 10),
-      mensaje:      $('#mensaje', form).value.trim(),
-      timestamp:    new Date().toISOString(),
+      nombre:             $('#nombre', form).value.trim(),
+      email:              $('#email', form).value.trim(),
+      asistencia:         checkedRadio?.value || '',
+      acompanantesNombres: acompNombres,
+      acompanantes:       acompNombres.length,
+      mensaje:            $('#mensaje', form).value.trim(),
+      timestamp:          new Date().toISOString(),
     };
 
     /* Estado de carga */
@@ -301,7 +310,7 @@ function initRSVP() {
     /* Guardar en Firebase + LocalStorage */
     await saveRSVP(data);
 
-    /* Actualizar contador si asiste */
+    /* Actualizar contador si asiste (la persona + sus acompañantes) */
     if (data.asistencia === 'si') {
       await incrementConfirmed(1 + data.acompanantes);
     }

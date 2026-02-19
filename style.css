@@ -823,6 +823,11 @@ textarea {
   line-height: 1.6;
 }
 
+.form__textarea--sm {
+  min-height: 72px;
+  font-size: .9rem;
+}
+
 /* Radio buttons */
 .form__radio-group {
   display: flex;

@@ -339,14 +339,16 @@
           </div>
 
           <div class="form__group" id="acompanantes-group">
-            <label for="acompanantes" class="form__label">Número de acompañantes</label>
-            <select id="acompanantes" name="acompanantes" class="form__input form__select">
-              <option value="0">Solo yo</option>
-              <option value="1">+ 1 acompañante</option>
-              <option value="2">+ 2 acompañantes</option>
-              <option value="3">+ 3 acompañantes</option>
-              <option value="4">+ 4 acompañantes</option>
-            </select>
+            <label for="acompanantes-nombres" class="form__label">
+              ¿Quién te acompaña?
+              <span class="form__label-optional">(opcional)</span>
+            </label>
+            <textarea
+              id="acompanantes-nombres"
+              name="acompanantes-nombres"
+              class="form__input form__textarea form__textarea--sm"
+              placeholder="Escribe los nombres, uno por línea:&#10;María García&#10;Juan López"
+              rows="3"></textarea>
           </div>
         </div>
 

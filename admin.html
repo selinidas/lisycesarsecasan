@@ -524,6 +524,7 @@
           <div>Acompañantes</div>
           <div></div>
           <div></div>
+          <!-- la columna de acompañantes mostrará nombres al hacer hover -->
         </div>
         <ul class="guest-list" id="guest-list">
           <li class="loading-state">Cargando invitados…</li>
@@ -725,13 +726,20 @@
           </div>
           <div>${chipMap[estado]}</div>
           <div class="guest-companions">
-            ${ rsvp ? (rsvp.acompanantes > 0 ? `+${rsvp.acompanantes}` : '—') : '—' }
+            ${ rsvp?.acompanantesNombres?.length
+              ? `+${rsvp.acompanantesNombres.length}`
+              : rsvp?.acompanantes > 0 ? `+${rsvp.acompanantes}` : '—' }
           </div>
           <div></div>
           <div>
             <button class="btn-delete" data-id="${inv.id}" title="Eliminar invitado">✕</button>
           </div>
-          ${ rsvp?.mensaje ? `<div class="guest-message">💬 "${escHtml(rsvp.mensaje)}"</div>` : '' }
+          ${ (rsvp?.acompanantesNombres?.length || rsvp?.mensaje) ? `
+            <div class="guest-message">
+              ${ rsvp.acompanantesNombres?.length
+                ? `👥 ${rsvp.acompanantesNombres.map(n => escHtml(n)).join(', ')}` : '' }
+              ${ rsvp.mensaje ? `<br>💬 "${escHtml(rsvp.mensaje)}"` : '' }
+            </div>` : '' }
         </li>
       `).join('');
 
