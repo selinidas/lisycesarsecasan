@@ -718,14 +718,25 @@
 
     /* ══ RENDER ══ */
     function getStatus(invitado) {
-      /* Busca el RSVP que coincida con el nombre del invitado (insensible a mayúsc.) */
-      const normalizar = s => s?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim() || '';
-      const nombreInv  = normalizar(invitado.nombre);
+      const normalizar = s =>
+        s?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim() || '';
+
+      const nombreInv = normalizar(invitado.nombre);
+      /* Primer nombre real (salta títulos como "tia", "tio") */
+      const titulos   = new Set(['tia', 'tio', 'don', 'dona']);
+      const palabras  = nombreInv.split(/\s+/).filter(p => !titulos.has(p));
+      const primerInv = palabras[0] || nombreInv.split(/\s+/)[0];
 
       const rsvp = allRsvps.find(r => {
         const nombreRsvp = normalizar(r.nombre);
-        /* coincidencia exacta o si el nombre del RSVP contiene el nombre del invitado */
-        return nombreRsvp === nombreInv || nombreRsvp.includes(nombreInv) || nombreInv.includes(nombreRsvp);
+        const primerRsvp = nombreRsvp.split(/\s+/)[0];
+
+        return (
+          nombreRsvp === nombreInv                          /* exacto */
+          || nombreRsvp.includes(nombreInv)                /* RSVP contiene el nombre de la lista */
+          || nombreInv.includes(nombreRsvp)                /* lista contiene el nombre del RSVP */
+          || (primerInv.length >= 3 && primerRsvp === primerInv) /* primer nombre coincide */
+        );
       });
 
       if (!rsvp) return { estado: 'pending', rsvp: null };
