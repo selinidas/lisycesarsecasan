@@ -21,7 +21,8 @@
          allow create: if
            request.resource.data.nombre is string &&
            request.resource.data.email  is string;
-         allow read, update, delete: if false;
+         allow read: if true;
+         allow update, delete: if false;
        }
        match /invitados/{id} {
          allow read, write: if true;
