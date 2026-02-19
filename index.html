@@ -321,34 +321,55 @@
           </div>
         </div>
 
-        <div class="form__row">
-          <div class="form__group">
-            <p class="form__label" id="asistencia-label">¿Asistirás?</p>
-            <div class="form__radio-group" role="radiogroup" aria-labelledby="asistencia-label">
+        <!-- Paso 1: ¿Asistirás? -->
+        <div class="form__group">
+          <p class="form__label" id="asistencia-label">¿Asistirás?</p>
+          <div class="form__radio-group" role="radiogroup" aria-labelledby="asistencia-label">
+            <label class="form__radio-label">
+              <input type="radio" name="asistencia" value="si" />
+              <span class="form__radio-custom" aria-hidden="true"></span>
+              Sí, estaré ahí
+            </label>
+            <label class="form__radio-label">
+              <input type="radio" name="asistencia" value="no" />
+              <span class="form__radio-custom" aria-hidden="true"></span>
+              No podré asistir
+            </label>
+          </div>
+        </div>
+
+        <!-- Paso 2: ¿Con acompañantes? (se muestra solo si asiste) -->
+        <div class="form__block" id="acompanantes-group" aria-hidden="true">
+          <div class="form__block-inner">
+            <p class="form__label" id="con-acomp-label">¿Vienes acompañado/a?</p>
+            <div class="form__radio-group" role="radiogroup" aria-labelledby="con-acomp-label">
               <label class="form__radio-label">
-                <input type="radio" name="asistencia" value="si" />
+                <input type="radio" name="con-acompanante" value="si" />
                 <span class="form__radio-custom" aria-hidden="true"></span>
-                Sí, estaré ahí
+                Sí, vengo con acompañantes
               </label>
               <label class="form__radio-label">
-                <input type="radio" name="asistencia" value="no" />
+                <input type="radio" name="con-acompanante" value="no" />
                 <span class="form__radio-custom" aria-hidden="true"></span>
-                No podré asistir
+                No, voy solo/a
               </label>
             </div>
-          </div>
 
-          <div class="form__group" id="acompanantes-group">
-            <label for="acompanantes-nombres" class="form__label">
-              ¿Quién te acompaña?
-              <span class="form__label-optional">(opcional)</span>
-            </label>
-            <textarea
-              id="acompanantes-nombres"
-              name="acompanantes-nombres"
-              class="form__input form__textarea form__textarea--sm"
-              placeholder="Escribe los nombres, uno por línea:&#10;María García&#10;Juan López"
-              rows="3"></textarea>
+            <!-- Paso 3: Nombres (se muestra solo si tiene acompañantes) -->
+            <div class="form__block" id="nombres-acomp-block" aria-hidden="true">
+              <div class="form__block-inner" style="padding-top:1rem;">
+                <label for="acompanantes-nombres" class="form__label">
+                  Nombres de los acompañantes
+                </label>
+                <textarea
+                  id="acompanantes-nombres"
+                  name="acompanantes-nombres"
+                  class="form__input form__textarea form__textarea--sm"
+                  placeholder="Escribe un nombre por línea:&#10;María García&#10;Juan López"
+                  rows="3"></textarea>
+              </div>
+            </div>
+
           </div>
         </div>
 

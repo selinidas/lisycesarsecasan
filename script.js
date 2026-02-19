@@ -262,15 +262,35 @@ function initRSVP() {
 
   if (!form) return;
 
-  /* Ocultar/atenuar acompañantes cuando dice "No" */
-  const acompGroup = $('#acompanantes-group');
+  const acompGroup      = $('#acompanantes-group');
+  const nombresBlock    = $('#nombres-acomp-block');
+
+  /* Paso 1 → mostrar bloque "¿vienes acompañado?" según asistencia */
   $$('input[name="asistencia"]', form).forEach(radio => {
     radio.addEventListener('change', () => {
       if (!acompGroup) return;
-      const dim = radio.value === 'no';
-      acompGroup.style.opacity        = dim ? '0.4' : '1';
-      acompGroup.style.pointerEvents  = dim ? 'none' : 'auto';
-      acompGroup.style.transition     = 'opacity 0.3s ease';
+      const asiste = radio.value === 'si';
+      acompGroup.classList.toggle('open', asiste);
+      acompGroup.setAttribute('aria-hidden', String(!asiste));
+      /* Resetear paso 2 si cambian a No */
+      if (!asiste) {
+        $$('input[name="con-acompanante"]', form).forEach(r => r.checked = false);
+        if (nombresBlock) {
+          nombresBlock.classList.remove('open');
+          nombresBlock.setAttribute('aria-hidden', 'true');
+        }
+      }
+    });
+  });
+
+  /* Paso 2 → mostrar textarea de nombres */
+  $$('input[name="con-acompanante"]', form).forEach(radio => {
+    radio.addEventListener('change', () => {
+      if (!nombresBlock) return;
+      const conAcomp = radio.value === 'si';
+      nombresBlock.classList.toggle('open', conAcomp);
+      nombresBlock.setAttribute('aria-hidden', String(!conAcomp));
+      if (conAcomp) $('#acompanantes-nombres', form)?.focus();
     });
   });
 
