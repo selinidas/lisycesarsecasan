@@ -262,36 +262,33 @@ function initRSVP() {
 
   if (!form) return;
 
-  const acompGroup      = $('#acompanantes-group');
-  const nombresBlock    = $('#nombres-acomp-block');
+  const acompGroup   = $('#acompanantes-group');
+  const nombresBlock = $('#nombres-acomp-block');
+  const selectAcomp  = $('#acompanantes', form);
 
-  /* Paso 1 → mostrar bloque "¿vienes acompañado?" según asistencia */
+  /* Paso 1 → mostrar bloque de acompañantes según asistencia */
   $$('input[name="asistencia"]', form).forEach(radio => {
     radio.addEventListener('change', () => {
       if (!acompGroup) return;
       const asiste = radio.value === 'si';
       acompGroup.classList.toggle('open', asiste);
       acompGroup.setAttribute('aria-hidden', String(!asiste));
-      /* Resetear paso 2 si cambian a No */
-      if (!asiste) {
-        $$('input[name="con-acompanante"]', form).forEach(r => r.checked = false);
-        if (nombresBlock) {
-          nombresBlock.classList.remove('open');
-          nombresBlock.setAttribute('aria-hidden', 'true');
-        }
+      /* Resetear si cambian a No */
+      if (!asiste && selectAcomp) {
+        selectAcomp.value = '0';
+        nombresBlock?.classList.remove('open');
+        nombresBlock?.setAttribute('aria-hidden', 'true');
       }
     });
   });
 
-  /* Paso 2 → mostrar textarea de nombres */
-  $$('input[name="con-acompanante"]', form).forEach(radio => {
-    radio.addEventListener('change', () => {
-      if (!nombresBlock) return;
-      const conAcomp = radio.value === 'si';
-      nombresBlock.classList.toggle('open', conAcomp);
-      nombresBlock.setAttribute('aria-hidden', String(!conAcomp));
-      if (conAcomp) $('#acompanantes-nombres', form)?.focus();
-    });
+  /* Paso 2 → mostrar textarea de nombres si eligen > 0 acompañantes */
+  selectAcomp?.addEventListener('change', () => {
+    if (!nombresBlock) return;
+    const conAcomp = parseInt(selectAcomp.value, 10) > 0;
+    nombresBlock.classList.toggle('open', conAcomp);
+    nombresBlock.setAttribute('aria-hidden', String(!conAcomp));
+    if (conAcomp) $('#acompanantes-nombres', form)?.focus();
   });
 
   form.addEventListener('submit', handleSubmit);
@@ -305,21 +302,24 @@ function initRSVP() {
     /* Recoger datos */
     const checkedRadio = $('input[name="asistencia"]:checked', form);
 
-    /* Parsear nombres de acompañantes (uno por línea o separados por coma) */
-    const acompNombresRaw = $('#acompanantes-nombres', form)?.value || '';
+    /* Número de acompañantes del select */
+    const numAcomp = parseInt($('#acompanantes', form)?.value || '0', 10);
+
+    /* Nombres escritos (solo si eligieron > 0) */
+    const acompNombresRaw = numAcomp > 0 ? ($('#acompanantes-nombres', form)?.value || '') : '';
     const acompNombres = acompNombresRaw
       .split(/[\n,]/)
       .map(n => n.trim())
       .filter(n => n.length > 0);
 
     const data = {
-      nombre:             $('#nombre', form).value.trim(),
-      email:              $('#email', form).value.trim(),
-      asistencia:         checkedRadio?.value || '',
+      nombre:              $('#nombre', form).value.trim(),
+      email:               $('#email', form).value.trim(),
+      asistencia:          checkedRadio?.value || '',
+      acompanantes:        numAcomp,
       acompanantesNombres: acompNombres,
-      acompanantes:       acompNombres.length,
-      mensaje:            $('#mensaje', form).value.trim(),
-      timestamp:          new Date().toISOString(),
+      mensaje:             $('#mensaje', form).value.trim(),
+      timestamp:           new Date().toISOString(),
     };
 
     /* Estado de carga */

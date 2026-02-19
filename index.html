@@ -338,26 +338,26 @@
           </div>
         </div>
 
-        <!-- Paso 2: ¿Con acompañantes? (se muestra solo si asiste) -->
+        <!-- Paso 2: Acompañantes (se muestra solo si asiste) -->
         <div class="form__block" id="acompanantes-group" aria-hidden="true">
           <div class="form__block-inner">
-            <p class="form__label" id="con-acomp-label">¿Vienes acompañado/a?</p>
-            <div class="form__radio-group" role="radiogroup" aria-labelledby="con-acomp-label">
-              <label class="form__radio-label">
-                <input type="radio" name="con-acompanante" value="si" />
-                <span class="form__radio-custom" aria-hidden="true"></span>
-                Sí, vengo con acompañantes
-              </label>
-              <label class="form__radio-label">
-                <input type="radio" name="con-acompanante" value="no" />
-                <span class="form__radio-custom" aria-hidden="true"></span>
-                No, voy solo/a
-              </label>
+            <div class="form__row">
+              <div class="form__group">
+                <label for="acompanantes" class="form__label">Número de acompañantes</label>
+                <select id="acompanantes" name="acompanantes" class="form__input form__select">
+                  <option value="0">Solo yo</option>
+                  <option value="1">+ 1 acompañante</option>
+                  <option value="2">+ 2 acompañantes</option>
+                  <option value="3">+ 3 acompañantes</option>
+                  <option value="4">+ 4 acompañantes</option>
+                  <option value="5">+ 5 acompañantes</option>
+                </select>
+              </div>
             </div>
 
-            <!-- Paso 3: Nombres (se muestra solo si tiene acompañantes) -->
+            <!-- Nombres: se abre si eligen más de 0 -->
             <div class="form__block" id="nombres-acomp-block" aria-hidden="true">
-              <div class="form__block-inner" style="padding-top:1rem;">
+              <div class="form__block-inner">
                 <label for="acompanantes-nombres" class="form__label">
                   Nombres de los acompañantes
                 </label>
@@ -369,7 +369,6 @@
                   rows="3"></textarea>
               </div>
             </div>
-
           </div>
         </div>
 
