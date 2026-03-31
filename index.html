@@ -404,109 +404,145 @@
       <h2 class="section-title reveal">Confirma tu Asistencia</h2>
       <p class="section-subtitle reveal">Por favor confirma antes del 17 de enero de 2027</p>
 
-      <!-- Formulario -->
-      <form class="rsvp__form reveal" id="rsvp-form" novalidate aria-label="Formulario de confirmación">
+      <!-- Boarding Pass RSVP -->
+      <div class="boarding-pass reveal" id="boarding-pass-card">
 
-        <div class="form__row">
-          <div class="form__group">
-            <label for="nombre" class="form__label">Nombre completo</label>
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              class="form__input"
-              placeholder="Tu nombre completo"
-              autocomplete="name"
-              required />
-          </div>
+        <!-- Izquierda: formulario -->
+        <div class="bp__main">
 
-          <div class="form__group">
-            <label for="email" class="form__label">Correo electrónico</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              class="form__input"
-              placeholder="tu@correo.com"
-              autocomplete="email"
-              required />
-          </div>
-        </div>
-
-        <!-- Paso 1: ¿Asistirás? -->
-        <div class="form__group">
-          <p class="form__label" id="asistencia-label">¿Asistirás?</p>
-          <div class="form__radio-group" role="radiogroup" aria-labelledby="asistencia-label">
-            <label class="form__radio-label">
-              <input type="radio" name="asistencia" value="si" />
-              <span class="form__radio-custom" aria-hidden="true"></span>
-              Sí, estaré ahí
-            </label>
-            <label class="form__radio-label">
-              <input type="radio" name="asistencia" value="no" />
-              <span class="form__radio-custom" aria-hidden="true"></span>
-              No podré asistir
-            </label>
-          </div>
-        </div>
-
-        <!-- Paso 2: Desplegable acompañantes (se muestra si asiste) -->
-        <div class="form__block" id="acompanantes-group" aria-hidden="true">
-          <div class="form__block-inner">
-            <div class="form__group">
-              <label for="acompanantes" class="form__label">Número de acompañantes</label>
-              <select id="acompanantes" name="acompanantes" class="form__input form__select">
-                <option value="0">Solo yo</option>
-                <option value="1">+ 1 acompañante</option>
-                <option value="2">+ 2 acompañantes</option>
-                <option value="3">+ 3 acompañantes</option>
-              </select>
+          <div class="bp__header">
+            <div class="bp__logo">
+              <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+              <span>C &amp; L</span>
             </div>
+            <span class="bp__class">BOARDING PASS</span>
           </div>
+
+          <form id="rsvp-form" novalidate aria-label="Formulario de confirmación">
+
+            <div class="bp__fields-row">
+              <div class="bp__field">
+                <label for="nombre" class="bp__label">Passenger Name</label>
+                <input type="text" id="nombre" name="nombre" class="bp__input"
+                  placeholder="Tu nombre completo" autocomplete="name" required />
+              </div>
+              <div class="bp__field">
+                <label for="email" class="bp__label">Contact</label>
+                <input type="email" id="email" name="email" class="bp__input"
+                  placeholder="tu@correo.com" autocomplete="email" required />
+              </div>
+            </div>
+
+            <div class="bp__field">
+              <p class="bp__label" id="asistencia-label">Confirmar Plaza</p>
+              <div class="form__radio-group" role="radiogroup" aria-labelledby="asistencia-label">
+                <label class="form__radio-label">
+                  <input type="radio" name="asistencia" value="si" />
+                  <span class="form__radio-custom" aria-hidden="true"></span>
+                  Confirmo asistencia
+                </label>
+                <label class="form__radio-label">
+                  <input type="radio" name="asistencia" value="no" />
+                  <span class="form__radio-custom" aria-hidden="true"></span>
+                  No podré asistir
+                </label>
+              </div>
+            </div>
+
+            <div class="form__block" id="acompanantes-group" aria-hidden="true">
+              <div class="form__block-inner">
+                <div class="bp__field">
+                  <label for="acompanantes" class="bp__label">Acompañantes</label>
+                  <select id="acompanantes" name="acompanantes" class="bp__input bp__select">
+                    <option value="0">Solo yo</option>
+                    <option value="1">+ 1 acompañante</option>
+                    <option value="2">+ 2 acompañantes</option>
+                    <option value="3">+ 3 acompañantes</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div id="nombres-acomp-block" style="display:none;">
+              <div class="bp__field" style="padding-top:1rem;">
+                <label for="acompanantes-nombres" class="bp__label">Nombres de los acompañantes</label>
+                <textarea id="acompanantes-nombres" name="acompanantes-nombres"
+                  class="bp__input bp__textarea"
+                  placeholder="Escribe un nombre por línea:&#10;María García&#10;Juan López"
+                  rows="3"></textarea>
+              </div>
+            </div>
+
+            <div class="bp__field">
+              <label for="mensaje" class="bp__label">
+                Mensaje <span class="form__label-optional">(opcional)</span>
+              </label>
+              <textarea id="mensaje" name="mensaje" class="bp__input bp__textarea"
+                placeholder="Comparte tus buenos deseos con Cesar y Lissette..."
+                rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn--rust bp__submit" id="rsvp-submit">
+              <span class="btn__text">✈ &nbsp;Confirmar Plaza</span>
+              <span class="btn__loading" aria-hidden="true" hidden>Enviando…</span>
+            </button>
+
+          </form>
         </div>
 
-        <!-- Paso 3: Nombres (se muestra si eligen más de 0) -->
-        <div id="nombres-acomp-block" style="display:none;">
-          <div class="form__group" style="padding-top:1.25rem;">
-            <label for="acompanantes-nombres" class="form__label">
-              Nombres de los acompañantes
-            </label>
-            <textarea
-              id="acompanantes-nombres"
-              name="acompanantes-nombres"
-              class="form__input form__textarea form__textarea--sm"
-              placeholder="Escribe un nombre por línea:&#10;María García&#10;Juan López"
-              rows="3"></textarea>
+        <!-- Perforación -->
+        <div class="bp__tear" aria-hidden="true">
+          <div class="bp__tear-notch bp__tear-notch--top"></div>
+          <div class="bp__tear-line"></div>
+          <div class="bp__tear-notch bp__tear-notch--bottom"></div>
+        </div>
+
+        <!-- Derecha: stub de vuelo -->
+        <div class="bp__stub">
+          <div class="bp__stub-plane">✈</div>
+
+          <div class="bp__stub-item">
+            <span class="bp__stub-label">From</span>
+            <span class="bp__stub-value">Tu Ciudad</span>
           </div>
+          <div class="bp__stub-item">
+            <span class="bp__stub-label">To</span>
+            <span class="bp__stub-value bp__stub-dest">LA VEGA</span>
+            <span class="bp__stub-sub">República Dom.</span>
+          </div>
+
+          <div class="bp__stub-divider"></div>
+
+          <div class="bp__stub-item">
+            <span class="bp__stub-label">Date</span>
+            <span class="bp__stub-value">17 ABR 2027</span>
+          </div>
+          <div class="bp__stub-item">
+            <span class="bp__stub-label">Boarding</span>
+            <span class="bp__stub-value">12:00 HRS</span>
+          </div>
+          <div class="bp__stub-item">
+            <span class="bp__stub-label">Flight</span>
+            <span class="bp__stub-value">AMOR · 01</span>
+          </div>
+          <div class="bp__stub-item">
+            <span class="bp__stub-label">Class</span>
+            <span class="bp__stub-value">WEDDING</span>
+          </div>
+
+          <div class="bp__barcode" aria-hidden="true"></div>
         </div>
 
-        <div class="form__group">
-          <label for="mensaje" class="form__label">
-            Mensaje para los novios
-            <span class="form__label-optional">(opcional)</span>
-          </label>
-          <textarea
-            id="mensaje"
-            name="mensaje"
-            class="form__input form__textarea"
-            placeholder="Comparte tus buenos deseos con Cesar y Lissette..."
-            rows="4">
-          </textarea>
-        </div>
-
-        <button type="submit" class="btn btn--rust form__submit" id="rsvp-submit">
-          <span class="btn__text">Enviar confirmación</span>
-          <span class="btn__loading" aria-hidden="true" hidden>Enviando…</span>
-        </button>
-
-      </form>
+      </div><!-- /.boarding-pass -->
 
       <!-- Mensaje de éxito post-envío -->
       <div class="rsvp__success" id="rsvp-success" hidden aria-live="polite">
         <div class="rsvp__success-card">
           <span class="rsvp__success-icon" aria-hidden="true">♡</span>
           <h3>¡Gracias!</h3>
-          <p id="rsvp-success-msg">Tu respuesta ha sido registrada. ¡Nos vemos el 17 de Abril!</p>
+          <p id="rsvp-success-msg">Tu plaza está confirmada. ¡Nos vemos el 17 de Abril en La Vega!</p>
         </div>
       </div>
 
