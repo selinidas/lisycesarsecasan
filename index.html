@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Cesar & Lissette se casan — 17 de Abril 2027 · La Vega, República Dominicana. Confirma tu asistencia." />
+  <meta name="description" content="Cesar & Lissette se casan — 13 de Marzo 2027 · La Vega, República Dominicana. Confirma tu asistencia." />
   <meta name="theme-color" content="#FAF8F4" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Cesar & Lissette — 17.04.2027" />
-  <meta property="og:description" content="Nos casamos el 17 de Abril de 2027 en La Vega, República Dominicana." />
+  <meta property="og:title" content="Cesar & Lissette — 13.03.2027" />
+  <meta property="og:description" content="Nos casamos el 13 de Marzo de 2027 en La Vega, República Dominicana." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.lissycesarsecasan.com" />
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <title>Cesar &amp; Lissette — 17.04.2027</title>
+  <title>Cesar &amp; Lissette — 13.03.2027</title>
 
   <!-- Google Fonts: Cormorant Garamond (serif) + Jost (sans-serif) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -170,10 +170,10 @@
         <em>"Dos almas, un mismo destino."</em>
       </p>
 
-      <div class="hero__date" aria-label="Fecha: 17 de Abril de 2027">
-        <span>17</span>
+      <div class="hero__date" aria-label="Fecha: 13 de Marzo de 2027">
+        <span>13</span>
         <span class="hero__date-dot" aria-hidden="true">·</span>
-        <span>Abril</span>
+        <span>Marzo</span>
         <span class="hero__date-dot" aria-hidden="true">·</span>
         <span>2027</span>
       </div>
@@ -212,41 +212,36 @@
       </svg>
       <h2 class="section-title reveal">Así empezó todo</h2>
 
-      <div class="galeria__grid reveal">
+      <div class="galeria__layout reveal">
 
-        <!-- Foto destacada (2 col × 2 filas) -->
-        <button class="galeria__item galeria__item--featured" data-index="0"
+        <!-- Foto horizontal — ancho completo -->
+        <button class="galeria__item galeria__item--wide" data-index="0"
           aria-label="Ver foto 1 en pantalla completa">
           <img src="fotos/IMG_0864.jpeg" alt="Cesar y Lissette" loading="lazy" />
         </button>
 
-        <!-- Fila derecha superior -->
-        <button class="galeria__item" data-index="1" aria-label="Ver foto 2">
-          <img src="fotos/IMG_7367.jpeg" alt="Cesar y Lissette" loading="lazy" />
-        </button>
+        <!-- Fila inferior: foto | historia | foto -->
+        <div class="galeria__bottom">
 
-        <button class="galeria__item" data-index="2" aria-label="Ver foto 3">
-          <img src="fotos/IMG_9408.jpeg" alt="Cesar y Lissette" loading="lazy" />
-        </button>
+          <button class="galeria__item galeria__item--tall" data-index="1"
+            aria-label="Ver foto 2">
+            <img src="fotos/IMG_7367.jpeg" alt="Cesar y Lissette" loading="lazy" />
+          </button>
 
-        <!-- Fila inferior -->
-        <button class="galeria__item" data-index="3" aria-label="Ver foto 4">
-          <div class="galeria__photo galeria__photo--4">
-            <span class="galeria__placeholder">La Vega</span>
+          <div class="galeria__story">
+            <span class="galeria__story-eyebrow">nuestra historia</span>
+            <h3 class="galeria__story-title">Así nos conocimos</h3>
+            <p class="galeria__story-body">
+              Aquí irá la historia de cómo se conocieron Cesar y Lissette. Puedes reemplazar este texto con vuestra historia real — dónde os conocisteis, qué pasó, cómo supisteis que era para siempre. 🤍
+            </p>
           </div>
-        </button>
 
-        <button class="galeria__item" data-index="4" aria-label="Ver foto 5">
-          <div class="galeria__photo galeria__photo--5">
-            <span class="galeria__placeholder">17.04</span>
-          </div>
-        </button>
+          <button class="galeria__item galeria__item--tall" data-index="2"
+            aria-label="Ver foto 3">
+            <img src="fotos/IMG_9408.jpeg" alt="Cesar y Lissette" loading="lazy" />
+          </button>
 
-        <button class="galeria__item" data-index="5" aria-label="Ver foto 6">
-          <div class="galeria__photo galeria__photo--6">
-            <span class="galeria__placeholder">2027</span>
-          </div>
-        </button>
+        </div>
 
       </div>
     </div>
@@ -402,7 +397,7 @@
         </g>
       </svg>
       <h2 class="section-title reveal">Confirma tu Asistencia</h2>
-      <p class="section-subtitle reveal">Por favor confirma antes del 17 de enero de 2027</p>
+      <p class="section-subtitle reveal">Por favor confirma antes del 13 de enero de 2027</p>
 
       <!-- Boarding Pass RSVP -->
       <div class="boarding-pass reveal" id="boarding-pass-card">
@@ -449,6 +444,17 @@
                   No podré asistir
                 </label>
               </div>
+            </div>
+
+            <div class="bp__field">
+              <label for="pais-origen" class="bp__label">Origin / País de origen</label>
+              <select id="pais-origen" name="pais-origen" class="bp__input bp__select">
+                <option value="">— Selecciona —</option>
+                <option value="rd">🇩🇴 República Dominicana</option>
+                <option value="es">🇪🇸 España</option>
+                <option value="us">🇺🇸 Estados Unidos</option>
+                <option value="other">🌍 Otro país</option>
+              </select>
             </div>
 
             <div class="form__block" id="acompanantes-group" aria-hidden="true">
@@ -517,7 +523,7 @@
 
           <div class="bp__stub-item">
             <span class="bp__stub-label">Date</span>
-            <span class="bp__stub-value">17 ABR 2027</span>
+            <span class="bp__stub-value">13 MAR 2027</span>
           </div>
           <div class="bp__stub-item">
             <span class="bp__stub-label">Boarding</span>
@@ -542,7 +548,7 @@
         <div class="rsvp__success-card">
           <span class="rsvp__success-icon" aria-hidden="true">♡</span>
           <h3>¡Gracias!</h3>
-          <p id="rsvp-success-msg">Tu plaza está confirmada. ¡Nos vemos el 17 de Abril en La Vega!</p>
+          <p id="rsvp-success-msg">Tu plaza está confirmada. ¡Nos vemos el 13 de Marzo en La Vega!</p>
         </div>
       </div>
 
@@ -921,7 +927,7 @@
         <span class="footer__ornament-line"></span>
       </div>
 
-      <p class="footer__date">17 · IV · MMXXVII</p>
+      <p class="footer__date">13 · III · MMXXVII</p>
       <p class="footer__location">La Vega, República Dominicana</p>
 
       <div class="footer__divider" aria-hidden="true"></div>

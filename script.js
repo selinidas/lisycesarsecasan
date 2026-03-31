@@ -147,10 +147,10 @@ function initScrollReveal() {
 
 /* ============================================================
    4. COUNTDOWN TIMER
-   Objetivo: 17 abril 2027, 18:00 hora RD (UTC-4, sin DST)
+   Objetivo: 13 marzo 2027, 12:00 hora RD (UTC-4, sin DST)
    ============================================================ */
 function initCountdown() {
-  const TARGET = new Date('2027-04-17T18:00:00-04:00');
+  const TARGET = new Date('2027-03-13T12:00:00-04:00');
 
   const daysEl    = $('#cd-days');
   const hoursEl   = $('#cd-hours');
@@ -314,6 +314,7 @@ function initRSVP() {
       nombre:              $('#nombre', form).value.trim(),
       email:               $('#email', form).value.trim(),
       asistencia:          checkedRadio?.value || '',
+      paisOrigen:          $('#pais-origen', form)?.value || '',
       acompanantes:        numAcomp,
       acompanantesNombres: acompNombres,
       mensaje:             $('#mensaje', form).value.trim(),
@@ -335,7 +336,7 @@ function initRSVP() {
 
     /* Enviar correo de confirmación si asiste */
     if (data.asistencia === 'si') {
-      await sendConfirmationEmail(data.nombre, data.email);
+      await sendConfirmationEmail(data.nombre, data.email, data.paisOrigen);
     }
 
     /* Mostrar mensaje de éxito */
@@ -360,12 +361,28 @@ async function saveRSVP(data) {
   localStorage.setItem('wedding_rsvps', JSON.stringify(list));
 }
 
-async function sendConfirmationEmail(nombre, email) {
+async function sendConfirmationEmail(nombre, email, paisOrigen) {
+  /* Para invitados de RD, incluir bloque de cuenta bancaria */
+  const bankInfo = paisOrigen === 'rd'
+    ? `<table cellpadding="0" cellspacing="0" border="0" width="100%"
+        style="margin-top:8px; background:#FDF6F2; border-left:3px solid #9B4A2E; border-radius:0 8px 8px 0;">
+        <tr><td style="padding:16px 20px;">
+          <p style="margin:0 0 6px; font-family:Arial,sans-serif; font-size:13px;
+            font-weight:600; color:#9B4A2E;">💳 Transferencia bancaria (invitados en RD)</p>
+          <p style="margin:0; font-family:Arial,sans-serif; font-size:13px;
+            color:#5C4444; line-height:1.9; white-space:pre-line;">Banco: [NOMBRE DEL BANCO]
+Titular: [NOMBRE DEL TITULAR]
+Número de cuenta: [NÚMERO DE CUENTA]
+Tipo de cuenta: [AHORROS / CORRIENTE]</p>
+        </td></tr>
+      </table>`
+    : '';
+
   try {
     await emailjs.send(
       EMAILJS_SERVICE_ID,
       EMAILJS_TEMPLATE_ID,
-      { to_name: nombre, to_email: email },
+      { to_name: nombre, to_email: email, bank_info: bankInfo },
       { publicKey: EMAILJS_PUBLIC_KEY }   /* formato correcto v4 */
     );
     console.log('Correo de confirmación enviado a', email);
@@ -384,7 +401,7 @@ function showSuccess(form, successEl, declined = false) {
   if (msgEl) {
     msgEl.textContent = declined
       ? 'Lamentamos que no puedas asistir. ¡Te tendremos en mente!'
-      : '¡Tu respuesta ha sido registrada! Nos vemos el 17 de Abril 🎉';
+      : '¡Tu respuesta ha sido registrada! Nos vemos el 13 de Marzo 🎉';
   }
   successEl.hidden = false;
 }
@@ -902,7 +919,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'background:#9B4A2E;color:#FAF8F4;font-family:Georgia,serif;font-size:13px;padding:4px 14px;border-radius:4px;'
   );
   console.log(
-    '%c Cesar & Lissette · 17 · IV · 2027 · La Vega, RD ',
+    '%c Cesar & Lissette · 13 · III · 2027 · La Vega, RD ',
     'color:#C4A5B5;font-family:Georgia,serif;font-size:10px;'
   );
 });
