@@ -745,12 +745,13 @@ textarea {
   overflow: hidden;
   box-shadow: var(--shadow-md);
   border: 1px solid var(--mauve-light);
+  aspect-ratio: 4 / 3;
 }
 
 .ubicacion__map iframe {
   display: block;
   width: 100%;
-  height: clamp(220px, 28vw, 320px);
+  height: 100%;
 }
 
 .ubicacion__actions {
