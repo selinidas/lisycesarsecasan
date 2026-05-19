@@ -262,18 +262,6 @@ function initRSVP() {
 
   if (!form) return;
 
-  const acompGroup   = $('#acompanantes-group');
-  const nombresBlock = $('#nombres-acomp-block');
-  const selectAcomp  = $('#acompanantes', form);
-
-  /* Mostrar textarea de nombres si eligen > 0 acompañantes */
-  selectAcomp?.addEventListener('change', () => {
-    if (!nombresBlock) return;
-    const conAcomp = parseInt(selectAcomp.value, 10) > 0;
-    nombresBlock.style.display = conAcomp ? 'block' : 'none';
-    if (conAcomp) $('#acompanantes-nombres', form)?.focus();
-  });
-
   form.addEventListener('submit', handleSubmit);
 
   async function handleSubmit(e) {
@@ -284,28 +272,18 @@ function initRSVP() {
 
     /* Recoger datos */
     const checkedRadio = $('input[name="asistencia"]:checked', form);
-
-    /* Número de acompañantes del select */
-    const numAcomp = parseInt($('#acompanantes', form)?.value || '0', 10);
-
-    /* Nombres escritos (solo si eligieron > 0) */
-    const acompNombresRaw = numAcomp > 0 ? ($('#acompanantes-nombres', form)?.value || '') : '';
-    const acompNombres = acompNombresRaw
-      .split(/[\n,]/)
-      .map(n => n.trim())
-      .filter(n => n.length > 0);
+    const acompNombre  = $('#acompanante-nombre', form)?.value.trim() || '';
 
     const data = {
-      nombre:              $('#nombre', form).value.trim(),
-      email:               $('#email', form).value.trim(),
-      asistencia:          checkedRadio?.value || '',
-      paisOrigen:          $('#pais-origen', form)?.value || '',
-      acompanantes:        numAcomp,
-      acompanantesNombres: acompNombres,
-      ninos:               $('input[name="ninos"]:checked', form)?.value || 'no',
-      restricciones:       $('#restricciones', form)?.value.trim() || '',
-      mensaje:             $('#mensaje', form).value.trim(),
-      timestamp:           new Date().toISOString(),
+      nombre:           $('#nombre', form).value.trim(),
+      email:            $('#email', form).value.trim(),
+      asistencia:       checkedRadio?.value || '',
+      paisOrigen:       $('#pais-origen', form)?.value || '',
+      acompanante:      acompNombre,
+      ninos:            $('input[name="ninos"]:checked', form)?.value || 'no',
+      restricciones:    $('#restricciones', form)?.value.trim() || '',
+      mensaje:          $('#mensaje', form).value.trim(),
+      timestamp:        new Date().toISOString(),
     };
 
     /* Estado de carga */
@@ -318,7 +296,7 @@ function initRSVP() {
 
     /* Actualizar contador si asiste (la persona + sus acompañantes) */
     if (data.asistencia === 'si') {
-      await incrementConfirmed(1 + data.acompanantes);
+      await incrementConfirmed(1 + (data.acompanante ? 1 : 0));
     }
 
     /* Enviar correo de confirmación si asiste */

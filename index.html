@@ -443,24 +443,12 @@
               </select>
             </div>
 
-            <div class="bp__field" id="acompanantes-group">
-              <label for="acompanantes" class="bp__label">Acompañantes</label>
-              <select id="acompanantes" name="acompanantes" class="bp__input bp__select">
-                <option value="0">Solo yo</option>
-                <option value="1">+ 1 acompañante</option>
-                <option value="2">+ 2 acompañantes</option>
-                <option value="3">+ 3 acompañantes</option>
-              </select>
-            </div>
-
-            <div id="nombres-acomp-block" style="display:none;">
-              <div class="bp__field">
-                <label for="acompanantes-nombres" class="bp__label">Nombre(s) del acompañante</label>
-                <textarea id="acompanantes-nombres" name="acompanantes-nombres"
-                  class="bp__input bp__textarea"
-                  placeholder="Un nombre por línea:&#10;María García&#10;Juan López"
-                  rows="3"></textarea>
-              </div>
+            <div class="bp__field">
+              <label for="acompanante-nombre" class="bp__label">
+                Nombre del acompañante <span class="form__label-optional">(si viene alguien contigo)</span>
+              </label>
+              <input type="text" id="acompanante-nombre" name="acompanante-nombre"
+                class="bp__input" placeholder="Nombre y apellidos" autocomplete="off" />
             </div>
 
             <div class="bp__field">
