@@ -317,6 +317,8 @@ function initRSVP() {
       paisOrigen:          $('#pais-origen', form)?.value || '',
       acompanantes:        numAcomp,
       acompanantesNombres: acompNombres,
+      ninos:               $('input[name="ninos"]:checked', form)?.value || 'no',
+      restricciones:       $('#restricciones', form)?.value.trim() || '',
       mensaje:             $('#mensaje', form).value.trim(),
       timestamp:           new Date().toISOString(),
     };

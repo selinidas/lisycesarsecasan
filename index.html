@@ -444,7 +444,6 @@
                 <option value="">— Selecciona —</option>
                 <option value="rd">🇩🇴 República Dominicana</option>
                 <option value="es">🇪🇸 España</option>
-                <option value="us">🇺🇸 Estados Unidos</option>
                 <option value="other">🌍 Otro país</option>
               </select>
             </div>
@@ -465,12 +464,47 @@
 
             <div id="nombres-acomp-block" style="display:none;">
               <div class="bp__field" style="padding-top:1rem;">
-                <label for="acompanantes-nombres" class="bp__label">Nombres de los acompañantes</label>
+                <label for="acompanantes-nombres" class="bp__label">Nombre(s) del acompañante</label>
                 <textarea id="acompanantes-nombres" name="acompanantes-nombres"
                   class="bp__input bp__textarea"
-                  placeholder="Escribe un nombre por línea:&#10;María García&#10;Juan López"
+                  placeholder="Un nombre por línea:&#10;María García&#10;Juan López"
                   rows="3"></textarea>
               </div>
+            </div>
+
+            <div class="bp__field">
+              <p class="bp__label" id="ninos-label">¿Vienes con niños?</p>
+              <div class="form__radio-group" role="radiogroup" aria-labelledby="ninos-label">
+                <label class="form__radio-label">
+                  <input type="radio" name="ninos" value="no" checked />
+                  <span class="form__radio-custom" aria-hidden="true"></span>
+                  No
+                </label>
+                <label class="form__radio-label">
+                  <input type="radio" name="ninos" value="1" />
+                  <span class="form__radio-custom" aria-hidden="true"></span>
+                  Sí, 1 niño
+                </label>
+                <label class="form__radio-label">
+                  <input type="radio" name="ninos" value="2" />
+                  <span class="form__radio-custom" aria-hidden="true"></span>
+                  Sí, 2 niños
+                </label>
+                <label class="form__radio-label">
+                  <input type="radio" name="ninos" value="3+" />
+                  <span class="form__radio-custom" aria-hidden="true"></span>
+                  Sí, 3 o más
+                </label>
+              </div>
+            </div>
+
+            <div class="bp__field">
+              <label for="restricciones" class="bp__label">
+                Restricciones alimentarias <span class="form__label-optional">(opcional)</span>
+              </label>
+              <textarea id="restricciones" name="restricciones" class="bp__input bp__textarea"
+                placeholder="Alergias, intolerancias, dieta vegetariana…"
+                rows="2"></textarea>
             </div>
 
             <div class="bp__field">
