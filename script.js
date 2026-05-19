@@ -266,22 +266,7 @@ function initRSVP() {
   const nombresBlock = $('#nombres-acomp-block');
   const selectAcomp  = $('#acompanantes', form);
 
-  /* Paso 1 → mostrar bloque de acompañantes según asistencia */
-  $$('input[name="asistencia"]', form).forEach(radio => {
-    radio.addEventListener('change', () => {
-      if (!acompGroup) return;
-      const asiste = radio.value === 'si';
-      acompGroup.classList.toggle('open', asiste);
-      acompGroup.setAttribute('aria-hidden', String(!asiste));
-      /* Resetear si cambian a No */
-      if (!asiste && selectAcomp) {
-        selectAcomp.value = '0';
-        if (nombresBlock) nombresBlock.style.display = 'none';
-      }
-    });
-  });
-
-  /* Paso 2 → mostrar textarea de nombres si eligen > 0 acompañantes */
+  /* Mostrar textarea de nombres si eligen > 0 acompañantes */
   selectAcomp?.addEventListener('change', () => {
     if (!nombresBlock) return;
     const conAcomp = parseInt(selectAcomp.value, 10) > 0;
