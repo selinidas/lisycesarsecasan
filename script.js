@@ -147,10 +147,10 @@ function initScrollReveal() {
 
 /* ============================================================
    4. COUNTDOWN TIMER
-   Objetivo: 13 marzo 2027, 12:00 hora RD (UTC-4, sin DST)
+   Objetivo: 13 marzo 2027, 17:00 hora RD (UTC-4, sin DST)
    ============================================================ */
 function initCountdown() {
-  const TARGET = new Date('2027-03-13T12:00:00-04:00');
+  const TARGET = new Date('2027-03-13T17:00:00-04:00');
 
   const daysEl    = $('#cd-days');
   const hoursEl   = $('#cd-hours');
