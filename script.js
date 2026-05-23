@@ -357,8 +357,6 @@ function showSuccess(form, successEl, asistencia) {
 
   const msgEl = $('#rsvp-success-msg');
   if (msgEl) msgEl.textContent = messages[asistencia] ?? messages.no;
-
-  successEl.hidden = false;
 }
 
 /* Validación del formulario */
