@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  CESAR & LISSETTE — Plantilla de correo de confirmación
+  ============================================================
+
+  INSTRUCCIONES:
+  1. Busca todos los textos marcados con ✏️ y reemplázalos
+     con tu información real.
+  2. Cuando hayas rellenado todo, copia TODO el contenido
+     del bloque <body>...</body> y pégalo en EmailJS.
+  3. Guarda {{to_name}} exactamente así — EmailJS lo reemplaza
+     automáticamente con el nombre del invitado.
+
+  CÓMO PEGAR EN EMAILJS:
+  → Entra a emailjs.com → Email Templates → tu plantilla
+  → Haz clic en la pestaña "Code editor" (no el editor visual)
+  → Borra todo y pega este HTML
+  ============================================================
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vista previa — Correo de confirmación</title>
+  <style>
+    /* Solo para la vista previa en el navegador */
+    body { margin: 0; background: #F0EDE8; font-family: Georgia, serif; }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#F0EDE8; font-family:Georgia,'Times New Roman',serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0"
+    style="background-color:#F0EDE8; padding: 40px 16px;">
+    <tr>
+      <td align="center">
+
+        <!-- ── Contenedor principal ── -->
+        <table width="600" cellpadding="0" cellspacing="0" border="0"
+          style="max-width:600px; width:100%; background-color:#FAF8F4;
+                 border-radius:12px; overflow:hidden;
+                 box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+
+          <!-- ══ CABECERA ══ -->
+          <tr>
+            <td align="center"
+              style="background-color:#9B4A2E; padding:48px 40px 40px;">
+
+              <!-- Ornamento floral SVG -->
+              <div style="margin-bottom:16px;">
+                <svg width="60" height="60" viewBox="0 0 60 60" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M30 56 C30 42 22 34 28 18 C32 8 30 2 30 2"
+                    stroke="#FAF8F4" stroke-width="0.8" fill="none" opacity="0.6"/>
+                  <ellipse cx="16" cy="40" rx="14" ry="5.5"
+                    transform="rotate(-35 16 40)" fill="#FAF8F4" opacity="0.25"/>
+                  <ellipse cx="41" cy="32" rx="12" ry="5"
+                    transform="rotate(25 41 32)" fill="#FAF8F4" opacity="0.20"/>
+                  <ellipse cx="14" cy="25" rx="11" ry="4.5"
+                    transform="rotate(-50 14 25)" fill="#FAF8F4" opacity="0.15"/>
+                  <!-- Corazón -->
+                  <path d="M30 46 l-1-1 C23 39 18 35 18 30 a6 6 0 0 1 12-2 6 6 0 0 1 12 2 c0 5-5 9-11 15z"
+                    fill="#FAF8F4" opacity="0.5"/>
+                </svg>
+              </div>
+
+              <p style="margin:0 0 8px; font-family:Arial,sans-serif;
+                font-size:11px; letter-spacing:0.25em; text-transform:uppercase;
+                color:#F5DFD5; font-weight:400;">
+                con amor, los invitamos a celebrar
+              </p>
+
+              <h1 style="margin:0 0 12px; font-family:Georgia,'Times New Roman',serif;
+                font-size:42px; font-weight:400; color:#FAF8F4;
+                letter-spacing:0.04em; line-height:1.1;">
+                Cesar &amp; Lissette
+              </h1>
+
+              <div style="display:inline-block; margin:0 0 16px;">
+                <table cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td style="padding:0 12px;">
+                      <div style="width:50px; height:1px; background:#C4A5B5; opacity:0.6;"></div>
+                    </td>
+                    <td>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="#C4A5B5"
+                        xmlns="http://www.w3.org/2000/svg" style="display:block;">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                          2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                          C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                          c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                      </svg>
+                    </td>
+                    <td style="padding:0 12px;">
+                      <div style="width:50px; height:1px; background:#C4A5B5; opacity:0.6;"></div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <p style="margin:0; font-family:Arial,sans-serif;
+                font-size:13px; letter-spacing:0.18em; color:#F5DFD5;
+                font-weight:400;">
+                13 · MARZO · 2027 · LA VEGA, RD
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- ══ SALUDO ══ -->
+          <tr>
+            <td style="padding:48px 48px 0;">
+
+              <p style="margin:0 0 8px; font-family:Arial,sans-serif;
+                font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+                color:#9B4A2E; font-weight:500;">
+                ¡Tu confirmación ha sido recibida!
+              </p>
+
+              <h2 style="margin:0 0 20px; font-family:Georgia,'Times New Roman',serif;
+                font-size:28px; font-weight:400; color:#3D2B2B; line-height:1.3;">
+                Hola, {{to_name}} 🤍
+              </h2>
+
+              <p style="margin:0 0 0; font-family:Arial,sans-serif;
+                font-size:15px; line-height:1.8; color:#5C4444;">
+                Estamos felices de saber que estarás con nosotros en este día tan especial.
+                A continuación encontrarás toda la información que necesitas para el gran día.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- ── Divider ── -->
+          <tr>
+            <td style="padding:32px 48px 0;">
+              <div style="height:1px; background:linear-gradient(to right,
+                transparent, #C4A5B5, transparent);"></div>
+            </td>
+          </tr>
+
+
+          <!-- ══ SECCIÓN 1: FECHA Y LUGAR ══ -->
+          <tr>
+            <td style="padding:32px 48px 0;">
+
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td width="48" valign="top" style="padding-right:16px;">
+                    <div style="width:48px; height:48px; border-radius:50%;
+                      background-color:#F5EDE8; display:flex; align-items:center;
+                      justify-content:center; text-align:center; line-height:48px;
+                      font-size:22px;">
+                      📅
+                    </div>
+                  </td>
+                  <td valign="top">
+                    <h3 style="margin:0 0 12px; font-family:Georgia,'Times New Roman',serif;
+                      font-size:20px; font-weight:400; color:#9B4A2E;">
+                      Fecha, Hora &amp; Lugar
+                    </h3>
+
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                      style="background:#FDF6F2; border-left:3px solid #9B4A2E;
+                      border-radius:0 8px 8px 0;">
+                      <tr>
+                        <td style="padding:16px 20px;">
+                          <p style="margin:0 0 4px; font-family:Georgia,'Times New Roman',serif;
+                            font-size:16px; font-weight:400; color:#3D2B2B; letter-spacing:0.02em;">
+                            Villa Guerrero
+                          </p>
+                          <p style="margin:0 0 12px; font-family:Arial,sans-serif;
+                            font-size:13px; color:#7A5C5C; line-height:1.6;">
+                            Carretera 21, La Vega, República Dominicana
+                          </p>
+                          <p style="margin:0 0 4px; font-family:Arial,sans-serif;
+                            font-size:13px; color:#9B4A2E; font-weight:600;">
+                            Sábado 13 de marzo de 2027 · Ceremonia 17:00 h
+                          </p>
+                          <p style="margin:0; font-family:Arial,sans-serif;
+                            font-size:12px; color:#7A5C5C; font-style:italic;">
+                            Recepción y celebración a continuación.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+
+          <!-- ── Divider ── -->
+          <tr>
+            <td style="padding:28px 48px 0;">
+              <div style="height:1px; background:#EDE4E0;"></div>
+            </td>
+          </tr>
+
+
+          <!-- ══ SECCIÓN 2: CÓDIGO DE VESTIMENTA ══ -->
+          <tr>
+            <td style="padding:28px 48px 0;">
+
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td width="48" valign="top" style="padding-right:16px;">
+                    <div style="width:48px; height:48px; border-radius:50%;
+                      background-color:#EEF3EC; text-align:center; line-height:48px;
+                      font-size:22px;">
+                      👗
+                    </div>
+                  </td>
+                  <td valign="top">
+                    <h3 style="margin:0 0 12px; font-family:Georgia,'Times New Roman',serif;
+                      font-size:20px; font-weight:400; color:#9B4A2E;">
+                      Código de Vestimenta
+                    </h3>
+
+                    <p style="margin:0 0 4px; font-family:Georgia,'Times New Roman',serif;
+                      font-size:18px; font-weight:400; color:#3D2B2B; letter-spacing:0.03em;">
+                      Garden Formal
+                    </p>
+
+                    <p style="margin:0 0 16px; font-family:Arial,sans-serif;
+                      font-size:13px; color:#5C4444; line-height:1.7;">
+                      Celebramos una primavera en el Caribe.<br/>
+                      Nos inspira una estética fresca, elegante y natural.
+                    </p>
+
+                    <!-- Para ellos -->
+                    <p style="margin:0 0 6px; font-family:Arial,sans-serif;
+                      font-size:13px; font-weight:600; color:#3D2B2B;">
+                      🌿 Para ellos
+                    </p>
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                      style="margin-bottom:16px; background:#F4F8F3; border-radius:8px;">
+                      <tr>
+                        <td style="padding:14px 16px;">
+                          <p style="margin:0; font-family:Arial,sans-serif;
+                            font-size:12px; color:#5C4444; line-height:1.8;">
+                            Traje o conjunto formal en tonos claros o neutros.<br/>
+                            Corbata opcional. Chaqueta recomendada.<br/>
+                            Se permiten colores y estampados sutiles.<br/>
+                            <span style="color:#9B4A2E;">(No jeans ni shorts).</span>
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Para ellas -->
+                    <p style="margin:0 0 6px; font-family:Arial,sans-serif;
+                      font-size:13px; font-weight:600; color:#3D2B2B;">
+                      🌸 Para ellas
+                    </p>
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                      style="margin-bottom:16px; background:#FDF0F4; border-radius:8px;">
+                      <tr>
+                        <td style="padding:14px 16px;">
+                          <p style="margin:0; font-family:Arial,sans-serif;
+                            font-size:12px; color:#5C4444; line-height:1.8;">
+                            Vestidos midi o largos en telas ligeras y fluidas.<br/>
+                            Colores suaves, tropicales o estampados florales.<br/>
+                            Sandalias elegantes, wedges o tacones cómodos.<br/>
+                            <span style="color:#9B4A2E;">(Evitamos flip-flops o estilos demasiado informales).</span>
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Blanco reservado -->
+                    <p style="margin:0 0 16px; font-family:Arial,sans-serif;
+                      font-size:13px; color:#9B4A2E; font-style:italic;
+                      text-align:center; font-weight:500;">
+                      🤍 El blanco queda reservado para la novia.
+                    </p>
+
+                    <!-- Link inspiración -->
+                    <p style="margin:0 0 8px; font-family:Arial,sans-serif;
+                      font-size:13px; color:#5C4444; text-align:center;">
+                      ¿Buscas inspiración para tu look?
+                    </p>
+                    <div style="text-align:center; margin-bottom:8px;">
+                      <a href="https://pin.it/4cDNSEyUR"
+                        style="display:inline-block; padding:10px 24px;
+                        background-color:#E60023; color:#ffffff;
+                        font-family:Arial,sans-serif; font-size:13px;
+                        font-weight:600; text-decoration:none;
+                        border-radius:6px; letter-spacing:0.02em;">
+                        📌 Ver ideas en Pinterest
+                      </a>
+                    </div>
+
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+
+          <!-- ── Divider ── -->
+          <tr>
+            <td style="padding:28px 48px 0;">
+              <div style="height:1px; background:#EDE4E0;"></div>
+            </td>
+          </tr>
+
+
+          <!-- ══ SECCIÓN 3: HOSPEDAJE ══ -->
+          <tr>
+            <td style="padding:28px 48px 0;">
+
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td width="48" valign="top" style="padding-right:16px;">
+                    <div style="width:48px; height:48px; border-radius:50%;
+                      background-color:#EEF3EC; text-align:center; line-height:48px;
+                      font-size:22px;">
+                      🏨
+                    </div>
+                  </td>
+                  <td valign="top">
+                    <h3 style="margin:0 0 12px; font-family:Georgia,'Times New Roman',serif;
+                      font-size:20px; font-weight:400; color:#9B4A2E;">
+                      Dónde Hospedarse
+                    </h3>
+
+                    <p style="margin:0 0 16px; font-family:Arial,sans-serif;
+                      font-size:13px; color:#5C4444; line-height:1.7;">
+                      Queremos que disfrutes tu estancia tanto como el día de la boda.
+                    </p>
+
+                    <!-- La Vega -->
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                      style="margin-bottom:10px; background:#FDF6F2;
+                      border-left:3px solid #9B4A2E; border-radius:0 8px 8px 0;">
+                      <tr>
+                        <td style="padding:14px 16px;">
+                          <p style="margin:0 0 2px; font-family:Arial,sans-serif;
+                            font-size:14px; font-weight:600; color:#3D2B2B;">
+                            📍 La Vega — opción más práctica
+                          </p>
+                          <p style="margin:0; font-family:Arial,sans-serif;
+                            font-size:12px; color:#7A5C5C; line-height:1.6;">
+                            Si viajas en grupo o en familia, recomendamos especialmente Airbnb.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Puerto Plata -->
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                      style="margin-bottom:10px; background:#FDF6F2; border-radius:8px;">
+                      <tr>
+                        <td style="padding:14px 16px;">
+                          <p style="margin:0 0 2px; font-family:Arial,sans-serif;
+                            font-size:14px; font-weight:600; color:#3D2B2B;">
+                            🌊 Puerto Plata — mar y playa
+                          </p>
+                          <p style="margin:0; font-family:Arial,sans-serif;
+                            font-size:12px; color:#7A5C5C;">
+                            Aproximadamente 1 hora y 30 minutos desde La Vega.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Santiago -->
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                      style="margin-bottom:10px; background:#FDF6F2; border-radius:8px;">
+                      <tr>
+                        <td style="padding:14px 16px;">
+                          <p style="margin:0 0 2px; font-family:Arial,sans-serif;
+                            font-size:14px; font-weight:600; color:#3D2B2B;">
+                            🏙️ Santiago — hoteles y ambiente urbano
+                          </p>
+                          <p style="margin:0; font-family:Arial,sans-serif;
+                            font-size:12px; color:#7A5C5C;">
+                            A unos 50–60 minutos desde La Vega.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Jarabacoa -->
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                      style="margin-bottom:10px; background:#FDF6F2; border-radius:8px;">
+                      <tr>
+                        <td style="padding:14px 16px;">
+                          <p style="margin:0 0 2px; font-family:Arial,sans-serif;
+                            font-size:14px; font-weight:600; color:#3D2B2B;">
+                            🌿 Jarabacoa — montaña y naturaleza
+                          </p>
+                          <p style="margin:0; font-family:Arial,sans-serif;
+                            font-size:12px; color:#7A5C5C;">
+                            Alrededor de 1 hora y 15 minutos desde La Vega.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Samaná -->
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                      style="margin-bottom:16px; background:#FDF6F2; border-radius:8px;">
+                      <tr>
+                        <td style="padding:14px 16px;">
+                          <p style="margin:0 0 2px; font-family:Arial,sans-serif;
+                            font-size:14px; font-weight:600; color:#3D2B2B;">
+                            🌴 Samaná — escapada caribeña
+                          </p>
+                          <p style="margin:0; font-family:Arial,sans-serif;
+                            font-size:12px; color:#7A5C5C;">
+                            Perfecta para extender el viaje. A unas 2 horas y 30 minutos.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p style="margin:0; font-family:Arial,sans-serif;
+                      font-size:13px; color:#9B4A2E; line-height:1.7;
+                      font-style:italic; text-align:center;">
+                      Estés donde estés, lo importante es que nos acompañes 🤍
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+
+          <!-- ── Divider ── -->
+          <tr>
+            <td style="padding:28px 48px 0;">
+              <div style="height:1px; background:#EDE4E0;"></div>
+            </td>
+          </tr>
+
+
+          <!-- ══ SECCIÓN 4: CÓMO LLEGAR ══ -->
+          <tr>
+            <td style="padding:28px 48px 0;">
+
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td width="48" valign="top" style="padding-right:16px;">
+                    <div style="width:48px; height:48px; border-radius:50%;
+                      background-color:#EEF3EC; text-align:center; line-height:48px;
+                      font-size:22px;">
+                      🚗
+                    </div>
+                  </td>
+                  <td valign="top">
+                    <h3 style="margin:0 0 12px; font-family:Georgia,'Times New Roman',serif;
+                      font-size:20px; font-weight:400; color:#9B4A2E;">
+                      Cómo Llegar
+                    </h3>
+
+                    <p style="margin:0 0 14px; font-family:Arial,sans-serif;
+                      font-size:13px; color:#5C4444; line-height:1.7;">
+                      La celebración tendrá lugar en <strong style="color:#3D2B2B;">Villa Guerrero, La Vega</strong>,
+                      en el corazón del Cibao.<br/><br/>
+                      La forma más cómoda de desplazarse es en coche. Recomendamos considerar
+                      el alquiler de vehículo durante su estancia para mayor flexibilidad.
+                    </p>
+
+                    <p style="margin:0 0 10px; font-family:Arial,sans-serif;
+                      font-size:13px; font-weight:600; color:#3D2B2B;">
+                      Si te hospedas en:
+                    </p>
+
+                    <!-- Tiempos desde cada ciudad -->
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                      style="margin-bottom:14px;">
+                      <tr>
+                        <td style="padding:6px 0; border-bottom:1px solid #EDE4E0;">
+                          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="font-family:Arial,sans-serif; font-size:13px;
+                                font-weight:600; color:#3D2B2B; width:120px;">
+                                📍 La Vega
+                              </td>
+                              <td style="font-family:Arial,sans-serif; font-size:13px;
+                                color:#5C4444;">
+                                entre 10 y 25 minutos en coche
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0; border-bottom:1px solid #EDE4E0;">
+                          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="font-family:Arial,sans-serif; font-size:13px;
+                                font-weight:600; color:#3D2B2B; width:120px;">
+                                🏙️ Santiago
+                              </td>
+                              <td style="font-family:Arial,sans-serif; font-size:13px;
+                                color:#5C4444;">
+                                aprox. 50–60 min por la Autopista Duarte
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0; border-bottom:1px solid #EDE4E0;">
+                          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="font-family:Arial,sans-serif; font-size:13px;
+                                font-weight:600; color:#3D2B2B; width:120px;">
+                                🌿 Jarabacoa
+                              </td>
+                              <td style="font-family:Arial,sans-serif; font-size:13px;
+                                color:#5C4444;">
+                                alrededor de 1 hora y 15 minutos
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0; border-bottom:1px solid #EDE4E0;">
+                          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="font-family:Arial,sans-serif; font-size:13px;
+                                font-weight:600; color:#3D2B2B; width:120px;">
+                                🌊 Puerto Plata
+                              </td>
+                              <td style="font-family:Arial,sans-serif; font-size:13px;
+                                color:#5C4444;">
+                                aprox. 1 hora y 30 minutos
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:6px 0;">
+                          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="font-family:Arial,sans-serif; font-size:13px;
+                                font-weight:600; color:#3D2B2B; width:120px;">
+                                🌴 Samaná
+                              </td>
+                              <td style="font-family:Arial,sans-serif; font-size:13px;
+                                color:#5C4444;">
+                                alrededor de 2 horas y 30 minutos
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p style="margin:0; font-family:Arial,sans-serif;
+                      font-size:13px; color:#5C4444; line-height:1.7;">
+                      También es posible utilizar servicios de transporte privado o taxi.
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+
+          <!-- ── Divider ── -->
+          <tr>
+            <td style="padding:32px 48px 0;">
+              <div style="height:1px; background:linear-gradient(to right,
+                transparent, #C4A5B5, transparent);"></div>
+            </td>
+          </tr>
+
+
+          <!-- ══ CONTACTO — WhatsApp ══ -->
+          <tr>
+            <td style="padding:32px 48px 0;">
+
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td width="48" valign="top" style="padding-right:16px;">
+                    <div style="width:48px; height:48px; border-radius:50%;
+                      background-color:#EEF3EC; text-align:center; line-height:48px;
+                      font-size:22px;">
+                      💬
+                    </div>
+                  </td>
+                  <td valign="top">
+                    <h3 style="margin:0 0 8px; font-family:Georgia,'Times New Roman',serif;
+                      font-size:20px; font-weight:400; color:#9B4A2E;">
+                      ¿Tienes alguna duda?
+                    </h3>
+                    <p style="margin:0 0 16px; font-family:Arial,sans-serif;
+                      font-size:13px; color:#5C4444; line-height:1.7;">
+                      Escríbenos por WhatsApp, estaremos encantados de ayudarte
+                      con cualquier detalle del viaje o la celebración.
+                    </p>
+                    <table cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="padding-right:12px;">
+                          <a href="https://wa.me/34601071881"
+                            style="display:inline-block; padding:10px 20px;
+                            background-color:#25D366; color:#ffffff;
+                            font-family:Arial,sans-serif; font-size:13px;
+                            font-weight:600; text-decoration:none;
+                            border-radius:6px; letter-spacing:0.02em;">
+                            💬 Cesar
+                          </a>
+                        </td>
+                        <td>
+                          <a href="https://wa.me/34682641072"
+                            style="display:inline-block; padding:10px 20px;
+                            background-color:#25D366; color:#ffffff;
+                            font-family:Arial,sans-serif; font-size:13px;
+                            font-weight:600; text-decoration:none;
+                            border-radius:6px; letter-spacing:0.02em;">
+                            💬 Lissette
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+
+          <!-- ── Divider ── -->
+          <tr>
+            <td style="padding:32px 48px 0;">
+              <div style="height:1px; background:#EDE4E0;"></div>
+            </td>
+          </tr>
+
+
+          <!-- ══ CUENTA BANCARIA (solo RD) ══ -->
+          <tr>
+            <td style="padding:28px 48px 0;">
+
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                  <td width="48" valign="top" style="padding-right:16px;">
+                    <div style="width:48px; height:48px; border-radius:50%;
+                      background-color:#F5EDE8; text-align:center; line-height:48px;
+                      font-size:22px;">
+                      💳
+                    </div>
+                  </td>
+                  <td valign="top">
+                    <h3 style="margin:0 0 12px; font-family:Georgia,'Times New Roman',serif;
+                      font-size:20px; font-weight:400; color:#9B4A2E;">
+                      Transferencia bancaria
+                    </h3>
+                    <p style="margin:0 0 12px; font-family:Arial,sans-serif;
+                      font-size:13px; color:#5C4444; line-height:1.7;">
+                      Si deseas hacernos un regalo desde República Dominicana,
+                      puedes realizar una transferencia a la siguiente cuenta:
+                    </p>
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                      style="background:#FDF6F2; border-left:3px solid #9B4A2E;
+                      border-radius:0 8px 8px 0;">
+                      <tr>
+                        <td style="padding:16px 20px;">
+                          <p style="margin:0 0 6px; font-family:Arial,sans-serif;
+                            font-size:13px; color:#5C4444; line-height:1.9;">
+                            <strong style="color:#3D2B2B;">Banco:</strong> Banco Popular Dominicano<br/>
+                            <strong style="color:#3D2B2B;">Titular:</strong> Lissette Sánchez<br/>
+                            <strong style="color:#3D2B2B;">Cédula:</strong> 402-2585031-8<br/>
+                            <strong style="color:#3D2B2B;">Cuenta corriente:</strong> 856588066
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+
+          <!-- ══ CIERRE ══ -->
+          <tr>
+            <td align="center" style="padding:32px 48px 48px;">
+
+              <p style="margin:0 0 28px; font-family:Arial,sans-serif;
+                font-size:13px; color:#7A5C5C;">
+                Con todo nuestro amor,
+              </p>
+
+              <p style="margin:0 0 24px; font-family:Georgia,'Times New Roman',serif;
+                font-size:28px; font-weight:400; color:#9B4A2E; letter-spacing:0.05em;">
+                Cesar &amp; Lissette
+              </p>
+
+              <!-- Botón CTA -->
+              <a href="https://www.lissycesarsecasan.com"
+                style="display:inline-block; padding:14px 32px;
+                background-color:#9B4A2E; color:#FAF8F4;
+                font-family:Arial,sans-serif; font-size:13px;
+                letter-spacing:0.12em; text-transform:uppercase;
+                text-decoration:none; border-radius:4px;
+                font-weight:500;">
+                Ver Invitación
+              </a>
+
+            </td>
+          </tr>
+
+          <!-- ══ FOOTER ══ -->
+          <tr>
+            <td align="center"
+              style="background-color:#3D2B2B; padding:24px 40px; border-radius:0 0 12px 12px;">
+              <p style="margin:0 0 4px; font-family:Arial,sans-serif;
+                font-size:11px; color:#C4A5B5; letter-spacing:0.12em;
+                text-transform:uppercase;">
+                13 · III · MMXXVII · La Vega, República Dominicana
+              </p>
+              <p style="margin:0; font-family:Arial,sans-serif;
+                font-size:10px; color:#7A5C5C;">
+                Recibiste este correo porque confirmaste asistencia en
+                <a href="https://www.lissycesarsecasan.com"
+                  style="color:#C4A5B5; text-decoration:none;">
+                  lissycesarsecasan.com
+                </a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!-- /Contenedor principal -->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

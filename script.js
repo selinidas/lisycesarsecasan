@@ -16,9 +16,10 @@ import {
    Rellena estos tres valores después de configurar EmailJS.
    Ver README.md → sección "Configurar EmailJS".
    ============================================================ */
-const EMAILJS_PUBLIC_KEY  = 'SAAmLPQB_I9_7kltt';   /* ← de EmailJS → Account → API Keys */
-const EMAILJS_SERVICE_ID  = 'service_hlonfmp';   /* ← de EmailJS → Email Services */
-const EMAILJS_TEMPLATE_ID = 'template_ctpsni6';  /* ← de EmailJS → Email Templates */
+const EMAILJS_PUBLIC_KEY     = 'SAAmLPQB_I9_7kltt';   /* ← de EmailJS → Account → API Keys */
+const EMAILJS_SERVICE_ID     = 'service_hlonfmp';     /* ← de EmailJS → Email Services */
+const EMAILJS_TEMPLATE_ID    = 'template_ctpsni6';    /* ← plantilla España / otros países */
+const EMAILJS_TEMPLATE_ID_RD = 'XXXXXXXXXXXXXXX';     /* ← plantilla República Dominicana — rellenar */
 
 /* ── Helpers ─────────────────────────────────────────────── */
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
@@ -327,27 +328,13 @@ async function saveRSVP(data) {
 }
 
 async function sendConfirmationEmail(nombre, email, paisOrigen) {
-  /* Para invitados de RD, incluir bloque de cuenta bancaria */
-  const bankInfo = paisOrigen === 'rd'
-    ? `<table cellpadding="0" cellspacing="0" border="0" width="100%"
-        style="margin-top:8px; background:#FDF6F2; border-left:3px solid #9B4A2E; border-radius:0 8px 8px 0;">
-        <tr><td style="padding:16px 20px;">
-          <p style="margin:0 0 6px; font-family:Arial,sans-serif; font-size:13px;
-            font-weight:600; color:#9B4A2E;">💳 Transferencia bancaria (invitados en RD)</p>
-          <p style="margin:0; font-family:Arial,sans-serif; font-size:13px;
-            color:#5C4444; line-height:1.9; white-space:pre-line;">Banco: [NOMBRE DEL BANCO]
-Titular: [NOMBRE DEL TITULAR]
-Número de cuenta: [NÚMERO DE CUENTA]
-Tipo de cuenta: [AHORROS / CORRIENTE]</p>
-        </td></tr>
-      </table>`
-    : '';
+  const templateId = paisOrigen === 'rd' ? EMAILJS_TEMPLATE_ID_RD : EMAILJS_TEMPLATE_ID;
 
   try {
     await emailjs.send(
       EMAILJS_SERVICE_ID,
-      EMAILJS_TEMPLATE_ID,
-      { to_name: nombre, to_email: email, bank_info: bankInfo },
+      templateId,
+      { to_name: nombre, to_email: email },
       { publicKey: EMAILJS_PUBLIC_KEY }   /* formato correcto v4 */
     );
     console.log('Correo de confirmación enviado a', email);
