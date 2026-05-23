@@ -877,8 +877,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initGallery();
   initQR();
   initMusicPlayer();
+  initRDMap();
 
   /* Easter egg en consola */
+
   console.log(
     '%c Wedding v1.0 ',
     'background:#9B4A2E;color:#FAF8F4;font-family:Georgia,serif;font-size:13px;padding:4px 14px;border-radius:4px;'
@@ -888,3 +890,45 @@ document.addEventListener('DOMContentLoaded', () => {
     'color:#C4A5B5;font-family:Georgia,serif;font-size:10px;'
   );
 });
+
+/* ── Mapa República Dominicana (Leaflet) ─────────────────────────── */
+function initRDMap() {
+  const el = document.getElementById('rd-mapa');
+  if (!el || typeof L === 'undefined') return;
+
+  const map = L.map('rd-mapa', { scrollWheelZoom: false, zoomControl: true })
+    .setView([19.05, -70.15], 8);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+    maxZoom: 19
+  }).addTo(map);
+
+  const makeIcon = (color, size) => L.divIcon({
+    className: '',
+    html: `<div style="
+      width:${size}px; height:${size}px; border-radius:50%;
+      background:${color}; border:3px solid #fff;
+      box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2]
+  });
+
+  const weddingIcon = makeIcon('#9B4A2E', 18);
+  const cityIcon    = makeIcon('#8FAF8A', 13);
+
+  const lugares = [
+    { coords: [19.2217, -70.5292], label: '📍 La Vega — La boda', icon: weddingIcon },
+    { coords: [19.4517, -70.6970], label: 'Santiago',     icon: cityIcon },
+    { coords: [19.7934, -70.6878], label: 'Puerto Plata', icon: cityIcon },
+    { coords: [19.1186, -70.6333], label: 'Jarabacoa',    icon: cityIcon },
+    { coords: [19.2064, -69.3364], label: 'Samaná',       icon: cityIcon },
+  ];
+
+  lugares.forEach(({ coords, label, icon }) => {
+    L.marker(coords, { icon })
+      .bindTooltip(label, { permanent: true, direction: 'top', offset: [0, -10],
+        className: 'rd-tooltip' })
+      .addTo(map);
+  });
+}
