@@ -933,6 +933,11 @@ textarea {
   flex-wrap: wrap;
 }
 
+.form__radio-group--col {
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
 .form__radio-label {
   display: flex;
   align-items: center;

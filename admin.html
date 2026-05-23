@@ -87,9 +87,13 @@
     /* ── Stats ── */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
       margin-bottom: 2rem;
+    }
+
+    @media (min-width: 700px) {
+      .stats-grid { grid-template-columns: repeat(6, 1fr); }
     }
 
     .stat-card {
@@ -213,8 +217,16 @@
           <div class="stat-card__label">Respuestas</div>
         </div>
         <div class="stat-card stat-card--confirm">
-          <div class="stat-card__num" id="stat-confirmed">—</div>
-          <div class="stat-card__label">Confirman</div>
+          <div class="stat-card__num" id="stat-ambas">—</div>
+          <div class="stat-card__label">Las dos bodas</div>
+        </div>
+        <div class="stat-card" style="border-top:3px solid #C4A5B5;">
+          <div class="stat-card__num" id="stat-civil">—</div>
+          <div class="stat-card__label">Solo Lanzarote</div>
+        </div>
+        <div class="stat-card" style="border-top:3px solid #8FAF8A;">
+          <div class="stat-card__num" id="stat-rd">—</div>
+          <div class="stat-card__label">Solo La Vega</div>
         </div>
         <div class="stat-card stat-card--decline">
           <div class="stat-card__num" id="stat-declined">—</div>
@@ -222,18 +234,19 @@
         </div>
         <div class="stat-card stat-card--personas">
           <div class="stat-card__num" id="stat-personas">—</div>
-          <div class="stat-card__label">Personas totales</div>
+          <div class="stat-card__label">Personas en La Vega</div>
         </div>
       </div>
 
       <!-- Filtros -->
       <div class="filters">
         <button class="filter-btn active" data-filter="all">Todos</button>
-        <button class="filter-btn" data-filter="confirmed">Confirman ✓</button>
+        <button class="filter-btn" data-filter="ambas">Las dos 💍🌴</button>
+        <button class="filter-btn" data-filter="civil">Solo Lanzarote 💍</button>
+        <button class="filter-btn" data-filter="rd">Solo La Vega 🌴</button>
         <button class="filter-btn" data-filter="declined">No asisten ✗</button>
-        <button class="filter-btn" data-filter="rd">🇩🇴 RD</button>
-        <button class="filter-btn" data-filter="es">🇪🇸 España</button>
-        <button class="filter-btn" data-filter="other">🌍 Otros</button>
+        <button class="filter-btn" data-filter="pais-rd">🇩🇴 RD</button>
+        <button class="filter-btn" data-filter="pais-es">🇪🇸 España</button>
       </div>
 
       <!-- Tabla -->
@@ -337,23 +350,29 @@
 
     /* ── Render ── */
     function render() {
-      const confirmed = allRsvps.filter(r => r.asistencia === 'si');
-      const declined  = allRsvps.filter(r => r.asistencia === 'no');
+      const ambas    = allRsvps.filter(r => r.asistencia === 'ambas');
+      const civil    = allRsvps.filter(r => r.asistencia === 'civil');
+      const rdOnly   = allRsvps.filter(r => r.asistencia === 'rd');
+      const declined = allRsvps.filter(r => r.asistencia === 'no');
 
-      /* Personas totales: confirmados + sus acompañantes */
-      const totalPersonas = confirmed.reduce((acc, r) => acc + 1 + (r.acompanante ? 1 : 0), 0);
+      /* Personas en La Vega: ambas + solo RD */
+      const enLaVega = [...ambas, ...rdOnly];
+      const totalPersonas = enLaVega.reduce((acc, r) => acc + 1 + (r.acompanante ? 1 : 0), 0);
 
-      document.getElementById('stat-total').textContent     = allRsvps.length;
-      document.getElementById('stat-confirmed').textContent = confirmed.length;
-      document.getElementById('stat-declined').textContent  = declined.length;
-      document.getElementById('stat-personas').textContent  = totalPersonas;
+      document.getElementById('stat-total').textContent    = allRsvps.length;
+      document.getElementById('stat-ambas').textContent    = ambas.length;
+      document.getElementById('stat-civil').textContent    = civil.length;
+      document.getElementById('stat-rd').textContent       = rdOnly.length;
+      document.getElementById('stat-declined').textContent = declined.length;
+      document.getElementById('stat-personas').textContent = totalPersonas;
 
       let filtrados = allRsvps;
-      if (activeFilter === 'confirmed') filtrados = confirmed;
-      if (activeFilter === 'declined')  filtrados = declined;
-      if (activeFilter === 'rd')        filtrados = allRsvps.filter(r => r.paisOrigen === 'rd');
-      if (activeFilter === 'es')        filtrados = allRsvps.filter(r => r.paisOrigen === 'es');
-      if (activeFilter === 'other')     filtrados = allRsvps.filter(r => r.paisOrigen === 'other');
+      if (activeFilter === 'ambas')    filtrados = ambas;
+      if (activeFilter === 'civil')    filtrados = civil;
+      if (activeFilter === 'rd')       filtrados = rdOnly;
+      if (activeFilter === 'declined') filtrados = declined;
+      if (activeFilter === 'pais-rd')  filtrados = allRsvps.filter(r => r.paisOrigen === 'rd');
+      if (activeFilter === 'pais-es')  filtrados = allRsvps.filter(r => r.paisOrigen === 'es');
 
       const list = document.getElementById('guest-list');
 
@@ -367,8 +386,10 @@
       }
 
       const chipMap = {
-        si: `<span class="status-chip status-chip--confirmed">✓ Confirma</span>`,
-        no: `<span class="status-chip status-chip--declined">✗ No asiste</span>`,
+        ambas:  `<span class="status-chip status-chip--confirmed">💍🌴 Las dos</span>`,
+        civil:  `<span class="status-chip" style="background:#ede6f0;color:#6a3a7a;">💍 Lanzarote</span>`,
+        rd:     `<span class="status-chip" style="background:#e8f0e8;color:#3a7a3a;">🌴 La Vega</span>`,
+        no:     `<span class="status-chip status-chip--declined">✗ No asiste</span>`,
       };
 
       const paisLabel = { rd: '🇩🇴 RD', es: '🇪🇸 España', other: '🌍 Otro' };
