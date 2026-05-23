@@ -740,6 +740,13 @@ textarea {
   align-items: start;
 }
 
+.ubicacion__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-6);
+}
+
 /* Foto de la villa */
 .ubicacion__photo {
   border-radius: var(--r-lg);
