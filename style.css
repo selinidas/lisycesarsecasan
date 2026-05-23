@@ -1483,6 +1483,17 @@ textarea {
   height: 420px;
 }
 
+.galeria__single {
+  display: flex;
+  justify-content: center;
+}
+
+.galeria__item--single {
+  width: 100%;
+  max-width: 540px;
+  height: 600px;
+}
+
 .galeria__bottom {
   display: grid;
   grid-template-columns: 1fr 1fr;
