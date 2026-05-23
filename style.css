@@ -389,11 +389,26 @@ textarea {
   justify-content: center;
   text-align: center;
   padding: var(--sp-16) var(--sp-4);
-  background-color: var(--off-white);
-  background-image: url('botanica-bg.svg');
-  background-size: 600px 600px;
-  background-repeat: repeat;
+  background-color: var(--ink);
+  background-image: url('fotos/pedida1.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   overflow: hidden;
+}
+
+/* Capa oscura para que el texto sea legible */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 14, 14, 0.52);
+  z-index: 0;
+}
+
+.hero > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* Orbes suaves de fondo */
@@ -494,7 +509,7 @@ textarea {
   font-weight: 400;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--mauve);
+  color: var(--mauve-light);
   margin-bottom: var(--sp-4);
 }
 
@@ -503,7 +518,7 @@ textarea {
   font-size: clamp(4.5rem, 13vw, 9.5rem);
   font-weight: 300;
   line-height: 0.92;
-  color: var(--ink);
+  color: var(--off-white);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -537,7 +552,7 @@ textarea {
   display: block;
   width: clamp(40px, 8vw, 80px);
   height: 1px;
-  background-color: var(--mauve-light);
+  background-color: rgba(255,255,255,0.35);
 }
 
 .hero__ornament svg {
@@ -553,7 +568,7 @@ textarea {
   font-size: clamp(1.1rem, 2.5vw, 1.4rem);
   font-weight: 300;
   font-style: italic;
-  color: var(--ink-mid);
+  color: rgba(255,255,255,0.82);
   margin-bottom: var(--sp-4);
   line-height: 1.5;
 }
@@ -568,12 +583,12 @@ textarea {
   font-weight: 400;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--off-white);
   margin-bottom: var(--sp-1);
 }
 
 .hero__date-dot {
-  color: var(--mauve);
+  color: var(--mauve-light);
   font-size: 1.2em;
   line-height: 1;
 }
@@ -582,7 +597,7 @@ textarea {
   font-size: 0.82rem;
   font-weight: 300;
   letter-spacing: 0.12em;
-  color: var(--ink-light);
+  color: rgba(255,255,255,0.65);
   margin-bottom: var(--sp-6);
 }
 
