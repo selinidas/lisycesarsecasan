@@ -27,461 +27,167 @@
       --shadow:     0 2px 16px rgba(60,30,20,.08);
     }
 
-    body {
-      font-family: var(--font-sans);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
+    body { font-family: var(--font-sans); background: var(--bg); color: var(--text); min-height: 100vh; }
 
     /* ── Login ── */
     #login-screen {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 1rem;
     }
 
     .login-card {
-      background: var(--off-white);
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      padding: 3rem 2.5rem;
-      width: 100%;
-      max-width: 380px;
-      text-align: center;
+      background: var(--off-white); border-radius: 16px; box-shadow: var(--shadow);
+      padding: 3rem 2.5rem; width: 100%; max-width: 380px; text-align: center;
     }
 
-    .login-card h1 {
-      font-family: var(--font-serif);
-      font-size: 2rem;
-      font-weight: 400;
-      color: var(--rust);
-      margin-bottom: .25rem;
-    }
-
-    .login-card p {
-      font-size: .85rem;
-      color: var(--text-muted);
-      margin-bottom: 2rem;
-      letter-spacing: .05em;
-    }
+    .login-card h1 { font-family: var(--font-serif); font-size: 2rem; font-weight: 400; color: var(--rust); margin-bottom: .25rem; }
+    .login-card > p { font-size: .85rem; color: var(--text-muted); margin-bottom: 2rem; letter-spacing: .05em; }
 
     .login-card input {
-      width: 100%;
-      padding: .75rem 1rem;
-      border: 1.5px solid var(--border);
-      border-radius: var(--r);
-      font-family: var(--font-sans);
-      font-size: .95rem;
-      background: white;
-      color: var(--text);
-      outline: none;
-      transition: border-color .2s;
-      margin-bottom: 1rem;
-      text-align: center;
-      letter-spacing: .1em;
+      width: 100%; padding: .75rem 1rem; border: 1.5px solid var(--border); border-radius: var(--r);
+      font-family: var(--font-sans); font-size: .95rem; background: white; color: var(--text);
+      outline: none; transition: border-color .2s; margin-bottom: 1rem;
+      text-align: center; letter-spacing: .1em;
     }
-
     .login-card input:focus { border-color: var(--rust); }
 
     .login-card button {
-      width: 100%;
-      padding: .85rem;
-      background: var(--rust);
-      color: var(--off-white);
-      border: none;
-      border-radius: var(--r);
-      font-family: var(--font-sans);
-      font-size: .85rem;
-      font-weight: 500;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background .2s;
+      width: 100%; padding: .85rem; background: var(--rust); color: var(--off-white);
+      border: none; border-radius: var(--r); font-family: var(--font-sans); font-size: .85rem;
+      font-weight: 500; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: background .2s;
     }
-
     .login-card button:hover { background: var(--rust-light); }
 
-    .login-error {
-      margin-top: .75rem;
-      font-size: .82rem;
-      color: #c0392b;
-      display: none;
-    }
+    .login-error { margin-top: .75rem; font-size: .82rem; color: #c0392b; display: none; }
 
     /* ── Dashboard ── */
     #dashboard { display: none; }
 
     .admin-header {
-      background: var(--off-white);
-      border-bottom: 1px solid var(--border);
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      background: var(--off-white); border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; position: sticky; top: 0; z-index: 10;
     }
 
-    .admin-header__brand {
-      font-family: var(--font-serif);
-      font-size: 1.4rem;
-      color: var(--rust);
-    }
-
+    .admin-header__brand { font-family: var(--font-serif); font-size: 1.4rem; color: var(--rust); }
     .admin-header__brand span {
-      font-family: var(--font-sans);
-      font-size: .7rem;
-      color: var(--text-muted);
-      font-weight: 400;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      display: block;
-      margin-top: -2px;
+      font-family: var(--font-sans); font-size: .7rem; color: var(--text-muted);
+      font-weight: 400; letter-spacing: .1em; text-transform: uppercase; display: block; margin-top: -2px;
     }
 
     .btn-logout {
-      background: none;
-      border: 1.5px solid var(--border);
-      padding: .4rem .9rem;
-      border-radius: 6px;
-      font-family: var(--font-sans);
-      font-size: .78rem;
-      color: var(--text-muted);
-      cursor: pointer;
-      letter-spacing: .06em;
-      transition: all .2s;
+      background: none; border: 1.5px solid var(--border); padding: .4rem .9rem;
+      border-radius: 6px; font-family: var(--font-sans); font-size: .78rem; color: var(--text-muted);
+      cursor: pointer; letter-spacing: .06em; transition: all .2s;
     }
-
     .btn-logout:hover { border-color: var(--rust); color: var(--rust); }
 
-    .admin-main {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 4rem;
-    }
-
-    /* ── Lado badges ── */
-    .lado-lis {
-      display: inline-block;
-      padding: .15rem .55rem;
-      border-radius: 20px;
-      font-size: .68rem;
-      font-weight: 600;
-      background: #e8f0e8;
-      color: #3a7a3a;
-      letter-spacing: .03em;
-    }
-
-    .lado-cesar {
-      display: inline-block;
-      padding: .15rem .55rem;
-      border-radius: 20px;
-      font-size: .68rem;
-      font-weight: 600;
-      background: #ede6f0;
-      color: #6a3a7a;
-      letter-spacing: .03em;
-    }
+    .admin-main { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
 
     /* ── Stats ── */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    .stats-grid--side {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
       margin-bottom: 2rem;
     }
 
     .stat-card {
-      background: var(--off-white);
-      border-radius: var(--r);
-      padding: 1.25rem 1rem;
-      text-align: center;
-      box-shadow: var(--shadow);
-      border-top: 3px solid var(--border);
+      background: var(--off-white); border-radius: var(--r); padding: 1.25rem 1rem;
+      text-align: center; box-shadow: var(--shadow); border-top: 3px solid var(--border);
     }
-
     .stat-card--total   { border-top-color: var(--mauve); }
     .stat-card--confirm { border-top-color: var(--sage); }
     .stat-card--decline { border-top-color: #c0392b; }
-    .stat-card--pending { border-top-color: var(--peach); }
+    .stat-card--personas { border-top-color: var(--peach); }
 
-    .stat-card__num {
-      font-family: var(--font-serif);
-      font-size: 2.4rem;
-      font-weight: 500;
-      color: var(--text);
-      line-height: 1;
-    }
-
-    .stat-card__label {
-      font-size: .72rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      margin-top: .35rem;
-    }
-
-    /* ── Add guest ── */
-    .add-guest-card {
-      background: var(--off-white);
-      border-radius: var(--r);
-      padding: 1.5rem;
-      box-shadow: var(--shadow);
-      margin-bottom: 1.5rem;
-    }
-
-    .add-guest-card h2 {
-      font-family: var(--font-serif);
-      font-size: 1.2rem;
-      font-weight: 400;
-      color: var(--text);
-      margin-bottom: 1rem;
-    }
-
-    .add-guest-form {
-      display: flex;
-      gap: .75rem;
-      flex-wrap: wrap;
-    }
-
-    .add-guest-form input {
-      flex: 1;
-      min-width: 180px;
-      padding: .65rem 1rem;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-family: var(--font-sans);
-      font-size: .9rem;
-      background: white;
-      color: var(--text);
-      outline: none;
-      transition: border-color .2s;
-    }
-
-    .add-guest-form input:focus { border-color: var(--rust); }
-
-    .add-guest-form input::placeholder { color: #bbb; }
-
-    .btn-add {
-      padding: .65rem 1.5rem;
-      background: var(--rust);
-      color: var(--off-white);
-      border: none;
-      border-radius: 8px;
-      font-family: var(--font-sans);
-      font-size: .82rem;
-      font-weight: 500;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background .2s;
-      white-space: nowrap;
-    }
-
-    .btn-add:hover { background: var(--rust-light); }
-    .btn-add:disabled { opacity: .5; cursor: not-allowed; }
+    .stat-card__num { font-family: var(--font-serif); font-size: 2.4rem; font-weight: 500; color: var(--text); line-height: 1; }
+    .stat-card__label { font-size: .72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .1em; margin-top: .35rem; }
 
     /* ── Filtros ── */
-    .filters {
-      display: flex;
-      gap: .5rem;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
+    .filters { display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap; }
 
     .filter-btn {
-      padding: .4rem .9rem;
-      border-radius: 20px;
-      border: 1.5px solid var(--border);
-      background: var(--off-white);
-      font-family: var(--font-sans);
-      font-size: .78rem;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all .2s;
-      letter-spacing: .04em;
+      padding: .4rem .9rem; border-radius: 20px; border: 1.5px solid var(--border);
+      background: var(--off-white); font-family: var(--font-sans); font-size: .78rem;
+      color: var(--text-muted); cursor: pointer; transition: all .2s; letter-spacing: .04em;
     }
+    .filter-btn.active, .filter-btn:hover { background: var(--rust); border-color: var(--rust); color: white; }
 
-    .filter-btn.active, .filter-btn:hover {
-      background: var(--rust);
-      border-color: var(--rust);
-      color: white;
-    }
-
-    /* ── Lista de invitados ── */
-    .guest-table-card {
-      background: var(--off-white);
-      border-radius: var(--r);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
+    /* ── Tabla ── */
+    .guest-table-card { background: var(--off-white); border-radius: var(--r); box-shadow: var(--shadow); overflow: hidden; }
 
     .guest-table-header {
       display: grid;
-      grid-template-columns: 1fr 120px 100px 60px 36px;
-      gap: 1rem;
-      padding: .75rem 1.25rem;
-      background: var(--bg);
-      border-bottom: 1px solid var(--border);
-      font-size: .72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      color: var(--text-muted);
+      grid-template-columns: 2fr 90px 100px 130px 60px;
+      gap: 1rem; padding: .75rem 1.25rem;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      font-size: .72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--text-muted);
     }
 
     .guest-list { list-style: none; }
 
     .guest-row {
       display: grid;
-      grid-template-columns: 1fr 120px 100px 60px 36px;
-      gap: 1rem;
-      align-items: center;
-      padding: .85rem 1.25rem;
-      border-bottom: 1px solid var(--border);
-      transition: background .15s;
+      grid-template-columns: 2fr 90px 100px 130px 60px;
+      gap: 1rem; align-items: start;
+      padding: .9rem 1.25rem; border-bottom: 1px solid var(--border);
+      transition: background .15s; cursor: pointer;
       animation: fadeIn .3s ease both;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     .guest-row:last-child { border-bottom: none; }
     .guest-row:hover { background: #fdf6f2; }
 
-    .guest-name {
-      font-size: .92rem;
-      font-weight: 500;
-      color: var(--text);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+    .guest-name { font-size: .92rem; font-weight: 500; color: var(--text); }
+    .guest-email { font-size: .75rem; color: var(--text-muted); margin-top: 2px; }
 
-    .guest-email {
-      font-size: .75rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .guest-detail {
+      grid-column: 1 / -1;
+      background: #fdf6f2; border-radius: 8px;
+      padding: .75rem 1rem; margin-top: .25rem;
+      font-size: .8rem; color: var(--text-muted);
+      display: none; flex-direction: column; gap: .4rem;
+      border-left: 3px solid var(--mauve);
     }
+    .guest-row.expanded .guest-detail { display: flex; }
 
     .status-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: .3rem;
-      padding: .25rem .7rem;
-      border-radius: 20px;
-      font-size: .72rem;
-      font-weight: 600;
-      letter-spacing: .04em;
-      white-space: nowrap;
+      display: inline-flex; align-items: center; gap: .3rem;
+      padding: .25rem .7rem; border-radius: 20px;
+      font-size: .72rem; font-weight: 600; letter-spacing: .04em; white-space: nowrap;
+    }
+    .status-chip--confirmed { background: #e8f5e9; color: #2e7d32; }
+    .status-chip--declined  { background: #fce4ec; color: #c62828; }
+
+    .pais-chip {
+      font-size: .78rem; color: var(--text-muted);
     }
 
-    .status-chip--confirmed {
-      background: #e8f5e9;
-      color: #2e7d32;
-    }
-
-    .status-chip--declined {
-      background: #fce4ec;
-      color: #c62828;
-    }
-
-    .status-chip--pending {
-      background: #fff3e0;
-      color: #e65100;
-    }
-
-    .guest-companions {
-      font-size: .85rem;
-      color: var(--text-muted);
-      text-align: center;
-    }
-
-    .btn-delete {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #ccc;
-      font-size: 1.1rem;
-      line-height: 1;
-      padding: .2rem;
-      border-radius: 4px;
-      transition: color .2s;
-    }
-
-    .btn-delete:hover { color: #c0392b; }
-
-    .guest-message {
-      grid-column: 1 / -1;
-      font-size: .78rem;
-      color: var(--text-muted);
-      font-style: italic;
-      padding: 0 0 .5rem;
-      display: none;
-    }
-
-    .guest-row:hover .guest-message { display: block; }
-
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--text-muted);
-      font-size: .9rem;
-    }
-
-    .loading-state {
-      text-align: center;
-      padding: 2rem;
-      color: var(--text-muted);
-      font-size: .85rem;
-    }
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); font-size: .9rem; }
+    .loading-state { text-align: center; padding: 2rem; color: var(--text-muted); font-size: .85rem; }
 
     /* ── Responsive ── */
-    @media (max-width: 640px) {
+    @media (max-width: 700px) {
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
-
       .guest-table-header { display: none; }
-
-      .guest-row {
-        grid-template-columns: 1fr auto 36px;
-        grid-template-rows: auto auto;
-      }
-
-      .guest-companions { display: none; }
-
+      .guest-row { grid-template-columns: 1fr auto; }
+      .guest-row > :nth-child(3),
+      .guest-row > :nth-child(4),
+      .guest-row > :nth-child(5) { display: none; }
       .admin-header { padding: 1rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ── Pantalla de login ── -->
+  <!-- ── Login ── -->
   <div id="login-screen">
     <div class="login-card">
       <h1>C &amp; L</h1>
       <p>Panel de administración · Boda 2027</p>
-      <input
-        type="password"
-        id="login-input"
-        placeholder="Contraseña"
-        autocomplete="current-password" />
+      <input type="password" id="login-input" placeholder="Contraseña" autocomplete="current-password" />
       <button id="login-btn">Entrar</button>
       <p class="login-error" id="login-error">Contraseña incorrecta</p>
     </div>
@@ -493,89 +199,54 @@
     <header class="admin-header">
       <div class="admin-header__brand">
         Cesar &amp; Lissette
-        <span>Panel de invitados · 17.04.2027</span>
+        <span>Respuestas recibidas · 13.03.2027</span>
       </div>
       <button class="btn-logout" id="logout-btn">Cerrar sesión</button>
     </header>
 
     <main class="admin-main">
 
-      <!-- Stats generales -->
+      <!-- Stats -->
       <div class="stats-grid">
         <div class="stat-card stat-card--total">
           <div class="stat-card__num" id="stat-total">—</div>
-          <div class="stat-card__label">Invitados</div>
+          <div class="stat-card__label">Respuestas</div>
         </div>
         <div class="stat-card stat-card--confirm">
           <div class="stat-card__num" id="stat-confirmed">—</div>
-          <div class="stat-card__label">Confirmados</div>
+          <div class="stat-card__label">Confirman</div>
         </div>
         <div class="stat-card stat-card--decline">
           <div class="stat-card__num" id="stat-declined">—</div>
           <div class="stat-card__label">No asisten</div>
         </div>
-        <div class="stat-card stat-card--pending">
-          <div class="stat-card__num" id="stat-pending">—</div>
-          <div class="stat-card__label">Sin respuesta</div>
-        </div>
-      </div>
-
-      <!-- Stats por lado -->
-      <div class="stats-grid--side">
-        <div class="stat-card" style="border-top:3px solid #8FAF8A;">
-          <div class="stat-card__num" style="font-size:1.6rem;" id="stat-lis">—</div>
-          <div class="stat-card__label">Lado <span class="lado-lis">Lissette</span></div>
-        </div>
-        <div class="stat-card" style="border-top:3px solid #C4A5B5;">
-          <div class="stat-card__num" style="font-size:1.6rem;" id="stat-cesar">—</div>
-          <div class="stat-card__label">Lado <span class="lado-cesar">Cesar</span></div>
-        </div>
-      </div>
-
-      <!-- Añadir invitado -->
-      <div class="add-guest-card">
-        <h2>Añadir invitado</h2>
-        <div class="add-guest-form">
-          <input
-            type="text"
-            id="input-nombre"
-            placeholder="Nombre completo"
-            autocomplete="off" />
-          <input
-            type="email"
-            id="input-email"
-            placeholder="Correo (opcional)"
-            autocomplete="off" />
-          <select id="input-lado" style="padding:.65rem 1rem;border:1.5px solid var(--border);border-radius:8px;font-family:var(--font-sans);font-size:.9rem;background:white;color:var(--text);outline:none;cursor:pointer;">
-            <option value="lissette">Lado Lissette</option>
-            <option value="cesar">Lado Cesar</option>
-          </select>
-          <button class="btn-add" id="btn-add">+ Añadir</button>
+        <div class="stat-card stat-card--personas">
+          <div class="stat-card__num" id="stat-personas">—</div>
+          <div class="stat-card__label">Personas totales</div>
         </div>
       </div>
 
       <!-- Filtros -->
       <div class="filters">
         <button class="filter-btn active" data-filter="all">Todos</button>
-        <button class="filter-btn" data-filter="lissette">Lissette</button>
-        <button class="filter-btn" data-filter="cesar">Cesar</button>
-        <button class="filter-btn" data-filter="confirmed">Confirmados ✓</button>
+        <button class="filter-btn" data-filter="confirmed">Confirman ✓</button>
         <button class="filter-btn" data-filter="declined">No asisten ✗</button>
-        <button class="filter-btn" data-filter="pending">Sin respuesta ·</button>
+        <button class="filter-btn" data-filter="rd">🇩🇴 RD</button>
+        <button class="filter-btn" data-filter="es">🇪🇸 España</button>
+        <button class="filter-btn" data-filter="other">🌍 Otros</button>
       </div>
 
       <!-- Tabla -->
       <div class="guest-table-card">
         <div class="guest-table-header">
-          <div>Nombre</div>
+          <div>Nombre / Correo</div>
+          <div>País</div>
           <div>Estado</div>
-          <div>Acompañantes</div>
-          <div></div>
-          <div></div>
-          <!-- la columna de acompañantes mostrará nombres al hacer hover -->
+          <div>Acompañante</div>
+          <div>Niños</div>
         </div>
         <ul class="guest-list" id="guest-list">
-          <li class="loading-state">Cargando invitados…</li>
+          <li class="loading-state">Cargando respuestas…</li>
         </ul>
       </div>
 
@@ -586,11 +257,9 @@
     import { initializeApp } from
       'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
     import {
-      getFirestore, collection, addDoc, deleteDoc,
-      doc, onSnapshot, query, orderBy, serverTimestamp,
+      getFirestore, collection, onSnapshot, query, orderBy,
     } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
 
-    /* ── Config Firebase (igual que firebase.js) ── */
     const app = initializeApp({
       apiKey:            'AIzaSyATR-1uUqpJFZAG9OPOjxYas7DjvEEVRCo',
       authDomain:        'boda-cesar-lissette.firebaseapp.com',
@@ -602,15 +271,12 @@
     });
     const db = getFirestore(app);
 
-    /* ── Contraseña ── */
     const PASSWORD = 'boda2027';
 
-    /* ── Estado ── */
-    let allInvitados = [];   /* lista de invitados definida por ti */
-    let allRsvps     = [];   /* RSVPs recibidos del formulario */
+    let allRsvps     = [];
     let activeFilter = 'all';
 
-    /* ══ LOGIN ══ */
+    /* ── Login ── */
     const loginScreen = document.getElementById('login-screen');
     const dashboard   = document.getElementById('dashboard');
     const loginInput  = document.getElementById('login-input');
@@ -618,7 +284,6 @@
     const loginError  = document.getElementById('login-error');
     const logoutBtn   = document.getElementById('logout-btn');
 
-    /* Sesión simple con sessionStorage */
     if (sessionStorage.getItem('admin_auth') === 'ok') showDashboard();
 
     loginBtn.addEventListener('click', tryLogin);
@@ -649,20 +314,10 @@
       initData();
     }
 
-    /* ══ DATOS ══ */
+    /* ── Datos en tiempo real ── */
     function initData() {
-      /* Escuchar invitados en tiempo real */
       onSnapshot(
-        query(collection(db, 'invitados'), orderBy('timestamp', 'asc')),
-        snap => {
-          allInvitados = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          render();
-        }
-      );
-
-      /* Escuchar RSVPs en tiempo real */
-      onSnapshot(
-        query(collection(db, 'rsvps'), orderBy('timestamp', 'asc')),
+        query(collection(db, 'rsvps'), orderBy('timestamp', 'desc')),
         snap => {
           allRsvps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
           render();
@@ -670,43 +325,7 @@
       );
     }
 
-    /* ══ AÑADIR INVITADO ══ */
-    const btnAdd      = document.getElementById('btn-add');
-    const inputNombre = document.getElementById('input-nombre');
-    const inputEmail  = document.getElementById('input-email');
-    const inputLado   = document.getElementById('input-lado');
-
-    btnAdd.addEventListener('click', addGuest);
-    inputNombre.addEventListener('keydown', e => { if (e.key === 'Enter') addGuest(); });
-
-    async function addGuest() {
-      const nombre = inputNombre.value.trim();
-      if (!nombre) { inputNombre.focus(); return; }
-
-      btnAdd.disabled = true;
-      try {
-        await addDoc(collection(db, 'invitados'), {
-          nombre,
-          email:     inputEmail.value.trim() || null,
-          lado:      inputLado.value,
-          timestamp: serverTimestamp(),
-        });
-        inputNombre.value = '';
-        inputEmail.value  = '';
-        inputNombre.focus();
-      } catch (err) {
-        console.error('Error al añadir invitado:', err);
-      }
-      btnAdd.disabled = false;
-    }
-
-    /* ══ BORRAR INVITADO ══ */
-    async function deleteGuest(id) {
-      if (!confirm('¿Eliminar este invitado de la lista?')) return;
-      await deleteDoc(doc(db, 'invitados', id));
-    }
-
-    /* ══ FILTROS ══ */
+    /* ── Filtros ── */
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -716,120 +335,78 @@
       });
     });
 
-    /* ══ RENDER ══ */
-    function getStatus(invitado) {
-      const normalizar = s =>
-        s?.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim() || '';
-
-      const nombreInv = normalizar(invitado.nombre);
-      /* Primer nombre real (salta títulos como "tia", "tio") */
-      const titulos   = new Set(['tia', 'tio', 'don', 'dona']);
-      const palabras  = nombreInv.split(/\s+/).filter(p => !titulos.has(p));
-      const primerInv = palabras[0] || nombreInv.split(/\s+/)[0];
-
-      const rsvp = allRsvps.find(r => {
-        const nombreRsvp = normalizar(r.nombre);
-        const primerRsvp = nombreRsvp.split(/\s+/)[0];
-
-        return (
-          nombreRsvp === nombreInv                          /* exacto */
-          || nombreRsvp.includes(nombreInv)                /* RSVP contiene el nombre de la lista */
-          || nombreInv.includes(nombreRsvp)                /* lista contiene el nombre del RSVP */
-          || (primerInv.length >= 3 && primerRsvp === primerInv) /* primer nombre coincide */
-        );
-      });
-
-      if (!rsvp) return { estado: 'pending', rsvp: null };
-      return { estado: rsvp.asistencia === 'si' ? 'confirmed' : 'declined', rsvp };
-    }
-
+    /* ── Render ── */
     function render() {
-      const list = document.getElementById('guest-list');
+      const confirmed = allRsvps.filter(r => r.asistencia === 'si');
+      const declined  = allRsvps.filter(r => r.asistencia === 'no');
 
-      /* Calcular stats sobre TODOS los invitados */
-      const todos      = allInvitados.map(inv => ({ inv, ...getStatus(inv) }));
-      const confirmed  = todos.filter(x => x.estado === 'confirmed');
-      const declined   = todos.filter(x => x.estado === 'declined');
-      const pending    = todos.filter(x => x.estado === 'pending');
-      const ladoLis    = todos.filter(x => x.inv.lado === 'lissette');
-      const ladoCesar  = todos.filter(x => x.inv.lado === 'cesar');
+      /* Personas totales: confirmados + sus acompañantes */
+      const totalPersonas = confirmed.reduce((acc, r) => acc + 1 + (r.acompanante ? 1 : 0), 0);
 
-      document.getElementById('stat-total').textContent     = todos.length;
+      document.getElementById('stat-total').textContent     = allRsvps.length;
       document.getElementById('stat-confirmed').textContent = confirmed.length;
       document.getElementById('stat-declined').textContent  = declined.length;
-      document.getElementById('stat-pending').textContent   = pending.length;
-      document.getElementById('stat-lis').textContent       = ladoLis.length;
-      document.getElementById('stat-cesar').textContent     = ladoCesar.length;
+      document.getElementById('stat-personas').textContent  = totalPersonas;
 
-      /* Aplicar filtro */
-      let filtrados = todos;
+      let filtrados = allRsvps;
       if (activeFilter === 'confirmed') filtrados = confirmed;
       if (activeFilter === 'declined')  filtrados = declined;
-      if (activeFilter === 'pending')   filtrados = pending;
-      if (activeFilter === 'lissette')  filtrados = ladoLis;
-      if (activeFilter === 'cesar')     filtrados = ladoCesar;
+      if (activeFilter === 'rd')        filtrados = allRsvps.filter(r => r.paisOrigen === 'rd');
+      if (activeFilter === 'es')        filtrados = allRsvps.filter(r => r.paisOrigen === 'es');
+      if (activeFilter === 'other')     filtrados = allRsvps.filter(r => r.paisOrigen === 'other');
+
+      const list = document.getElementById('guest-list');
 
       if (!filtrados.length) {
-        list.innerHTML = `<li class="empty-state">
-          ${ allInvitados.length === 0
-            ? 'Añade tu primer invitado arriba ↑'
-            : 'No hay invitados en esta categoría' }
-        </li>`;
+        list.innerHTML = `<li class="empty-state">${
+          allRsvps.length === 0
+            ? 'Aún no hay respuestas. ¡Pronto llegarán! ✉️'
+            : 'No hay respuestas en esta categoría.'
+        }</li>`;
         return;
       }
 
       const chipMap = {
-        confirmed: `<span class="status-chip status-chip--confirmed">✓ Confirmado</span>`,
-        declined:  `<span class="status-chip status-chip--declined">✗ No asiste</span>`,
-        pending:   `<span class="status-chip status-chip--pending">· Pendiente</span>`,
+        si: `<span class="status-chip status-chip--confirmed">✓ Confirma</span>`,
+        no: `<span class="status-chip status-chip--declined">✗ No asiste</span>`,
       };
 
-      const ladoBadge = lado => lado === 'lissette'
-        ? `<span class="lado-lis">Lis</span>`
-        : lado === 'cesar'
-          ? `<span class="lado-cesar">Cesar</span>`
-          : '';
+      const paisLabel = { rd: '🇩🇴 RD', es: '🇪🇸 España', other: '🌍 Otro' };
 
-      list.innerHTML = filtrados.map(({ inv, estado, rsvp }) => `
-        <li class="guest-row">
-          <div>
-            <div class="guest-name" style="display:flex;align-items:center;gap:.4rem;">
-              ${escHtml(inv.nombre)}
-              ${ladoBadge(inv.lado)}
-            </div>
-            ${inv.nota ? `<div class="guest-email">${escHtml(inv.nota)}</div>` : ''}
-            ${inv.email ? `<div class="guest-email">${escHtml(inv.email)}</div>` : ''}
-            ${rsvp?.email && !inv.email ? `<div class="guest-email">${escHtml(rsvp.email)}</div>` : ''}
-          </div>
-          <div>${chipMap[estado]}</div>
-          <div class="guest-companions">
-            ${ rsvp?.acompanantesNombres?.length
-              ? `+${rsvp.acompanantesNombres.length}`
-              : rsvp?.acompanantes > 0 ? `+${rsvp.acompanantes}` : '—' }
-          </div>
-          <div></div>
-          <div>
-            <button class="btn-delete" data-id="${inv.id}" title="Eliminar invitado">✕</button>
-          </div>
-          ${ (rsvp?.acompanantesNombres?.length || rsvp?.mensaje) ? `
-            <div class="guest-message">
-              ${ rsvp.acompanantesNombres?.length
-                ? `👥 ${rsvp.acompanantesNombres.map(n => escHtml(n)).join(', ')}` : '' }
-              ${ rsvp.mensaje ? `<br>💬 "${escHtml(rsvp.mensaje)}"` : '' }
-            </div>` : '' }
-        </li>
-      `).join('');
+      list.innerHTML = filtrados.map(r => {
+        const ninos = { no: '—', '1': '1', '2': '2', '3+': '3+' }[r.ninos] ?? '—';
+        const extras = [
+          r.restricciones ? `🍽 ${esc(r.restricciones)}` : '',
+          r.mensaje       ? `💬 "${esc(r.mensaje)}"` : '',
+        ].filter(Boolean);
 
-      /* Eventos de borrar */
-      list.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', () => deleteGuest(btn.dataset.id));
+        return `
+        <li class="guest-row" data-id="${r.id}">
+          <div>
+            <div class="guest-name">${esc(r.nombre)}</div>
+            <div class="guest-email">${esc(r.email)}</div>
+          </div>
+          <div class="pais-chip">${paisLabel[r.paisOrigen] ?? '—'}</div>
+          <div>${chipMap[r.asistencia] ?? '—'}</div>
+          <div class="guest-email" style="padding-top:.15rem;">${r.acompanante ? esc(r.acompanante) : '—'}</div>
+          <div class="guest-email" style="padding-top:.15rem;text-align:center;">${ninos}</div>
+          ${extras.length ? `
+          <div class="guest-detail">
+            ${extras.map(e => `<span>${e}</span>`).join('')}
+          </div>` : ''}
+        </li>`;
+      }).join('');
+
+      /* Expandir / colapsar fila al clic */
+      list.querySelectorAll('.guest-row').forEach(row => {
+        row.addEventListener('click', () => row.classList.toggle('expanded'));
       });
     }
 
-    function escHtml(str) {
+    function esc(str) {
       return String(str ?? '')
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
   </script>
 
