@@ -1473,6 +1473,16 @@ textarea {
   height: 360px;
 }
 
+.galeria__duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.galeria__item--duo {
+  height: 420px;
+}
+
 .galeria__bottom {
   display: grid;
   grid-template-columns: 1fr 1fr;
