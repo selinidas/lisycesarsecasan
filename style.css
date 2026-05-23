@@ -1061,6 +1061,7 @@ textarea {
 .boarding-pass--done .bp__header { display: none; }
 
 /* Éxito dentro del boarding pass — ocupa el panel izquierdo */
+.bp__main .rsvp__success[hidden] { display: none !important; }
 .bp__main .rsvp__success {
   max-width: none;
   margin: 0;
