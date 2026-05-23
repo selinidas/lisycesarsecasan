@@ -261,6 +261,11 @@ textarea {
   font-size: 1.5rem;
   font-weight: 300;
   letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.9);
+  transition: color var(--t-base);
+}
+
+.nav.scrolled .nav__logo {
   color: var(--ink);
 }
 
@@ -275,9 +280,13 @@ textarea {
   font-weight: 400;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink-mid);
+  color: rgba(255,255,255,0.85);
   transition: color var(--t-fast);
   position: relative;
+}
+
+.nav.scrolled .nav__links a {
+  color: var(--ink-mid);
 }
 
 .nav__links a::after {
