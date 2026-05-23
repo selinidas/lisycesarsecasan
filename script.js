@@ -295,13 +295,13 @@ function initRSVP() {
     /* Guardar en Firebase + LocalStorage */
     await saveRSVP(data);
 
-    /* Actualizar contador si viene a La Vega */
-    if (data.asistencia === 'rd' || data.asistencia === 'ambas') {
+    /* Actualizar contador si confirma asistencia */
+    if (data.asistencia === 'si') {
       await incrementConfirmed(1 + (data.acompanante ? 1 : 0));
     }
 
-    /* Enviar correo de confirmación si viene a La Vega */
-    if (data.asistencia === 'rd' || data.asistencia === 'ambas') {
+    /* Enviar correo de confirmación si confirma asistencia */
+    if (data.asistencia === 'si') {
       await sendConfirmationEmail(data.nombre, data.email, data.paisOrigen);
     }
 
@@ -346,14 +346,13 @@ async function sendConfirmationEmail(nombre, email, paisOrigen) {
 
 function showSuccess(form, successEl, asistencia) {
   form.reset();
-  form.style.display = 'none';
+  const boardingPass = document.getElementById('boarding-pass-card');
+  if (boardingPass) boardingPass.classList.add('boarding-pass--done');
   if (!successEl) return;
 
   const messages = {
-    ambas:  '¡Perfecto! Te veremos en Lanzarote el 6 y en La Vega el 13 de Marzo. 🎉',
-    civil:  '¡Genial! Te veremos en Lanzarote el 6 de Marzo. 💍',
-    rd:     '¡Tu plaza está confirmada! Nos vemos el 13 de Marzo en La Vega. 🌴',
-    no:     'Lamentamos que no puedas acompañarnos. ¡Te tendremos en mente!',
+    si:  '¡Tu plaza está confirmada! Nos vemos el 13 de Marzo en La Vega. 🌴',
+    no:  'Lamentamos que no puedas acompañarnos. ¡Te tendremos en mente!',
   };
 
   const msgEl = $('#rsvp-success-msg');

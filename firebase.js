@@ -20,7 +20,8 @@
        match /rsvps/{id} {
          allow create: if
            request.resource.data.nombre is string &&
-           request.resource.data.email  is string;
+           request.resource.data.email  is string &&
+           request.resource.data.asistencia in ['si', 'no'];
          allow read: if true;
          allow update, delete: if false;
        }

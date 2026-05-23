@@ -1056,6 +1056,10 @@ textarea {
   line-height: 1.6;
 }
 
+/* Ocultar formulario al confirmar */
+.boarding-pass--done #rsvp-form { display: none !important; }
+.boarding-pass--done .bp__header { display: none; }
+
 /* Éxito dentro del boarding pass — ocupa el panel izquierdo */
 .bp__main .rsvp__success {
   max-width: none;
