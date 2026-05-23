@@ -346,7 +346,7 @@ async function sendConfirmationEmail(nombre, email, paisOrigen) {
 
 function showSuccess(form, successEl, declined = false) {
   form.reset();
-  form.hidden = true;
+  form.style.display = 'none';
   if (!successEl) return;
 
   const msgEl = $('#rsvp-success-msg');
