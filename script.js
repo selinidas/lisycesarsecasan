@@ -18,7 +18,7 @@ import {
    ============================================================ */
 const EMAILJS_PUBLIC_KEY     = 'SAAmLPQB_I9_7kltt';   /* ← de EmailJS → Account → API Keys */
 const EMAILJS_SERVICE_ID     = 'service_hlonfmp';     /* ← de EmailJS → Email Services */
-const EMAILJS_TEMPLATE_ID    = 'template_ctpsni6';    /* ← plantilla España / otros países */
+const EMAILJS_TEMPLATE_ID    = 'template_zgdpo41';    /* ← plantilla España / otros países */
 const EMAILJS_TEMPLATE_ID_RD = 'template_i6uw91d';    /* ← plantilla República Dominicana */
 
 /* ── Helpers ─────────────────────────────────────────────── */
