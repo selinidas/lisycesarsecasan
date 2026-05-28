@@ -28,6 +28,9 @@
        match /invitados/{id} {
          allow read, write: if true;
        }
+       match /gastos/{id} {
+         allow read, write: if true;
+       }
      }
    }
 
