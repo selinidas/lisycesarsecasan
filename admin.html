@@ -668,23 +668,29 @@
     }
 
     async function fetchRates() {
-      try {
-        const res  = await fetch('https://api.frankfurter.app/latest?from=EUR&to=USD,DOP');
-        const data = await res.json();
-        /* rates.USD = cuántos EUR vale 1 USD = 1 / data.rates.USD */
-        rates.USD = 1 / data.rates.USD;
-        rates.DOP = 1 / data.rates.DOP;
+      const APIS = [
+        'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/eur.json',
+        'https://latest.currency-api.pages.dev/v1/currencies/eur.json',
+      ];
+      for (const url of APIS) {
+        try {
+          const res  = await fetch(url);
+          const data = await res.json();
+          /* data.eur.usd = USD por 1 EUR → invertir para EUR por 1 USD */
+          rates.USD = 1 / data.eur.usd;
+          rates.DOP = 1 / data.eur.dop;
 
-        document.getElementById('rate-usd').textContent =
-          `${rates.USD.toFixed(4)} €`;
-        document.getElementById('rate-dop').textContent =
-          `${rates.DOP.toFixed(5)} €`;
-        document.getElementById('rates-updated').textContent =
-          `Actualizado: ${data.date}`;
-      } catch {
-        document.getElementById('rate-usd').textContent = 'sin conexión';
-        document.getElementById('rate-dop').textContent = 'sin conexión';
+          document.getElementById('rate-usd').textContent =
+            `${rates.USD.toFixed(4)} €`;
+          document.getElementById('rate-dop').textContent =
+            `${rates.DOP.toFixed(5)} €`;
+          document.getElementById('rates-updated').textContent =
+            `Actualizado: ${data.date}`;
+          return;
+        } catch { /* intentar siguiente */ }
       }
+      document.getElementById('rate-usd').textContent = 'sin conexión';
+      document.getElementById('rate-dop').textContent = 'sin conexión';
     }
 
     function toEUR(importe, moneda) {
