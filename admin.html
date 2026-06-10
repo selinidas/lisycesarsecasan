@@ -1102,6 +1102,7 @@
               pagadoEUR:  parseFloat(toEUR(pagado,  moneda).toFixed(2)),
             });
             editingId = null;
+            renderBudget(currentGastos);
           } catch (err) {
             alert('Error al guardar.'); console.error(err);
             btn.disabled = false; btn.textContent = 'Guardar cambios';
