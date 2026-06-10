@@ -207,11 +207,11 @@
     }
     .bsum-card__sub { font-size: .68rem; opacity: .65; margin-top: .3rem; }
 
-    .bsum-card--recibido { background: var(--sage); color: white; }
-    .bsum-card--gastado  { background: var(--rust); color: white; }
-    .bsum-card--balance-pos { background: #2e7d32; color: white; }
-    .bsum-card--balance-neg { background: #c62828; color: white; }
-    .bsum-card--balance-zero { background: #888; color: white; }
+    .bsum-card--bote      { background: var(--sage);  color: white; }
+    .bsum-card--gastado   { background: var(--rust);  color: white; }
+    .bsum-card--balance-pos  { background: #2e7d32; color: white; }
+    .bsum-card--balance-neg  { background: #c62828; color: white; }
+    .bsum-card--balance-zero { background: #888;    color: white; }
     .bsum-card--rates {
       background: var(--off-white); color: var(--text);
       display: flex; flex-direction: column; justify-content: center;
@@ -254,8 +254,8 @@
       grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto;
       gap: .75rem; align-items: end;
     }
-    .budget-form--ingreso {
-      grid-template-columns: 1.5fr 2fr 1fr 1fr auto;
+    .budget-form--bote {
+      grid-template-columns: 2fr 1fr 1fr auto;
     }
     @media (max-width: 700px) {
       .budget-form,
@@ -294,7 +294,7 @@
     }
     .budget-table-header {
       display: grid;
-      grid-template-columns: 2fr 1.1fr 1fr 1fr 1fr 1fr 70px 36px;
+      grid-template-columns: 2fr 1.1fr 1fr 1fr 1fr 1fr 70px 56px;
       gap: .75rem; padding: .75rem 1.25rem;
       background: var(--bg); border-bottom: 1px solid var(--border);
       font-size: .7rem; font-weight: 600; text-transform: uppercase;
@@ -302,7 +302,7 @@
     }
     .income-table-header {
       display: grid;
-      grid-template-columns: 1.5fr 2fr 1fr 1fr 90px 36px;
+      grid-template-columns: 2fr 1fr 1fr 80px 36px;
       gap: .75rem; padding: .75rem 1.25rem;
       background: var(--bg); border-bottom: 1px solid var(--border);
       font-size: .7rem; font-weight: 600; text-transform: uppercase;
@@ -310,7 +310,7 @@
     }
     .budget-row {
       display: grid;
-      grid-template-columns: 2fr 1.1fr 1fr 1fr 1fr 1fr 70px 36px;
+      grid-template-columns: 2fr 1.1fr 1fr 1fr 1fr 1fr 70px 56px;
       gap: .75rem; align-items: center;
       padding: .85rem 1.25rem; border-bottom: 1px solid var(--border);
       animation: fadeIn .25s ease both;
@@ -329,9 +329,54 @@
       background: #ede7f6; color: #4527a0; font-weight: 500;
       white-space: nowrap; display: inline-block;
     }
+    .row-actions { display: flex; gap: .2rem; align-items: center; }
+    .btn-edit {
+      background: none; border: none; cursor: pointer; color: #bbb;
+      font-size: .9rem; padding: .2rem; border-radius: 4px; transition: color .15s;
+    }
+    .btn-edit:hover { color: var(--rust); }
+
+    /* Fila de edición inline */
+    .budget-row--editing {
+      display: block; padding: 1rem 1.25rem;
+      background: #fffbf9; border-left: 3px solid var(--rust);
+      border-bottom: 1px solid var(--border);
+      animation: fadeIn .2s ease both;
+    }
+    .edit-grid {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr 1fr;
+      gap: .6rem; align-items: end; margin-bottom: .75rem;
+    }
+    @media (max-width: 700px) { .edit-grid { grid-template-columns: 1fr 1fr; } }
+    .edit-grid label {
+      display: flex; flex-direction: column; gap: .25rem;
+      font-size: .68rem; text-transform: uppercase;
+      letter-spacing: .07em; color: var(--text-muted);
+    }
+    .edit-input, .edit-select {
+      padding: .45rem .6rem; border: 1.5px solid var(--border); border-radius: 7px;
+      font-family: var(--font-sans); font-size: .85rem; width: 100%;
+      background: white; color: var(--text); outline: none; transition: border-color .2s;
+    }
+    .edit-input:focus, .edit-select:focus { border-color: var(--rust); }
+    .edit-actions { display: flex; justify-content: flex-end; gap: .5rem; }
+    .btn-save-edit {
+      padding: .45rem 1rem; background: var(--rust); color: white;
+      border: none; border-radius: 7px; font-family: var(--font-sans);
+      font-size: .8rem; font-weight: 500; cursor: pointer; transition: background .2s;
+    }
+    .btn-save-edit:hover { background: var(--rust-light); }
+    .btn-save-edit:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-cancel-edit {
+      padding: .45rem .9rem; background: none; border: 1.5px solid var(--border);
+      border-radius: 7px; font-family: var(--font-sans); font-size: .8rem;
+      color: var(--text-muted); cursor: pointer; transition: all .2s;
+    }
+    .btn-cancel-edit:hover { border-color: var(--text-muted); color: var(--text); }
     .income-row {
       display: grid;
-      grid-template-columns: 1.5fr 2fr 1fr 1fr 90px 36px;
+      grid-template-columns: 2fr 1fr 1fr 80px 36px;
       gap: .75rem; align-items: center;
       padding: .85rem 1.25rem; border-bottom: 1px solid var(--border);
       animation: fadeIn .25s ease both;
@@ -477,18 +522,18 @@
 
         <!-- Resumen: 4 tarjetas -->
         <div class="budget-summary">
-          <div class="bsum-card bsum-card--recibido">
-            <div class="bsum-card__label">Total recibido</div>
+          <div class="bsum-card bsum-card--bote">
+            <div class="bsum-card__label">Bote total</div>
             <div class="bsum-card__num" id="summary-recibido">— €</div>
-            <div class="bsum-card__sub" id="summary-recibido-count">0 entradas</div>
+            <div class="bsum-card__sub" id="summary-recibido-count">0 aportaciones</div>
           </div>
           <div class="bsum-card bsum-card--gastado">
-            <div class="bsum-card__label">Total gastado</div>
+            <div class="bsum-card__label">Gastado del bote</div>
             <div class="bsum-card__num" id="summary-gastado">— €</div>
-            <div class="bsum-card__sub" id="summary-gastado-count">0 gastos</div>
+            <div class="bsum-card__sub" id="summary-gastado-count">0 gastos del bote</div>
           </div>
           <div class="bsum-card bsum-card--balance-zero" id="balance-card">
-            <div class="bsum-card__label">Balance</div>
+            <div class="bsum-card__label">Bote disponible</div>
             <div class="bsum-card__num" id="summary-balance">— €</div>
             <div class="bsum-card__sub" id="summary-balance-label">—</div>
           </div>
@@ -500,24 +545,20 @@
           </div>
         </div>
 
-        <!-- ── INGRESOS ── -->
+        <!-- ── BOTE DE LA BODA ── -->
         <div class="budget-section-title">
-          Ingresos
-          <span class="section-badge section-badge--ingreso">Dinero recibido</span>
+          Bote de la boda
+          <span class="section-badge section-badge--ingreso">Aportaciones de invitados</span>
         </div>
 
         <div class="budget-form-card">
-          <div class="budget-form budget-form--ingreso">
+          <div class="budget-form budget-form--bote">
             <label>
-              <span class="field-label">De quién</span>
-              <input type="text" id="ingreso-quien" placeholder="Ej: Mamá y papá" />
+              <span class="field-label">Nota (quién lo dio — opcional)</span>
+              <input type="text" id="ingreso-quien" placeholder="Ej: Ana y Pedro, tíos de Lissette…" />
             </label>
             <label>
-              <span class="field-label">Concepto</span>
-              <input type="text" id="ingreso-concepto" placeholder="Ej: Regalo de boda, aportación…" />
-            </label>
-            <label>
-              <span class="field-label">Importe</span>
+              <span class="field-label">Cantidad</span>
               <input type="number" id="ingreso-importe" placeholder="0.00" min="0" step="0.01" />
             </label>
             <label>
@@ -528,21 +569,20 @@
                 <option value="DOP">$ DOP</option>
               </select>
             </label>
-            <button class="btn-add btn-add--green" id="btn-add-ingreso">+ Añadir</button>
+            <button class="btn-add btn-add--green" id="btn-add-ingreso">+ Sumar al bote</button>
           </div>
         </div>
 
         <div class="budget-table-card" style="margin-bottom:1.5rem;">
           <div class="income-table-header">
-            <div>De quién</div>
-            <div>Concepto</div>
-            <div>Importe</div>
+            <div>Nota / De quién</div>
+            <div>Cantidad</div>
             <div>En EUR</div>
             <div>Fecha</div>
             <div></div>
           </div>
           <ul class="budget-list" id="income-list">
-            <li class="loading-state">Cargando ingresos…</li>
+            <li class="loading-state">Cargando bote…</li>
           </ul>
         </div>
 
@@ -610,7 +650,7 @@
             <div>Pendiente</div>
             <div>Quién</div>
             <div>Fecha</div>
-            <div></div>
+            <div></div><!-- editar + borrar -->
           </div>
           <ul class="budget-list" id="budget-list">
             <li class="loading-state">Cargando gastos…</li>
@@ -627,7 +667,7 @@
       'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
     import {
       getFirestore, collection, onSnapshot, query, orderBy,
-      addDoc, deleteDoc, doc, serverTimestamp,
+      addDoc, deleteDoc, updateDoc, doc, serverTimestamp,
     } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
 
     const app = initializeApp({
@@ -643,11 +683,12 @@
 
     const PASSWORD = 'boda2027';
 
-    let allRsvps          = [];
-    let activeFilter      = 'all';
-    let rates             = { USD: 1, DOP: 1 };
-    let totalRecibidoEUR  = 0;
-    let totalGastadoEUR   = 0;
+    let allRsvps         = [];
+    let activeFilter     = 'all';
+    let rates            = { USD: 1, DOP: 1 };
+    let totalRecibidoEUR = 0;
+    let currentGastos    = [];
+    let editingId        = null;
 
     /* ═══════════════════════════════════════════
        LOGIN
@@ -792,21 +833,18 @@
 
       onSnapshot(
         query(collection(db, 'ingresos'), orderBy('timestamp', 'desc')),
-        snap => {
-          const ingresos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          renderIngresos(ingresos);
-        }
+        snap => renderBote(snap.docs.map(d => ({ id: d.id, ...d.data() })))
       );
 
       onSnapshot(
         query(collection(db, 'gastos'), orderBy('timestamp', 'desc')),
         snap => {
-          const gastos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          renderBudget(gastos);
+          currentGastos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          renderBudget(currentGastos);
         }
       );
 
-      document.getElementById('btn-add-ingreso').addEventListener('click', addIngreso);
+      document.getElementById('btn-add-ingreso').addEventListener('click', addAportacion);
       document.getElementById('btn-add-gasto').addEventListener('click', addGasto);
     }
 
@@ -842,75 +880,70 @@
       return num.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
     }
 
-    function updateBalanceSummary() {
-      const balance = totalRecibidoEUR - totalGastadoEUR;
-      const card    = document.getElementById('balance-card');
+    function updateSummary() {
+      /* Gastado del bote = sum de pagadoEUR de gastos cuyo quien === 'Bote' */
+      const boteGastadoEUR = currentGastos.reduce((acc, g) =>
+        g.quien === 'Bote' ? acc + (g.pagadoEUR ?? 0) : acc, 0);
+      const boteDisponible = totalRecibidoEUR - boteGastadoEUR;
+      const boteGastos     = currentGastos.filter(g => g.quien === 'Bote').length;
 
-      document.getElementById('summary-balance').textContent = fmt(balance);
+      document.getElementById('summary-gastado').textContent       = fmt(boteGastadoEUR);
+      document.getElementById('summary-gastado-count').textContent =
+        `${boteGastos} gasto${boteGastos !== 1 ? 's' : ''} del bote`;
+      document.getElementById('summary-balance').textContent       = fmt(boteDisponible);
+
+      const card = document.getElementById('balance-card');
       card.className = 'bsum-card ' + (
-        balance > 0  ? 'bsum-card--balance-pos' :
-        balance < 0  ? 'bsum-card--balance-neg' :
-                       'bsum-card--balance-zero'
+        boteDisponible > 0  ? 'bsum-card--balance-pos'  :
+        boteDisponible < 0  ? 'bsum-card--balance-neg'  :
+                              'bsum-card--balance-zero'
       );
       document.getElementById('summary-balance-label').textContent =
-        balance > 0 ? 'Superávit' :
-        balance < 0 ? 'Déficit'   : 'En equilibrio';
+        boteDisponible > 0 ? 'Disponible' : boteDisponible < 0 ? 'En negativo' : 'En cero';
     }
 
-    async function addIngreso() {
-      const quien    = document.getElementById('ingreso-quien').value.trim();
-      const concepto = document.getElementById('ingreso-concepto').value.trim();
-      const importe  = parseFloat(document.getElementById('ingreso-importe').value);
-      const moneda   = document.getElementById('ingreso-moneda').value;
+    /* ── Bote: añadir aportación ── */
+    async function addAportacion() {
+      const quien   = document.getElementById('ingreso-quien').value.trim();
+      const importe = parseFloat(document.getElementById('ingreso-importe').value);
+      const moneda  = document.getElementById('ingreso-moneda').value;
 
-      if (!quien || !importe || importe <= 0) {
-        alert('Por favor indica de quién es y el importe.');
-        return;
-      }
+      if (!importe || importe <= 0) { alert('Introduce la cantidad.'); return; }
 
       const btn = document.getElementById('btn-add-ingreso');
       btn.disabled = true; btn.textContent = 'Guardando…';
-
       try {
         await addDoc(collection(db, 'ingresos'), {
-          quien, concepto, importe, moneda,
+          quien, importe, moneda,
           importeEUR: parseFloat(toEUR(importe, moneda).toFixed(2)),
           timestamp:  serverTimestamp(),
         });
-        document.getElementById('ingreso-quien').value    = '';
-        document.getElementById('ingreso-concepto').value = '';
-        document.getElementById('ingreso-importe').value  = '';
-      } catch (err) {
-        alert('Error al guardar. Inténtalo de nuevo.');
-        console.error(err);
-      } finally {
-        btn.disabled = false; btn.textContent = '+ Añadir';
-      }
+        document.getElementById('ingreso-quien').value  = '';
+        document.getElementById('ingreso-importe').value = '';
+      } catch (err) { alert('Error al guardar.'); console.error(err); }
+      finally { btn.disabled = false; btn.textContent = '+ Sumar al bote'; }
     }
 
-    function renderIngresos(ingresos) {
+    /* ── Bote: renderizar tabla ── */
+    function renderBote(ingresos) {
       totalRecibidoEUR = ingresos.reduce((acc, i) => acc + (i.importeEUR || 0), 0);
-
       document.getElementById('summary-recibido').textContent       = fmt(totalRecibidoEUR);
       document.getElementById('summary-recibido-count').textContent =
-        `${ingresos.length} entrada${ingresos.length !== 1 ? 's' : ''}`;
-
-      updateBalanceSummary();
+        `${ingresos.length} aportación${ingresos.length !== 1 ? 'es' : ''}`;
+      updateSummary();
 
       const list = document.getElementById('income-list');
       if (!ingresos.length) {
-        list.innerHTML = `<li class="empty-state">Aún no hay ingresos registrados.</li>`;
+        list.innerHTML = `<li class="empty-state">El bote está vacío. ¡Añade la primera aportación!</li>`;
         return;
       }
-
       list.innerHTML = ingresos.map(i => {
         const fecha = i.timestamp?.toDate
           ? i.timestamp.toDate().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: '2-digit' })
           : '—';
         return `
         <li class="income-row">
-          <div class="budget-concepto">${esc(i.quien)}</div>
-          <div class="budget-importe">${esc(i.concepto || '—')}</div>
+          <div class="budget-concepto">${esc(i.quien || '(sin nota)')}</div>
           <div class="budget-importe">${i.importe?.toLocaleString('es-ES')} ${i.moneda}</div>
           <div class="income-eur">${fmt(i.importeEUR || 0)}</div>
           <div class="budget-fecha">${fecha}</div>
@@ -919,15 +952,15 @@
           </div>
         </li>`;
       }).join('');
-
       list.querySelectorAll('.btn-delete').forEach(btn => {
         btn.addEventListener('click', async () => {
-          if (!confirm('¿Eliminar este ingreso?')) return;
+          if (!confirm('¿Eliminar esta aportación del bote?')) return;
           await deleteDoc(doc(db, btn.dataset.col, btn.dataset.id));
         });
       });
     }
 
+    /* ── Gastos: añadir ── */
     async function addGasto() {
       const concepto  = document.getElementById('gasto-concepto').value.trim();
       const categoria = document.getElementById('gasto-categoria').value;
@@ -940,37 +973,49 @@
         alert('Por favor rellena el concepto y el importe total.');
         return;
       }
-
       const btn = document.getElementById('btn-add-gasto');
       btn.disabled = true; btn.textContent = 'Guardando…';
-
       try {
         await addDoc(collection(db, 'gastos'), {
           concepto, categoria, importe, pagado, moneda, quien,
           importeEUR: parseFloat(toEUR(importe, moneda).toFixed(2)),
-          pagadoEUR:  parseFloat(toEUR(pagado, moneda).toFixed(2)),
+          pagadoEUR:  parseFloat(toEUR(pagado,  moneda).toFixed(2)),
           timestamp:  serverTimestamp(),
         });
         document.getElementById('gasto-concepto').value = '';
         document.getElementById('gasto-importe').value  = '';
         document.getElementById('gasto-pagado').value   = '';
-      } catch (err) {
-        alert('Error al guardar. Inténtalo de nuevo.');
-        console.error(err);
-      } finally {
-        btn.disabled = false; btn.textContent = '+ Añadir';
-      }
+      } catch (err) { alert('Error al guardar.'); console.error(err); }
+      finally { btn.disabled = false; btn.textContent = '+ Añadir'; }
+    }
+
+    /* ── Gastos: renderizar ── */
+    function makeEditRow(g) {
+      const cats   = ['Venue','Catering','Flores','Música','Fotografía','Belleza','Vestimenta','Transporte','Invitaciones','Otros'];
+      const catOpts = cats.map(c => `<option value="${c}"${g.categoria===c?' selected':''}>${c}</option>`).join('');
+      const monOpts = [['EUR','€ EUR'],['USD','$ USD'],['DOP','$ DOP']]
+        .map(([v,l]) => `<option value="${v}"${g.moneda===v?' selected':''}>${l}</option>`).join('');
+      const quiOpts = [['Bote','Bote de la boda'],['César','César'],['Lis','Lis']]
+        .map(([v,l]) => `<option value="${v}"${(g.quien??'Bote')===v?' selected':''}>${l}</option>`).join('');
+      return `
+      <li class="budget-row--editing">
+        <div class="edit-grid">
+          <label>Concepto<input class="edit-input" id="edit-concepto" value="${esc(g.concepto)}" /></label>
+          <label>Categoría<select class="edit-select" id="edit-categoria">${catOpts}</select></label>
+          <label>Importe total<input class="edit-input" id="edit-importe" type="number" value="${g.importe??0}" /></label>
+          <label>Pagado<input class="edit-input" id="edit-pagado" type="number" value="${g.pagado??0}" /></label>
+          <label>Moneda<select class="edit-select" id="edit-moneda">${monOpts}</select></label>
+          <label>Quién pagó<select class="edit-select" id="edit-quien">${quiOpts}</select></label>
+        </div>
+        <div class="edit-actions">
+          <button class="btn-cancel-edit">Cancelar</button>
+          <button class="btn-save-edit" data-id="${g.id}">Guardar cambios</button>
+        </div>
+      </li>`;
     }
 
     function renderBudget(gastos) {
-      /* El balance usa lo realmente pagado, no el total comprometido */
-      totalGastadoEUR = gastos.reduce((acc, g) => acc + (g.pagadoEUR ?? g.importeEUR ?? 0), 0);
-
-      document.getElementById('summary-gastado').textContent       = fmt(totalGastadoEUR);
-      document.getElementById('summary-gastado-count').textContent =
-        `${gastos.length} gasto${gastos.length !== 1 ? 's' : ''}`;
-
-      updateBalanceSummary();
+      updateSummary();
 
       const list = document.getElementById('budget-list');
       if (!gastos.length) {
@@ -979,18 +1024,18 @@
       }
 
       list.innerHTML = gastos.map(g => {
+        if (g.id === editingId) return makeEditRow(g);
+
         const fecha      = g.timestamp?.toDate
           ? g.timestamp.toDate().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: '2-digit' })
           : '—';
         const importe    = g.importe  ?? 0;
-        const pagado     = g.pagado   ?? g.importe ?? 0;
+        const pagado     = g.pagado   ?? 0;
         const pendiente  = importe - pagado;
         const moneda     = g.moneda ?? '';
-
         const importeEUR = g.importeEUR ?? toEUR(importe, moneda);
-        const pagadoEUR  = g.pagadoEUR  ?? toEUR(pagado, moneda);
+        const pagadoEUR  = g.pagadoEUR  ?? toEUR(pagado,  moneda);
         const pendienteEUR = importeEUR - pagadoEUR;
-
         const pct        = importe > 0 ? pagado / importe : 1;
         const badgeClass = pct >= 1 ? 'pendiente-badge--ok'
                          : pct > 0  ? 'pendiente-badge--parcial'
@@ -998,8 +1043,7 @@
         const badgeText  = pct >= 1
           ? '✓ Pagado'
           : pendiente.toLocaleString('es-ES', { maximumFractionDigits: 2 }) + ' ' + moneda;
-
-        const fmtSmall = n => n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+        const fmtS = n => n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
 
         return `
         <li class="budget-row">
@@ -1007,28 +1051,69 @@
           <div><span class="budget-cat">${esc(g.categoria)}</span></div>
           <div class="amount-block">
             <span class="budget-importe">${importe.toLocaleString('es-ES')} ${moneda}</span>
-            <span class="amount-eur">${fmtSmall(importeEUR)}</span>
+            <span class="amount-eur">${fmtS(importeEUR)}</span>
           </div>
           <div class="amount-block">
             <span class="budget-eur">${pagado.toLocaleString('es-ES')} ${moneda}</span>
-            <span class="amount-eur">${fmtSmall(pagadoEUR)}</span>
+            <span class="amount-eur">${fmtS(pagadoEUR)}</span>
           </div>
           <div class="amount-block">
             <span class="pendiente-badge ${badgeClass}">${badgeText}</span>
-            ${pct < 1 ? `<span class="amount-eur">${fmtSmall(pendienteEUR)}</span>` : ''}
+            ${pct < 1 ? `<span class="amount-eur">${fmtS(pendienteEUR)}</span>` : ''}
           </div>
           <div><span class="quien-chip">${esc(g.quien ?? '—')}</span></div>
           <div class="budget-fecha">${fecha}</div>
-          <div>
-            <button class="btn-delete" data-col="gastos" data-id="${g.id}" title="Eliminar">✕</button>
+          <div class="row-actions">
+            <button class="btn-edit" data-id="${g.id}" title="Editar">✎</button>
+            <button class="btn-delete" data-id="${g.id}" title="Eliminar">✕</button>
           </div>
         </li>`;
       }).join('');
 
+      /* Editar */
+      list.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', () => {
+          editingId = btn.dataset.id;
+          renderBudget(currentGastos);
+        });
+      });
+
+      /* Cancelar edición */
+      list.querySelectorAll('.btn-cancel-edit').forEach(btn => {
+        btn.addEventListener('click', () => { editingId = null; renderBudget(currentGastos); });
+      });
+
+      /* Guardar edición */
+      list.querySelectorAll('.btn-save-edit').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id        = btn.dataset.id;
+          const concepto  = document.getElementById('edit-concepto').value.trim();
+          const categoria = document.getElementById('edit-categoria').value;
+          const importe   = parseFloat(document.getElementById('edit-importe').value) || 0;
+          const pagado    = parseFloat(document.getElementById('edit-pagado').value)  || 0;
+          const moneda    = document.getElementById('edit-moneda').value;
+          const quien     = document.getElementById('edit-quien').value;
+          if (!concepto || !importe) { alert('Rellena concepto e importe.'); return; }
+          btn.disabled = true; btn.textContent = 'Guardando…';
+          try {
+            await updateDoc(doc(db, 'gastos', id), {
+              concepto, categoria, importe, pagado, moneda, quien,
+              importeEUR: parseFloat(toEUR(importe, moneda).toFixed(2)),
+              pagadoEUR:  parseFloat(toEUR(pagado,  moneda).toFixed(2)),
+            });
+            editingId = null;
+          } catch (err) {
+            alert('Error al guardar.'); console.error(err);
+            btn.disabled = false; btn.textContent = 'Guardar cambios';
+          }
+        });
+      });
+
+      /* Eliminar */
       list.querySelectorAll('.btn-delete').forEach(btn => {
         btn.addEventListener('click', async () => {
           if (!confirm('¿Eliminar este gasto?')) return;
-          await deleteDoc(doc(db, btn.dataset.col, btn.dataset.id));
+          await deleteDoc(doc(db, 'gastos', btn.dataset.id));
         });
       });
     }
