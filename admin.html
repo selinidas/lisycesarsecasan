@@ -185,64 +185,83 @@
     .empty-state   { text-align: center; padding: 3rem 1rem; color: var(--text-muted); font-size: .9rem; }
     .loading-state { text-align: center; padding: 2rem; color: var(--text-muted); font-size: .85rem; }
 
-    /* ── Presupuesto ── */
-    .budget-top {
+    /* ── Presupuesto — resumen ── */
+    .budget-summary {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
-    @media (max-width: 700px) { .budget-top { grid-template-columns: 1fr; } }
+    @media (max-width: 700px) { .budget-summary { grid-template-columns: repeat(2, 1fr); } }
 
-    .budget-total-card {
-      background: var(--rust); color: var(--off-white);
-      border-radius: var(--r); padding: 1.5rem 1.75rem;
-      box-shadow: var(--shadow);
+    .bsum-card {
+      border-radius: var(--r); padding: 1.25rem 1.1rem;
+      box-shadow: var(--shadow); text-align: center;
     }
-    .budget-total-card__label {
-      font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
-      opacity: .8; margin-bottom: .4rem;
+    .bsum-card__label {
+      font-size: .68rem; letter-spacing: .12em; text-transform: uppercase;
+      opacity: .75; margin-bottom: .35rem;
     }
-    .budget-total-card__num {
-      font-family: var(--font-serif); font-size: 2.8rem; font-weight: 500; line-height: 1;
+    .bsum-card__num {
+      font-family: var(--font-serif); font-size: 1.9rem; font-weight: 500; line-height: 1;
     }
-    .budget-total-card__sub {
-      font-size: .72rem; opacity: .7; margin-top: .4rem;
+    .bsum-card__sub { font-size: .68rem; opacity: .65; margin-top: .3rem; }
+
+    .bsum-card--recibido { background: var(--sage); color: white; }
+    .bsum-card--gastado  { background: var(--rust); color: white; }
+    .bsum-card--balance-pos { background: #2e7d32; color: white; }
+    .bsum-card--balance-neg { background: #c62828; color: white; }
+    .bsum-card--balance-zero { background: #888; color: white; }
+    .bsum-card--rates {
+      background: var(--off-white); color: var(--text);
+      display: flex; flex-direction: column; justify-content: center;
+      text-align: left; padding: 1rem 1.2rem; gap: .35rem;
     }
 
-    .budget-rates-card {
-      background: var(--off-white); border-radius: var(--r);
-      padding: 1.5rem 1.75rem; box-shadow: var(--shadow);
-      display: flex; flex-direction: column; justify-content: center; gap: .5rem;
-    }
-    .budget-rates-card__title {
-      font-size: .72rem; color: var(--text-muted); text-transform: uppercase;
-      letter-spacing: .1em; margin-bottom: .2rem;
-    }
     .rate-row {
       display: flex; justify-content: space-between; align-items: center;
-      font-size: .85rem;
+      font-size: .82rem;
     }
     .rate-row span:last-child { font-weight: 600; color: var(--rust); }
-    .rates-updated { font-size: .7rem; color: var(--text-muted); margin-top: .4rem; }
+    .rates-updated { font-size: .65rem; color: var(--text-muted); margin-top: .2rem; }
+    .budget-rates-title {
+      font-size: .68rem; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: .1em; margin-bottom: .2rem;
+    }
 
-    /* Formulario añadir gasto */
+    /* Sección ingresos / gastos */
+    .budget-section-title {
+      font-family: var(--font-serif); font-size: 1.3rem; font-weight: 400;
+      color: var(--text); margin: 1.75rem 0 1rem;
+      padding-bottom: .5rem; border-bottom: 1.5px solid var(--border);
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .budget-section-title .section-badge {
+      font-family: var(--font-sans); font-size: .68rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: .2rem .6rem; border-radius: 20px; color: white;
+    }
+    .section-badge--ingreso { background: var(--sage); }
+    .section-badge--gasto   { background: var(--rust); }
+
+    /* Formulario (ingresos y gastos comparten estilos) */
     .budget-form-card {
       background: var(--off-white); border-radius: var(--r);
-      padding: 1.5rem; box-shadow: var(--shadow); margin-bottom: 1.5rem;
-    }
-    .budget-form-card h3 {
-      font-family: var(--font-serif); font-size: 1.15rem; font-weight: 400;
-      color: var(--rust); margin-bottom: 1rem;
+      padding: 1.25rem 1.5rem; box-shadow: var(--shadow); margin-bottom: 1.25rem;
     }
     .budget-form {
       display: grid;
       grid-template-columns: 2fr 1.2fr 1fr 1fr auto;
       gap: .75rem; align-items: end;
     }
+    .budget-form--ingreso {
+      grid-template-columns: 1.5fr 2fr 1fr 1fr auto;
+    }
     @media (max-width: 700px) {
-      .budget-form { grid-template-columns: 1fr 1fr; }
-      .budget-form .btn-add { grid-column: 1 / -1; }
+      .budget-form,
+      .budget-form--ingreso { grid-template-columns: 1fr 1fr; }
+      .budget-form .btn-add,
+      .budget-form--ingreso .btn-add { grid-column: 1 / -1; }
     }
     .budget-form label { display: flex; flex-direction: column; gap: .3rem; }
     .budget-form .field-label {
@@ -264,9 +283,11 @@
       cursor: pointer; transition: background .2s; white-space: nowrap;
     }
     .btn-add:hover { background: var(--rust-light); }
+    .btn-add--green { background: #2e7d32; }
+    .btn-add--green:hover { background: #388e3c; }
     .btn-add:disabled { opacity: .5; cursor: not-allowed; }
 
-    /* Tabla gastos */
+    /* Tablas */
     .budget-table-card {
       background: var(--off-white); border-radius: var(--r);
       box-shadow: var(--shadow); overflow: hidden;
@@ -279,6 +300,14 @@
       font-size: .7rem; font-weight: 600; text-transform: uppercase;
       letter-spacing: .08em; color: var(--text-muted);
     }
+    .income-table-header {
+      display: grid;
+      grid-template-columns: 1.5fr 2fr 1fr 1fr 90px 36px;
+      gap: .75rem; padding: .75rem 1.25rem;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      font-size: .7rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--text-muted);
+    }
     .budget-row {
       display: grid;
       grid-template-columns: 2.5fr 1.3fr 1fr 1fr 90px 36px;
@@ -286,8 +315,17 @@
       padding: .85rem 1.25rem; border-bottom: 1px solid var(--border);
       animation: fadeIn .25s ease both;
     }
-    .budget-row:last-child { border-bottom: none; }
-    .budget-row:hover { background: #fdf6f2; }
+    .income-row {
+      display: grid;
+      grid-template-columns: 1.5fr 2fr 1fr 1fr 90px 36px;
+      gap: .75rem; align-items: center;
+      padding: .85rem 1.25rem; border-bottom: 1px solid var(--border);
+      animation: fadeIn .25s ease both;
+    }
+    .budget-row:last-child,
+    .income-row:last-child { border-bottom: none; }
+    .budget-row:hover,
+    .income-row:hover { background: #fdf6f2; }
 
     .budget-concepto { font-size: .9rem; font-weight: 500; }
     .budget-cat {
@@ -297,6 +335,7 @@
     }
     .budget-importe { font-size: .88rem; color: var(--text-muted); }
     .budget-eur { font-size: .92rem; font-weight: 600; color: var(--rust); }
+    .income-eur { font-size: .92rem; font-weight: 600; color: #2e7d32; }
     .budget-fecha { font-size: .72rem; color: var(--text-muted); }
 
     .btn-delete {
@@ -307,16 +346,21 @@
     .btn-delete:hover { color: #c0392b; }
 
     @media (max-width: 700px) {
-      .budget-table-header { display: none; }
-      .budget-row {
+      .budget-table-header,
+      .income-table-header { display: none; }
+      .budget-row,
+      .income-row {
         grid-template-columns: 1fr auto 28px;
         grid-template-rows: auto auto;
       }
       .budget-row > :nth-child(3),
-      .budget-row > :nth-child(5) { display: none; }
+      .budget-row > :nth-child(5),
+      .income-row > :nth-child(3),
+      .income-row > :nth-child(5) { display: none; }
       .budget-concepto { grid-column: 1; }
       .budget-cat { font-size: .7rem; }
-      .budget-eur { grid-column: 2; text-align: right; }
+      .budget-eur,
+      .income-eur { grid-column: 2; text-align: right; }
       .btn-delete { grid-column: 3; grid-row: 1; }
       .budget-importe { grid-column: 1 / 3; font-size: .75rem; }
       .budget-fecha { display: none; }
@@ -414,24 +458,84 @@
       <!-- ══ TAB: PRESUPUESTO ══ -->
       <div id="tab-presupuesto" hidden>
 
-        <!-- Total + Cambio -->
-        <div class="budget-top">
-          <div class="budget-total-card">
-            <div class="budget-total-card__label">Total gastado</div>
-            <div class="budget-total-card__num" id="budget-total">— €</div>
-            <div class="budget-total-card__sub" id="budget-count">0 gastos registrados</div>
+        <!-- Resumen: 4 tarjetas -->
+        <div class="budget-summary">
+          <div class="bsum-card bsum-card--recibido">
+            <div class="bsum-card__label">Total recibido</div>
+            <div class="bsum-card__num" id="summary-recibido">— €</div>
+            <div class="bsum-card__sub" id="summary-recibido-count">0 entradas</div>
           </div>
-          <div class="budget-rates-card">
-            <div class="budget-rates-card__title">Tipo de cambio (BCE)</div>
-            <div class="rate-row"><span>1 USD</span><span id="rate-usd">cargando…</span></div>
-            <div class="rate-row"><span>1 DOP</span><span id="rate-dop">cargando…</span></div>
+          <div class="bsum-card bsum-card--gastado">
+            <div class="bsum-card__label">Total gastado</div>
+            <div class="bsum-card__num" id="summary-gastado">— €</div>
+            <div class="bsum-card__sub" id="summary-gastado-count">0 gastos</div>
+          </div>
+          <div class="bsum-card bsum-card--balance-zero" id="balance-card">
+            <div class="bsum-card__label">Balance</div>
+            <div class="bsum-card__num" id="summary-balance">— €</div>
+            <div class="bsum-card__sub" id="summary-balance-label">—</div>
+          </div>
+          <div class="bsum-card bsum-card--rates">
+            <div class="budget-rates-title">Tipo de cambio</div>
+            <div class="rate-row"><span>1 USD</span><span id="rate-usd">…</span></div>
+            <div class="rate-row"><span>1 DOP</span><span id="rate-dop">…</span></div>
             <div class="rates-updated" id="rates-updated"></div>
           </div>
         </div>
 
-        <!-- Formulario -->
+        <!-- ── INGRESOS ── -->
+        <div class="budget-section-title">
+          Ingresos
+          <span class="section-badge section-badge--ingreso">Dinero recibido</span>
+        </div>
+
         <div class="budget-form-card">
-          <h3>Añadir gasto</h3>
+          <div class="budget-form budget-form--ingreso">
+            <label>
+              <span class="field-label">De quién</span>
+              <input type="text" id="ingreso-quien" placeholder="Ej: Mamá y papá" />
+            </label>
+            <label>
+              <span class="field-label">Concepto</span>
+              <input type="text" id="ingreso-concepto" placeholder="Ej: Regalo de boda, aportación…" />
+            </label>
+            <label>
+              <span class="field-label">Importe</span>
+              <input type="number" id="ingreso-importe" placeholder="0.00" min="0" step="0.01" />
+            </label>
+            <label>
+              <span class="field-label">Moneda</span>
+              <select id="ingreso-moneda">
+                <option value="EUR">€ EUR</option>
+                <option value="USD">$ USD</option>
+                <option value="DOP">$ DOP</option>
+              </select>
+            </label>
+            <button class="btn-add btn-add--green" id="btn-add-ingreso">+ Añadir</button>
+          </div>
+        </div>
+
+        <div class="budget-table-card" style="margin-bottom:1.5rem;">
+          <div class="income-table-header">
+            <div>De quién</div>
+            <div>Concepto</div>
+            <div>Importe</div>
+            <div>En EUR</div>
+            <div>Fecha</div>
+            <div></div>
+          </div>
+          <ul class="budget-list" id="income-list">
+            <li class="loading-state">Cargando ingresos…</li>
+          </ul>
+        </div>
+
+        <!-- ── GASTOS ── -->
+        <div class="budget-section-title">
+          Gastos
+          <span class="section-badge section-badge--gasto">Pagos realizados</span>
+        </div>
+
+        <div class="budget-form-card">
           <div class="budget-form">
             <label>
               <span class="field-label">Concepto</span>
@@ -468,7 +572,6 @@
           </div>
         </div>
 
-        <!-- Tabla gastos -->
         <div class="budget-table-card">
           <div class="budget-table-header">
             <div>Concepto</div>
@@ -509,9 +612,11 @@
 
     const PASSWORD = 'boda2027';
 
-    let allRsvps     = [];
-    let activeFilter = 'all';
-    let rates        = { USD: 1, DOP: 1 }; /* EUR per unit — se actualiza con la API */
+    let allRsvps          = [];
+    let activeFilter      = 'all';
+    let rates             = { USD: 1, DOP: 1 };
+    let totalRecibidoEUR  = 0;
+    let totalGastadoEUR   = 0;
 
     /* ═══════════════════════════════════════════
        LOGIN
@@ -654,7 +759,14 @@
     async function initBudget() {
       await fetchRates();
 
-      /* Escuchar gastos en tiempo real */
+      onSnapshot(
+        query(collection(db, 'ingresos'), orderBy('timestamp', 'desc')),
+        snap => {
+          const ingresos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          renderIngresos(ingresos);
+        }
+      );
+
       onSnapshot(
         query(collection(db, 'gastos'), orderBy('timestamp', 'desc')),
         snap => {
@@ -663,7 +775,7 @@
         }
       );
 
-      /* Añadir gasto */
+      document.getElementById('btn-add-ingreso').addEventListener('click', addIngreso);
       document.getElementById('btn-add-gasto').addEventListener('click', addGasto);
     }
 
@@ -676,16 +788,11 @@
         try {
           const res  = await fetch(url);
           const data = await res.json();
-          /* data.eur.usd = USD por 1 EUR → invertir para EUR por 1 USD */
           rates.USD = 1 / data.eur.usd;
           rates.DOP = 1 / data.eur.dop;
-
-          document.getElementById('rate-usd').textContent =
-            `${rates.USD.toFixed(4)} €`;
-          document.getElementById('rate-dop').textContent =
-            `${rates.DOP.toFixed(5)} €`;
-          document.getElementById('rates-updated').textContent =
-            `Actualizado: ${data.date}`;
+          document.getElementById('rate-usd').textContent = `${rates.USD.toFixed(4)} €`;
+          document.getElementById('rate-dop').textContent = `${rates.DOP.toFixed(5)} €`;
+          document.getElementById('rates-updated').textContent = `Actualizado: ${data.date}`;
           return;
         } catch { /* intentar siguiente */ }
       }
@@ -700,6 +807,96 @@
       return importe;
     }
 
+    function fmt(num) {
+      return num.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+    }
+
+    function updateBalanceSummary() {
+      const balance = totalRecibidoEUR - totalGastadoEUR;
+      const card    = document.getElementById('balance-card');
+
+      document.getElementById('summary-balance').textContent = fmt(balance);
+      card.className = 'bsum-card ' + (
+        balance > 0  ? 'bsum-card--balance-pos' :
+        balance < 0  ? 'bsum-card--balance-neg' :
+                       'bsum-card--balance-zero'
+      );
+      document.getElementById('summary-balance-label').textContent =
+        balance > 0 ? 'Superávit' :
+        balance < 0 ? 'Déficit'   : 'En equilibrio';
+    }
+
+    async function addIngreso() {
+      const quien    = document.getElementById('ingreso-quien').value.trim();
+      const concepto = document.getElementById('ingreso-concepto').value.trim();
+      const importe  = parseFloat(document.getElementById('ingreso-importe').value);
+      const moneda   = document.getElementById('ingreso-moneda').value;
+
+      if (!quien || !importe || importe <= 0) {
+        alert('Por favor indica de quién es y el importe.');
+        return;
+      }
+
+      const btn = document.getElementById('btn-add-ingreso');
+      btn.disabled = true; btn.textContent = 'Guardando…';
+
+      try {
+        await addDoc(collection(db, 'ingresos'), {
+          quien, concepto, importe, moneda,
+          importeEUR: parseFloat(toEUR(importe, moneda).toFixed(2)),
+          timestamp:  serverTimestamp(),
+        });
+        document.getElementById('ingreso-quien').value    = '';
+        document.getElementById('ingreso-concepto').value = '';
+        document.getElementById('ingreso-importe').value  = '';
+      } catch (err) {
+        alert('Error al guardar. Inténtalo de nuevo.');
+        console.error(err);
+      } finally {
+        btn.disabled = false; btn.textContent = '+ Añadir';
+      }
+    }
+
+    function renderIngresos(ingresos) {
+      totalRecibidoEUR = ingresos.reduce((acc, i) => acc + (i.importeEUR || 0), 0);
+
+      document.getElementById('summary-recibido').textContent       = fmt(totalRecibidoEUR);
+      document.getElementById('summary-recibido-count').textContent =
+        `${ingresos.length} entrada${ingresos.length !== 1 ? 's' : ''}`;
+
+      updateBalanceSummary();
+
+      const list = document.getElementById('income-list');
+      if (!ingresos.length) {
+        list.innerHTML = `<li class="empty-state">Aún no hay ingresos registrados.</li>`;
+        return;
+      }
+
+      list.innerHTML = ingresos.map(i => {
+        const fecha = i.timestamp?.toDate
+          ? i.timestamp.toDate().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: '2-digit' })
+          : '—';
+        return `
+        <li class="income-row">
+          <div class="budget-concepto">${esc(i.quien)}</div>
+          <div class="budget-importe">${esc(i.concepto || '—')}</div>
+          <div class="budget-importe">${i.importe?.toLocaleString('es-ES')} ${i.moneda}</div>
+          <div class="income-eur">${fmt(i.importeEUR || 0)}</div>
+          <div class="budget-fecha">${fecha}</div>
+          <div>
+            <button class="btn-delete" data-col="ingresos" data-id="${i.id}" title="Eliminar">✕</button>
+          </div>
+        </li>`;
+      }).join('');
+
+      list.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!confirm('¿Eliminar este ingreso?')) return;
+          await deleteDoc(doc(db, btn.dataset.col, btn.dataset.id));
+        });
+      });
+    }
+
     async function addGasto() {
       const concepto  = document.getElementById('gasto-concepto').value.trim();
       const categoria = document.getElementById('gasto-categoria').value;
@@ -712,41 +909,34 @@
       }
 
       const btn = document.getElementById('btn-add-gasto');
-      btn.disabled = true;
-      btn.textContent = 'Guardando…';
+      btn.disabled = true; btn.textContent = 'Guardando…';
 
       try {
         await addDoc(collection(db, 'gastos'), {
-          concepto,
-          categoria,
-          importe,
-          moneda,
+          concepto, categoria, importe, moneda,
           importeEUR: parseFloat(toEUR(importe, moneda).toFixed(2)),
           timestamp:  serverTimestamp(),
         });
-
-        /* Limpiar form */
         document.getElementById('gasto-concepto').value = '';
         document.getElementById('gasto-importe').value  = '';
       } catch (err) {
         alert('Error al guardar. Inténtalo de nuevo.');
         console.error(err);
       } finally {
-        btn.disabled    = false;
-        btn.textContent = '+ Añadir';
+        btn.disabled = false; btn.textContent = '+ Añadir';
       }
     }
 
     function renderBudget(gastos) {
-      const total = gastos.reduce((acc, g) => acc + (g.importeEUR || 0), 0);
+      totalGastadoEUR = gastos.reduce((acc, g) => acc + (g.importeEUR || 0), 0);
 
-      document.getElementById('budget-total').textContent =
-        total.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
-      document.getElementById('budget-count').textContent =
-        `${gastos.length} gasto${gastos.length !== 1 ? 's' : ''} registrado${gastos.length !== 1 ? 's' : ''}`;
+      document.getElementById('summary-gastado').textContent       = fmt(totalGastadoEUR);
+      document.getElementById('summary-gastado-count').textContent =
+        `${gastos.length} gasto${gastos.length !== 1 ? 's' : ''}`;
+
+      updateBalanceSummary();
 
       const list = document.getElementById('budget-list');
-
       if (!gastos.length) {
         list.innerHTML = `<li class="empty-state">Aún no hay gastos. ¡Añade el primero!</li>`;
         return;
@@ -756,18 +946,15 @@
         const fecha = g.timestamp?.toDate
           ? g.timestamp.toDate().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: '2-digit' })
           : '—';
-        const importeOrig = `${g.importe?.toLocaleString('es-ES')} ${g.moneda}`;
-        const importeEUR  = `${(g.importeEUR || 0).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
-
         return `
         <li class="budget-row">
           <div class="budget-concepto">${esc(g.concepto)}</div>
           <div><span class="budget-cat">${esc(g.categoria)}</span></div>
-          <div class="budget-importe">${importeOrig}</div>
-          <div class="budget-eur">${importeEUR}</div>
+          <div class="budget-importe">${g.importe?.toLocaleString('es-ES')} ${g.moneda}</div>
+          <div class="budget-eur">${fmt(g.importeEUR || 0)}</div>
           <div class="budget-fecha">${fecha}</div>
           <div>
-            <button class="btn-delete" data-id="${g.id}" title="Eliminar">✕</button>
+            <button class="btn-delete" data-col="gastos" data-id="${g.id}" title="Eliminar">✕</button>
           </div>
         </li>`;
       }).join('');
@@ -775,7 +962,7 @@
       list.querySelectorAll('.btn-delete').forEach(btn => {
         btn.addEventListener('click', async () => {
           if (!confirm('¿Eliminar este gasto?')) return;
-          await deleteDoc(doc(db, 'gastos', btn.dataset.id));
+          await deleteDoc(doc(db, btn.dataset.col, btn.dataset.id));
         });
       });
     }

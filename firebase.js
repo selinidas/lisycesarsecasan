@@ -31,6 +31,9 @@
        match /gastos/{id} {
          allow read, write: if true;
        }
+       match /ingresos/{id} {
+         allow read, write: if true;
+       }
      }
    }
 
