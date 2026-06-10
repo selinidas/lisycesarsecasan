@@ -251,7 +251,7 @@
     }
     .budget-form {
       display: grid;
-      grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr auto;
+      grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto;
       gap: .75rem; align-items: end;
     }
     .budget-form--ingreso {
@@ -294,7 +294,7 @@
     }
     .budget-table-header {
       display: grid;
-      grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr 80px 36px;
+      grid-template-columns: 2fr 1.1fr 1fr 1fr 1fr 1fr 70px 36px;
       gap: .75rem; padding: .75rem 1.25rem;
       background: var(--bg); border-bottom: 1px solid var(--border);
       font-size: .7rem; font-weight: 600; text-transform: uppercase;
@@ -310,7 +310,7 @@
     }
     .budget-row {
       display: grid;
-      grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr 80px 36px;
+      grid-template-columns: 2fr 1.1fr 1fr 1fr 1fr 1fr 70px 36px;
       gap: .75rem; align-items: center;
       padding: .85rem 1.25rem; border-bottom: 1px solid var(--border);
       animation: fadeIn .25s ease both;
@@ -322,6 +322,13 @@
     .pendiente-badge--ok      { background: #e8f5e9; color: #2e7d32; }
     .pendiente-badge--parcial { background: #fff3e0; color: #e65100; }
     .pendiente-badge--sin-pago { background: #fce4ec; color: #c62828; }
+    .amount-block { display: flex; flex-direction: column; gap: 2px; }
+    .amount-eur   { font-size: .68rem; color: var(--text-muted); }
+    .quien-chip {
+      font-size: .72rem; padding: .15rem .55rem; border-radius: 12px;
+      background: #ede7f6; color: #4527a0; font-weight: 500;
+      white-space: nowrap; display: inline-block;
+    }
     .income-row {
       display: grid;
       grid-template-columns: 1.5fr 2fr 1fr 1fr 90px 36px;
@@ -582,6 +589,14 @@
                 <option value="DOP">$ DOP</option>
               </select>
             </label>
+            <label>
+              <span class="field-label">Quién pagó</span>
+              <select id="gasto-quien">
+                <option value="Bote">Bote de la boda</option>
+                <option value="César">César</option>
+                <option value="Lis">Lis</option>
+              </select>
+            </label>
             <button class="btn-add" id="btn-add-gasto">+ Añadir</button>
           </div>
         </div>
@@ -593,6 +608,7 @@
             <div>Total</div>
             <div>Pagado</div>
             <div>Pendiente</div>
+            <div>Quién</div>
             <div>Fecha</div>
             <div></div>
           </div>
@@ -918,6 +934,7 @@
       const importe   = parseFloat(document.getElementById('gasto-importe').value);
       const pagado    = parseFloat(document.getElementById('gasto-pagado').value) || 0;
       const moneda    = document.getElementById('gasto-moneda').value;
+      const quien     = document.getElementById('gasto-quien').value;
 
       if (!concepto || !importe || importe <= 0) {
         alert('Por favor rellena el concepto y el importe total.');
@@ -929,7 +946,7 @@
 
       try {
         await addDoc(collection(db, 'gastos'), {
-          concepto, categoria, importe, pagado, moneda,
+          concepto, categoria, importe, pagado, moneda, quien,
           importeEUR: parseFloat(toEUR(importe, moneda).toFixed(2)),
           pagadoEUR:  parseFloat(toEUR(pagado, moneda).toFixed(2)),
           timestamp:  serverTimestamp(),
@@ -970,6 +987,10 @@
         const pendiente  = importe - pagado;
         const moneda     = g.moneda ?? '';
 
+        const importeEUR = g.importeEUR ?? toEUR(importe, moneda);
+        const pagadoEUR  = g.pagadoEUR  ?? toEUR(pagado, moneda);
+        const pendienteEUR = importeEUR - pagadoEUR;
+
         const pct        = importe > 0 ? pagado / importe : 1;
         const badgeClass = pct >= 1 ? 'pendiente-badge--ok'
                          : pct > 0  ? 'pendiente-badge--parcial'
@@ -978,13 +999,25 @@
           ? '✓ Pagado'
           : pendiente.toLocaleString('es-ES', { maximumFractionDigits: 2 }) + ' ' + moneda;
 
+        const fmtSmall = n => n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+
         return `
         <li class="budget-row">
           <div class="budget-concepto">${esc(g.concepto)}</div>
           <div><span class="budget-cat">${esc(g.categoria)}</span></div>
-          <div class="budget-importe">${importe.toLocaleString('es-ES')} ${moneda}</div>
-          <div class="budget-eur">${pagado.toLocaleString('es-ES')} ${moneda}</div>
-          <div><span class="pendiente-badge ${badgeClass}">${badgeText}</span></div>
+          <div class="amount-block">
+            <span class="budget-importe">${importe.toLocaleString('es-ES')} ${moneda}</span>
+            <span class="amount-eur">${fmtSmall(importeEUR)}</span>
+          </div>
+          <div class="amount-block">
+            <span class="budget-eur">${pagado.toLocaleString('es-ES')} ${moneda}</span>
+            <span class="amount-eur">${fmtSmall(pagadoEUR)}</span>
+          </div>
+          <div class="amount-block">
+            <span class="pendiente-badge ${badgeClass}">${badgeText}</span>
+            ${pct < 1 ? `<span class="amount-eur">${fmtSmall(pendienteEUR)}</span>` : ''}
+          </div>
+          <div><span class="quien-chip">${esc(g.quien ?? '—')}</span></div>
           <div class="budget-fecha">${fecha}</div>
           <div>
             <button class="btn-delete" data-col="gastos" data-id="${g.id}" title="Eliminar">✕</button>
