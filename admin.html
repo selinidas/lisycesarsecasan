@@ -207,11 +207,9 @@
     }
     .bsum-card__sub { font-size: .68rem; opacity: .65; margin-top: .3rem; }
 
-    .bsum-card--bote      { background: var(--sage);  color: white; }
-    .bsum-card--gastado   { background: var(--rust);  color: white; }
-    .bsum-card--balance-pos  { background: #2e7d32; color: white; }
-    .bsum-card--balance-neg  { background: #c62828; color: white; }
-    .bsum-card--balance-zero { background: #888;    color: white; }
+    .bsum-card--bote  { background: var(--sage);  color: white; }
+    .bsum-card--lis   { background: var(--mauve); color: white; }
+    .bsum-card--cesar { background: var(--peach); color: white; }
     .bsum-card--rates {
       background: var(--off-white); color: var(--text);
       display: flex; flex-direction: column; justify-content: center;
@@ -254,9 +252,65 @@
       grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto;
       gap: .75rem; align-items: end;
     }
-    .budget-form--bote {
-      grid-template-columns: 2fr 1fr 1fr auto;
+    /* Grid de los 3 botes */
+    .botes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
     }
+    @media (max-width: 700px) { .botes-grid { grid-template-columns: 1fr; } }
+
+    .bote-block {
+      background: var(--off-white); border-radius: var(--r);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .bote-block__header {
+      padding: .9rem 1.1rem;
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .bote-block__header--boda  { background: var(--sage);  color: white; }
+    .bote-block__header--lis   { background: var(--mauve); color: white; }
+    .bote-block__header--cesar { background: var(--peach); color: white; }
+    .bote-block__name { font-weight: 600; font-size: .9rem; }
+    .bote-block__total { font-family: var(--font-serif); font-size: 1.35rem; }
+    .bote-block__disp {
+      font-size: .68rem; opacity: .85; padding: .3rem 1.1rem .4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .bote-block__form {
+      display: grid; grid-template-columns: 1fr 1fr auto;
+      gap: .5rem; align-items: end;
+      padding: .75rem 1rem;
+    }
+    .bote-block__form input,
+    .bote-block__form select {
+      padding: .45rem .6rem; border: 1.5px solid var(--border); border-radius: 7px;
+      font-family: var(--font-sans); font-size: .85rem; background: white;
+      color: var(--text); outline: none; transition: border-color .2s; width: 100%;
+    }
+    .bote-block__form input:focus,
+    .bote-block__form select:focus { border-color: var(--rust); }
+    .btn-bote {
+      padding: .5rem .7rem; color: white; border: none; border-radius: 7px;
+      font-family: var(--font-sans); font-size: .82rem; font-weight: 500;
+      cursor: pointer; transition: opacity .2s; white-space: nowrap;
+    }
+    .btn-bote:hover { opacity: .85; }
+    .btn-bote:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-bote--boda  { background: var(--sage); }
+    .btn-bote--lis   { background: var(--mauve); }
+    .btn-bote--cesar { background: var(--peach); }
+    .bote-list { list-style: none; max-height: 180px; overflow-y: auto; }
+    .bote-entry {
+      display: grid; grid-template-columns: 1fr 1fr 60px 24px;
+      gap: .5rem; align-items: center;
+      padding: .55rem 1rem; border-top: 1px solid var(--border);
+      font-size: .82rem;
+    }
+    .bote-entry:hover { background: #fdf6f2; }
+    .bote-entry__eur   { font-weight: 600; color: var(--rust); }
+    .bote-entry__fecha { font-size: .68rem; color: var(--text-muted); }
     @media (max-width: 700px) {
       .budget-form,
       .budget-form--ingreso { grid-template-columns: 1fr 1fr; }
@@ -520,22 +574,22 @@
       <!-- ══ TAB: PRESUPUESTO ══ -->
       <div id="tab-presupuesto" hidden>
 
-        <!-- Resumen: 4 tarjetas -->
+        <!-- Resumen: 3 botes + tasas -->
         <div class="budget-summary">
           <div class="bsum-card bsum-card--bote">
-            <div class="bsum-card__label">Bote total</div>
-            <div class="bsum-card__num" id="summary-recibido">— €</div>
-            <div class="bsum-card__sub" id="summary-recibido-count">0 aportaciones</div>
+            <div class="bsum-card__label">Bote boda</div>
+            <div class="bsum-card__num" id="summary-boda">— €</div>
+            <div class="bsum-card__sub" id="summary-boda-disp">Disponible: —</div>
           </div>
-          <div class="bsum-card bsum-card--gastado">
-            <div class="bsum-card__label">Gastado del bote</div>
-            <div class="bsum-card__num" id="summary-gastado">— €</div>
-            <div class="bsum-card__sub" id="summary-gastado-count">0 gastos del bote</div>
+          <div class="bsum-card bsum-card--lis">
+            <div class="bsum-card__label">Lis</div>
+            <div class="bsum-card__num" id="summary-lis">— €</div>
+            <div class="bsum-card__sub" id="summary-lis-disp">Disponible: —</div>
           </div>
-          <div class="bsum-card bsum-card--balance-zero" id="balance-card">
-            <div class="bsum-card__label">Bote disponible</div>
-            <div class="bsum-card__num" id="summary-balance">— €</div>
-            <div class="bsum-card__sub" id="summary-balance-label">—</div>
+          <div class="bsum-card bsum-card--cesar">
+            <div class="bsum-card__label">César</div>
+            <div class="bsum-card__num" id="summary-cesar">— €</div>
+            <div class="bsum-card__sub" id="summary-cesar-disp">Disponible: —</div>
           </div>
           <div class="bsum-card bsum-card--rates">
             <div class="budget-rates-title">Tipo de cambio</div>
@@ -545,45 +599,77 @@
           </div>
         </div>
 
-        <!-- ── BOTE DE LA BODA ── -->
+        <!-- ── TRES BOTES ── -->
         <div class="budget-section-title">
-          Bote de la boda
-          <span class="section-badge section-badge--ingreso">Aportaciones de invitados</span>
+          Aportaciones
+          <span class="section-badge section-badge--ingreso">Botes</span>
         </div>
 
-        <div class="budget-form-card">
-          <div class="budget-form budget-form--bote">
-            <label>
-              <span class="field-label">Nota (quién lo dio — opcional)</span>
-              <input type="text" id="ingreso-quien" placeholder="Ej: Ana y Pedro, tíos de Lissette…" />
-            </label>
-            <label>
-              <span class="field-label">Cantidad</span>
-              <input type="number" id="ingreso-importe" placeholder="0.00" min="0" step="0.01" />
-            </label>
-            <label>
-              <span class="field-label">Moneda</span>
-              <select id="ingreso-moneda">
+        <div class="botes-grid">
+
+          <!-- Bote de la boda -->
+          <div class="bote-block">
+            <div class="bote-block__header bote-block__header--boda">
+              <span class="bote-block__name">Bote de la boda</span>
+              <span class="bote-block__total" id="bote-boda-total">0,00 €</span>
+            </div>
+            <div class="bote-block__disp" id="bote-boda-disp">Disponible: —</div>
+            <div class="bote-block__form">
+              <input type="number" id="boda-importe" placeholder="0.00" min="0" step="0.01" />
+              <select id="boda-moneda">
                 <option value="EUR">€ EUR</option>
                 <option value="USD">$ USD</option>
                 <option value="DOP">$ DOP</option>
               </select>
-            </label>
-            <button class="btn-add btn-add--green" id="btn-add-ingreso">+ Sumar al bote</button>
+              <button class="btn-bote btn-bote--boda" id="btn-add-boda">+</button>
+            </div>
+            <ul class="bote-list" id="list-boda">
+              <li class="empty-state" style="font-size:.8rem;padding:.75rem 1rem;">Sin aportaciones</li>
+            </ul>
           </div>
-        </div>
 
-        <div class="budget-table-card" style="margin-bottom:1.5rem;">
-          <div class="income-table-header">
-            <div>Nota / De quién</div>
-            <div>Cantidad</div>
-            <div>En EUR</div>
-            <div>Fecha</div>
-            <div></div>
+          <!-- Lis -->
+          <div class="bote-block">
+            <div class="bote-block__header bote-block__header--lis">
+              <span class="bote-block__name">Lis</span>
+              <span class="bote-block__total" id="bote-lis-total">0,00 €</span>
+            </div>
+            <div class="bote-block__disp" id="bote-lis-disp">Disponible: —</div>
+            <div class="bote-block__form">
+              <input type="number" id="lis-importe" placeholder="0.00" min="0" step="0.01" />
+              <select id="lis-moneda">
+                <option value="EUR">€ EUR</option>
+                <option value="USD">$ USD</option>
+                <option value="DOP">$ DOP</option>
+              </select>
+              <button class="btn-bote btn-bote--lis" id="btn-add-lis">+</button>
+            </div>
+            <ul class="bote-list" id="list-lis">
+              <li class="empty-state" style="font-size:.8rem;padding:.75rem 1rem;">Sin aportaciones</li>
+            </ul>
           </div>
-          <ul class="budget-list" id="income-list">
-            <li class="loading-state">Cargando bote…</li>
-          </ul>
+
+          <!-- César -->
+          <div class="bote-block">
+            <div class="bote-block__header bote-block__header--cesar">
+              <span class="bote-block__name">César</span>
+              <span class="bote-block__total" id="bote-cesar-total">0,00 €</span>
+            </div>
+            <div class="bote-block__disp" id="bote-cesar-disp">Disponible: —</div>
+            <div class="bote-block__form">
+              <input type="number" id="cesar-importe" placeholder="0.00" min="0" step="0.01" />
+              <select id="cesar-moneda">
+                <option value="EUR">€ EUR</option>
+                <option value="USD">$ USD</option>
+                <option value="DOP">$ DOP</option>
+              </select>
+              <button class="btn-bote btn-bote--cesar" id="btn-add-cesar">+</button>
+            </div>
+            <ul class="bote-list" id="list-cesar">
+              <li class="empty-state" style="font-size:.8rem;padding:.75rem 1rem;">Sin aportaciones</li>
+            </ul>
+          </div>
+
         </div>
 
         <!-- ── GASTOS ── -->
@@ -683,12 +769,12 @@
 
     const PASSWORD = 'boda2027';
 
-    let allRsvps         = [];
-    let activeFilter     = 'all';
-    let rates            = { USD: 1, DOP: 1 };
-    let totalRecibidoEUR = 0;
-    let currentGastos    = [];
-    let editingId        = null;
+    let allRsvps      = [];
+    let activeFilter  = 'all';
+    let rates         = { USD: 1, DOP: 1 };
+    let totales       = { boda: 0, lis: 0, cesar: 0 };
+    let currentGastos = [];
+    let editingId     = null;
 
     /* ═══════════════════════════════════════════
        LOGIN
@@ -844,7 +930,9 @@
         }
       );
 
-      document.getElementById('btn-add-ingreso').addEventListener('click', addAportacion);
+      document.getElementById('btn-add-boda').addEventListener('click',  () => addAportacion('boda'));
+      document.getElementById('btn-add-lis').addEventListener('click',   () => addAportacion('lis'));
+      document.getElementById('btn-add-cesar').addEventListener('click', () => addAportacion('cesar'));
       document.getElementById('btn-add-gasto').addEventListener('click', addGasto);
     }
 
@@ -880,82 +968,75 @@
       return num.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
     }
 
+    /* ── Actualizar tarjetas resumen ── */
     function updateSummary() {
-      /* Gastado del bote = sum de pagadoEUR de gastos cuyo quien === 'Bote' */
-      const boteGastadoEUR = currentGastos.reduce((acc, g) =>
-        g.quien === 'Bote' ? acc + (g.pagadoEUR ?? 0) : acc, 0);
-      const boteDisponible = totalRecibidoEUR - boteGastadoEUR;
-      const boteGastos     = currentGastos.filter(g => g.quien === 'Bote').length;
-
-      document.getElementById('summary-gastado').textContent       = fmt(boteGastadoEUR);
-      document.getElementById('summary-gastado-count').textContent =
-        `${boteGastos} gasto${boteGastos !== 1 ? 's' : ''} del bote`;
-      document.getElementById('summary-balance').textContent       = fmt(boteDisponible);
-
-      const card = document.getElementById('balance-card');
-      card.className = 'bsum-card ' + (
-        boteDisponible > 0  ? 'bsum-card--balance-pos'  :
-        boteDisponible < 0  ? 'bsum-card--balance-neg'  :
-                              'bsum-card--balance-zero'
-      );
-      document.getElementById('summary-balance-label').textContent =
-        boteDisponible > 0 ? 'Disponible' : boteDisponible < 0 ? 'En negativo' : 'En cero';
+      const quienMap = { boda: 'Bote', lis: 'Lis', cesar: 'César' };
+      ['boda', 'lis', 'cesar'].forEach(key => {
+        const gastado   = currentGastos.reduce((acc, g) =>
+          g.quien === quienMap[key] ? acc + (g.pagadoEUR ?? 0) : acc, 0);
+        const disp      = totales[key] - gastado;
+        const dispFmt   = (disp >= 0 ? '' : '−') + fmt(Math.abs(disp));
+        document.getElementById(`summary-${key}`).textContent      = fmt(totales[key]);
+        document.getElementById(`summary-${key}-disp`).textContent = `Disponible: ${dispFmt}`;
+        document.getElementById(`bote-${key}-total`).textContent   = fmt(totales[key]);
+        document.getElementById(`bote-${key}-disp`).textContent    =
+          `Disponible: ${dispFmt} · Gastado: ${fmt(gastado)}`;
+      });
     }
 
-    /* ── Bote: añadir aportación ── */
-    async function addAportacion() {
-      const quien   = document.getElementById('ingreso-quien').value.trim();
-      const importe = parseFloat(document.getElementById('ingreso-importe').value);
-      const moneda  = document.getElementById('ingreso-moneda').value;
-
+    /* ── Botes: añadir aportación ── */
+    async function addAportacion(bote) {
+      const importe = parseFloat(document.getElementById(`${bote}-importe`).value);
+      const moneda  = document.getElementById(`${bote}-moneda`).value;
       if (!importe || importe <= 0) { alert('Introduce la cantidad.'); return; }
-
-      const btn = document.getElementById('btn-add-ingreso');
-      btn.disabled = true; btn.textContent = 'Guardando…';
+      const btn = document.getElementById(`btn-add-${bote}`);
+      btn.disabled = true;
       try {
         await addDoc(collection(db, 'ingresos'), {
-          quien, importe, moneda,
+          bote, importe, moneda,
           importeEUR: parseFloat(toEUR(importe, moneda).toFixed(2)),
           timestamp:  serverTimestamp(),
         });
-        document.getElementById('ingreso-quien').value  = '';
-        document.getElementById('ingreso-importe').value = '';
+        document.getElementById(`${bote}-importe`).value = '';
       } catch (err) { alert('Error al guardar.'); console.error(err); }
-      finally { btn.disabled = false; btn.textContent = '+ Sumar al bote'; }
+      finally { btn.disabled = false; }
     }
 
-    /* ── Bote: renderizar tabla ── */
+    /* ── Botes: renderizar los 3 ── */
     function renderBote(ingresos) {
-      totalRecibidoEUR = ingresos.reduce((acc, i) => acc + (i.importeEUR || 0), 0);
-      document.getElementById('summary-recibido').textContent       = fmt(totalRecibidoEUR);
-      document.getElementById('summary-recibido-count').textContent =
-        `${ingresos.length} aportación${ingresos.length !== 1 ? 'es' : ''}`;
+      totales = { boda: 0, lis: 0, cesar: 0 };
+      ingresos.forEach(i => {
+        const key = i.bote ?? 'boda'; /* entradas antiguas sin campo bote → boda */
+        if (totales[key] !== undefined) totales[key] += (i.importeEUR || 0);
+      });
       updateSummary();
 
-      const list = document.getElementById('income-list');
-      if (!ingresos.length) {
-        list.innerHTML = `<li class="empty-state">El bote está vacío. ¡Añade la primera aportación!</li>`;
-        return;
-      }
-      list.innerHTML = ingresos.map(i => {
-        const fecha = i.timestamp?.toDate
-          ? i.timestamp.toDate().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: '2-digit' })
-          : '—';
-        return `
-        <li class="income-row">
-          <div class="budget-concepto">${esc(i.quien || '(sin nota)')}</div>
-          <div class="budget-importe">${i.importe?.toLocaleString('es-ES')} ${i.moneda}</div>
-          <div class="income-eur">${fmt(i.importeEUR || 0)}</div>
-          <div class="budget-fecha">${fecha}</div>
-          <div>
+      ['boda', 'lis', 'cesar'].forEach(key => {
+        const items = ingresos.filter(i => (i.bote ?? 'boda') === key)
+          .sort((a, b) => (b.timestamp?.seconds ?? 0) - (a.timestamp?.seconds ?? 0));
+        const list  = document.getElementById(`list-${key}`);
+
+        if (!items.length) {
+          list.innerHTML = `<li class="empty-state" style="font-size:.8rem;padding:.75rem 1rem;">Sin aportaciones</li>`;
+          return;
+        }
+        list.innerHTML = items.map(i => {
+          const fecha = i.timestamp?.toDate
+            ? i.timestamp.toDate().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: '2-digit' })
+            : '—';
+          return `
+          <li class="bote-entry">
+            <span>${i.importe?.toLocaleString('es-ES')} ${i.moneda}</span>
+            <span class="bote-entry__eur">${fmt(i.importeEUR || 0)}</span>
+            <span class="bote-entry__fecha">${fecha}</span>
             <button class="btn-delete" data-col="ingresos" data-id="${i.id}" title="Eliminar">✕</button>
-          </div>
-        </li>`;
-      }).join('');
-      list.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', async () => {
-          if (!confirm('¿Eliminar esta aportación del bote?')) return;
-          await deleteDoc(doc(db, btn.dataset.col, btn.dataset.id));
+          </li>`;
+        }).join('');
+        list.querySelectorAll('.btn-delete').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            if (!confirm('¿Eliminar esta aportación?')) return;
+            await deleteDoc(doc(db, btn.dataset.col, btn.dataset.id));
+          });
         });
       });
     }
