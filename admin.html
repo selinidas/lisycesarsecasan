@@ -99,7 +99,7 @@
     .tab-btn.active { color: var(--rust); border-bottom-color: var(--rust); }
     .tab-btn:hover:not(.active) { color: var(--text); }
 
-    /* ── Stats ── */
+    /* ── Stats RSVP ── */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -185,12 +185,12 @@
     .empty-state   { text-align: center; padding: 3rem 1rem; color: var(--text-muted); font-size: .9rem; }
     .loading-state { text-align: center; padding: 2rem; color: var(--text-muted); font-size: .85rem; }
 
-    /* ── Presupuesto — resumen ── */
+    /* ── Presupuesto — resumen global ── */
     .budget-summary {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
     }
     @media (max-width: 700px) { .budget-summary { grid-template-columns: repeat(2, 1fr); } }
 
@@ -200,16 +200,16 @@
     }
     .bsum-card__label {
       font-size: .68rem; letter-spacing: .12em; text-transform: uppercase;
-      opacity: .75; margin-bottom: .35rem;
+      opacity: .8; margin-bottom: .35rem;
     }
     .bsum-card__num {
       font-family: var(--font-serif); font-size: 1.9rem; font-weight: 500; line-height: 1;
     }
-    .bsum-card__sub { font-size: .68rem; opacity: .65; margin-top: .3rem; }
+    .bsum-card__sub { font-size: .68rem; opacity: .7; margin-top: .3rem; }
 
-    .bsum-card--bote  { background: var(--sage);  color: white; }
-    .bsum-card--lis   { background: var(--mauve); color: white; }
-    .bsum-card--cesar { background: var(--peach); color: white; }
+    .bsum-card--aportado { background: var(--sage);  color: white; }
+    .bsum-card--gastado  { background: var(--rust);  color: white; }
+    .bsum-card--pendiente{ background: var(--peach); color: white; }
     .bsum-card--rates {
       background: var(--off-white); color: var(--text);
       display: flex; flex-direction: column; justify-content: center;
@@ -227,7 +227,7 @@
       letter-spacing: .1em; margin-bottom: .2rem;
     }
 
-    /* Sección ingresos / gastos */
+    /* Títulos de sección */
     .budget-section-title {
       font-family: var(--font-serif); font-size: 1.3rem; font-weight: 400;
       color: var(--text); margin: 1.75rem 0 1rem;
@@ -242,17 +242,7 @@
     .section-badge--ingreso { background: var(--sage); }
     .section-badge--gasto   { background: var(--rust); }
 
-    /* Formulario (ingresos y gastos comparten estilos) */
-    .budget-form-card {
-      background: var(--off-white); border-radius: var(--r);
-      padding: 1.25rem 1.5rem; box-shadow: var(--shadow); margin-bottom: 1.25rem;
-    }
-    .budget-form {
-      display: grid;
-      grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto;
-      gap: .75rem; align-items: end;
-    }
-    /* Grid de los 3 botes */
+    /* ── Botes de aportaciones ── */
     .botes-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -266,22 +256,19 @@
       box-shadow: var(--shadow); overflow: hidden;
     }
     .bote-block__header {
-      padding: .9rem 1.1rem;
+      padding: 1rem 1.1rem;
       display: flex; justify-content: space-between; align-items: baseline;
     }
-    .bote-block__header--boda  { background: var(--sage);  color: white; }
-    .bote-block__header--lis   { background: var(--mauve); color: white; }
-    .bote-block__header--cesar { background: var(--peach); color: white; }
-    .bote-block__name { font-weight: 600; font-size: .9rem; }
+    .bote-block__header--lis    { background: var(--mauve); color: white; }
+    .bote-block__header--cesar  { background: var(--peach); color: white; }
+    .bote-block__header--boda   { background: var(--sage);  color: white; }
+    .bote-block__name  { font-weight: 600; font-size: .9rem; }
     .bote-block__total { font-family: var(--font-serif); font-size: 1.35rem; }
-    .bote-block__disp {
-      font-size: .68rem; opacity: .85; padding: .3rem 1.1rem .4rem;
-      border-bottom: 1px solid var(--border);
-    }
+
     .bote-block__form {
       display: grid; grid-template-columns: 1fr 1fr auto;
       gap: .5rem; align-items: end;
-      padding: .75rem 1rem;
+      padding: .75rem 1rem; border-bottom: 1px solid var(--border);
     }
     .bote-block__form input,
     .bote-block__form select {
@@ -291,31 +278,42 @@
     }
     .bote-block__form input:focus,
     .bote-block__form select:focus { border-color: var(--rust); }
+
     .btn-bote {
-      padding: .5rem .7rem; color: white; border: none; border-radius: 7px;
+      padding: .5rem .8rem; color: white; border: none; border-radius: 7px;
       font-family: var(--font-sans); font-size: .82rem; font-weight: 500;
       cursor: pointer; transition: opacity .2s; white-space: nowrap;
     }
     .btn-bote:hover { opacity: .85; }
     .btn-bote:disabled { opacity: .45; cursor: not-allowed; }
-    .btn-bote--boda  { background: var(--sage); }
     .btn-bote--lis   { background: var(--mauve); }
     .btn-bote--cesar { background: var(--peach); }
-    .bote-list { list-style: none; max-height: 180px; overflow-y: auto; }
+    .btn-bote--boda  { background: var(--sage); }
+
+    .bote-list { list-style: none; max-height: 200px; overflow-y: auto; }
     .bote-entry {
-      display: grid; grid-template-columns: 1fr 1fr 60px 24px;
+      display: grid; grid-template-columns: 1fr auto 60px 24px;
       gap: .5rem; align-items: center;
       padding: .55rem 1rem; border-top: 1px solid var(--border);
       font-size: .82rem;
     }
     .bote-entry:hover { background: #fdf6f2; }
-    .bote-entry__eur   { font-weight: 600; color: var(--rust); }
+    .bote-entry__eur   { font-weight: 600; color: var(--rust); text-align: right; }
     .bote-entry__fecha { font-size: .68rem; color: var(--text-muted); }
+
+    /* ── Formulario de gastos ── */
+    .budget-form-card {
+      background: var(--off-white); border-radius: var(--r);
+      padding: 1.25rem 1.5rem; box-shadow: var(--shadow); margin-bottom: 1.25rem;
+    }
+    .budget-form {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr 1fr 1fr 1fr 1fr auto;
+      gap: .75rem; align-items: end;
+    }
     @media (max-width: 700px) {
-      .budget-form,
-      .budget-form--ingreso { grid-template-columns: 1fr 1fr; }
-      .budget-form .btn-add,
-      .budget-form--ingreso .btn-add { grid-column: 1 / -1; }
+      .budget-form { grid-template-columns: 1fr 1fr; }
+      .budget-form .btn-add { grid-column: 1 / -1; }
     }
     .budget-form label { display: flex; flex-direction: column; gap: .3rem; }
     .budget-form .field-label {
@@ -337,11 +335,9 @@
       cursor: pointer; transition: background .2s; white-space: nowrap;
     }
     .btn-add:hover { background: var(--rust-light); }
-    .btn-add--green { background: #2e7d32; }
-    .btn-add--green:hover { background: #388e3c; }
     .btn-add:disabled { opacity: .5; cursor: not-allowed; }
 
-    /* Tablas */
+    /* ── Tabla de gastos ── */
     .budget-table-card {
       background: var(--off-white); border-radius: var(--r);
       box-shadow: var(--shadow); overflow: hidden;
@@ -354,14 +350,6 @@
       font-size: .7rem; font-weight: 600; text-transform: uppercase;
       letter-spacing: .08em; color: var(--text-muted);
     }
-    .income-table-header {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr 80px 36px;
-      gap: .75rem; padding: .75rem 1.25rem;
-      background: var(--bg); border-bottom: 1px solid var(--border);
-      font-size: .7rem; font-weight: 600; text-transform: uppercase;
-      letter-spacing: .08em; color: var(--text-muted);
-    }
     .budget-row {
       display: grid;
       grid-template-columns: 2fr 1.1fr 1fr 1fr 1fr 1fr 70px 56px;
@@ -369,20 +357,28 @@
       padding: .85rem 1.25rem; border-bottom: 1px solid var(--border);
       animation: fadeIn .25s ease both;
     }
+    .budget-row:last-child { border-bottom: none; }
+    .budget-row:hover { background: #fdf6f2; }
+
     .pendiente-badge {
       font-size: .72rem; padding: .2rem .55rem; border-radius: 12px;
       font-weight: 600; white-space: nowrap; display: inline-block;
     }
-    .pendiente-badge--ok      { background: #e8f5e9; color: #2e7d32; }
-    .pendiente-badge--parcial { background: #fff3e0; color: #e65100; }
+    .pendiente-badge--ok       { background: #e8f5e9; color: #2e7d32; }
+    .pendiente-badge--parcial  { background: #fff3e0; color: #e65100; }
     .pendiente-badge--sin-pago { background: #fce4ec; color: #c62828; }
+
     .amount-block { display: flex; flex-direction: column; gap: 2px; }
     .amount-eur   { font-size: .68rem; color: var(--text-muted); }
+
     .quien-chip {
       font-size: .72rem; padding: .15rem .55rem; border-radius: 12px;
-      background: #ede7f6; color: #4527a0; font-weight: 500;
-      white-space: nowrap; display: inline-block;
+      font-weight: 500; white-space: nowrap; display: inline-block;
     }
+    .quien-chip--lis   { background: #f3e5f5; color: #6a1b9a; }
+    .quien-chip--cesar { background: #fff3e0; color: #bf360c; }
+    .quien-chip--bote  { background: #e8f5e9; color: #1b5e20; }
+
     .row-actions { display: flex; gap: .2rem; align-items: center; }
     .btn-edit {
       background: none; border: none; cursor: pointer; color: #bbb;
@@ -428,17 +424,6 @@
       color: var(--text-muted); cursor: pointer; transition: all .2s;
     }
     .btn-cancel-edit:hover { border-color: var(--text-muted); color: var(--text); }
-    .income-row {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr 80px 36px;
-      gap: .75rem; align-items: center;
-      padding: .85rem 1.25rem; border-bottom: 1px solid var(--border);
-      animation: fadeIn .25s ease both;
-    }
-    .budget-row:last-child,
-    .income-row:last-child { border-bottom: none; }
-    .budget-row:hover,
-    .income-row:hover { background: #fdf6f2; }
 
     .budget-concepto { font-size: .9rem; font-weight: 500; }
     .budget-cat {
@@ -448,35 +433,24 @@
     }
     .budget-importe { font-size: .88rem; color: var(--text-muted); }
     .budget-eur { font-size: .92rem; font-weight: 600; color: var(--rust); }
-    .income-eur { font-size: .92rem; font-weight: 600; color: #2e7d32; }
     .budget-fecha { font-size: .72rem; color: var(--text-muted); }
 
     .btn-delete {
       background: none; border: none; cursor: pointer; color: #ccc;
-      font-size: 1rem; padding: .2rem; border-radius: 4px;
-      transition: color .15s;
+      font-size: 1rem; padding: .2rem; border-radius: 4px; transition: color .15s;
     }
     .btn-delete:hover { color: #c0392b; }
 
     @media (max-width: 700px) {
-      .budget-table-header,
-      .income-table-header { display: none; }
+      .budget-table-header { display: none; }
       .budget-row {
         grid-template-columns: 1fr auto 28px;
         grid-template-rows: auto auto auto;
       }
-      .income-row {
-        grid-template-columns: 1fr auto 28px;
-        grid-template-rows: auto auto;
-      }
       .budget-row > :nth-child(3),
-      .budget-row > :nth-child(6),
-      .income-row > :nth-child(3),
-      .income-row > :nth-child(5) { display: none; }
+      .budget-row > :nth-child(6) { display: none; }
       .budget-concepto { grid-column: 1; }
-      .budget-cat { font-size: .7rem; }
-      .budget-eur,
-      .income-eur { grid-column: 2; text-align: right; }
+      .budget-eur { grid-column: 2; text-align: right; }
       .btn-delete { grid-column: 3; grid-row: 1; }
       .budget-importe { grid-column: 1 / 3; font-size: .75rem; }
       .budget-fecha { display: none; }
@@ -574,22 +548,22 @@
       <!-- ══ TAB: PRESUPUESTO ══ -->
       <div id="tab-presupuesto" hidden>
 
-        <!-- Resumen: 3 botes + tasas -->
+        <!-- Resumen global -->
         <div class="budget-summary">
-          <div class="bsum-card bsum-card--bote">
-            <div class="bsum-card__label">Bote boda</div>
-            <div class="bsum-card__num" id="summary-boda">— €</div>
-            <div class="bsum-card__sub" id="summary-boda-disp">Disponible: —</div>
+          <div class="bsum-card bsum-card--aportado">
+            <div class="bsum-card__label">Total aportado</div>
+            <div class="bsum-card__num" id="summary-total">— €</div>
+            <div class="bsum-card__sub">Lis + César + Invitados</div>
           </div>
-          <div class="bsum-card bsum-card--lis">
-            <div class="bsum-card__label">Lis</div>
-            <div class="bsum-card__num" id="summary-lis">— €</div>
-            <div class="bsum-card__sub" id="summary-lis-disp">Disponible: —</div>
+          <div class="bsum-card bsum-card--gastado">
+            <div class="bsum-card__label">Total pagado</div>
+            <div class="bsum-card__num" id="summary-gastado">— €</div>
+            <div class="bsum-card__sub">De los gastos registrados</div>
           </div>
-          <div class="bsum-card bsum-card--cesar">
-            <div class="bsum-card__label">César</div>
-            <div class="bsum-card__num" id="summary-cesar">— €</div>
-            <div class="bsum-card__sub" id="summary-cesar-disp">Disponible: —</div>
+          <div class="bsum-card bsum-card--pendiente">
+            <div class="bsum-card__label">Pendiente de pagar</div>
+            <div class="bsum-card__num" id="summary-pendiente">— €</div>
+            <div class="bsum-card__sub" id="summary-balance-sub">Balance: —</div>
           </div>
           <div class="bsum-card bsum-card--rates">
             <div class="budget-rates-title">Tipo de cambio</div>
@@ -599,34 +573,13 @@
           </div>
         </div>
 
-        <!-- ── TRES BOTES ── -->
+        <!-- ── APORTACIONES: 3 botes ── -->
         <div class="budget-section-title">
           Aportaciones
-          <span class="section-badge section-badge--ingreso">Botes</span>
+          <span class="section-badge section-badge--ingreso">Quién pone qué</span>
         </div>
 
         <div class="botes-grid">
-
-          <!-- Bote de la boda -->
-          <div class="bote-block">
-            <div class="bote-block__header bote-block__header--boda">
-              <span class="bote-block__name">Bote de la boda</span>
-              <span class="bote-block__total" id="bote-boda-total">0,00 €</span>
-            </div>
-            <div class="bote-block__disp" id="bote-boda-disp">Disponible: —</div>
-            <div class="bote-block__form">
-              <input type="number" id="boda-importe" placeholder="0.00" min="0" step="0.01" />
-              <select id="boda-moneda">
-                <option value="EUR">€ EUR</option>
-                <option value="USD">$ USD</option>
-                <option value="DOP">$ DOP</option>
-              </select>
-              <button class="btn-bote btn-bote--boda" id="btn-add-boda">+</button>
-            </div>
-            <ul class="bote-list" id="list-boda">
-              <li class="empty-state" style="font-size:.8rem;padding:.75rem 1rem;">Sin aportaciones</li>
-            </ul>
-          </div>
 
           <!-- Lis -->
           <div class="bote-block">
@@ -634,7 +587,6 @@
               <span class="bote-block__name">Lis</span>
               <span class="bote-block__total" id="bote-lis-total">0,00 €</span>
             </div>
-            <div class="bote-block__disp" id="bote-lis-disp">Disponible: —</div>
             <div class="bote-block__form">
               <input type="number" id="lis-importe" placeholder="0.00" min="0" step="0.01" />
               <select id="lis-moneda">
@@ -642,7 +594,7 @@
                 <option value="USD">$ USD</option>
                 <option value="DOP">$ DOP</option>
               </select>
-              <button class="btn-bote btn-bote--lis" id="btn-add-lis">+</button>
+              <button class="btn-bote btn-bote--lis" id="btn-add-lis">+ Añadir</button>
             </div>
             <ul class="bote-list" id="list-lis">
               <li class="empty-state" style="font-size:.8rem;padding:.75rem 1rem;">Sin aportaciones</li>
@@ -655,7 +607,6 @@
               <span class="bote-block__name">César</span>
               <span class="bote-block__total" id="bote-cesar-total">0,00 €</span>
             </div>
-            <div class="bote-block__disp" id="bote-cesar-disp">Disponible: —</div>
             <div class="bote-block__form">
               <input type="number" id="cesar-importe" placeholder="0.00" min="0" step="0.01" />
               <select id="cesar-moneda">
@@ -663,9 +614,29 @@
                 <option value="USD">$ USD</option>
                 <option value="DOP">$ DOP</option>
               </select>
-              <button class="btn-bote btn-bote--cesar" id="btn-add-cesar">+</button>
+              <button class="btn-bote btn-bote--cesar" id="btn-add-cesar">+ Añadir</button>
             </div>
             <ul class="bote-list" id="list-cesar">
+              <li class="empty-state" style="font-size:.8rem;padding:.75rem 1rem;">Sin aportaciones</li>
+            </ul>
+          </div>
+
+          <!-- Bote invitados -->
+          <div class="bote-block">
+            <div class="bote-block__header bote-block__header--boda">
+              <span class="bote-block__name">Bote invitados</span>
+              <span class="bote-block__total" id="bote-boda-total">0,00 €</span>
+            </div>
+            <div class="bote-block__form">
+              <input type="number" id="boda-importe" placeholder="0.00" min="0" step="0.01" />
+              <select id="boda-moneda">
+                <option value="EUR">€ EUR</option>
+                <option value="USD">$ USD</option>
+                <option value="DOP">$ DOP</option>
+              </select>
+              <button class="btn-bote btn-bote--boda" id="btn-add-boda">+ Añadir</button>
+            </div>
+            <ul class="bote-list" id="list-boda">
               <li class="empty-state" style="font-size:.8rem;padding:.75rem 1rem;">Sin aportaciones</li>
             </ul>
           </div>
@@ -675,7 +646,7 @@
         <!-- ── GASTOS ── -->
         <div class="budget-section-title">
           Gastos
-          <span class="section-badge section-badge--gasto">Pagos realizados</span>
+          <span class="section-badge section-badge--gasto">Lo que se va pagando</span>
         </div>
 
         <div class="budget-form-card">
@@ -718,9 +689,9 @@
             <label>
               <span class="field-label">Quién pagó</span>
               <select id="gasto-quien">
-                <option value="Bote">Bote de la boda</option>
-                <option value="César">César</option>
                 <option value="Lis">Lis</option>
+                <option value="César">César</option>
+                <option value="Bote">Bote invitados</option>
               </select>
             </label>
             <button class="btn-add" id="btn-add-gasto">+ Añadir</button>
@@ -736,7 +707,7 @@
             <div>Pendiente</div>
             <div>Quién</div>
             <div>Fecha</div>
-            <div></div><!-- editar + borrar -->
+            <div></div>
           </div>
           <ul class="budget-list" id="budget-list">
             <li class="loading-state">Cargando gastos…</li>
@@ -919,7 +890,7 @@
 
       onSnapshot(
         query(collection(db, 'ingresos'), orderBy('timestamp', 'desc')),
-        snap => renderBote(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+        snap => renderBotes(snap.docs.map(d => ({ id: d.id, ...d.data() })))
       );
 
       onSnapshot(
@@ -930,9 +901,9 @@
         }
       );
 
-      document.getElementById('btn-add-boda').addEventListener('click',  () => addAportacion('boda'));
       document.getElementById('btn-add-lis').addEventListener('click',   () => addAportacion('lis'));
       document.getElementById('btn-add-cesar').addEventListener('click', () => addAportacion('cesar'));
+      document.getElementById('btn-add-boda').addEventListener('click',  () => addAportacion('boda'));
       document.getElementById('btn-add-gasto').addEventListener('click', addGasto);
     }
 
@@ -968,19 +939,25 @@
       return num.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
     }
 
-    /* ── Actualizar tarjetas resumen ── */
+    /* ── Resumen global ── */
     function updateSummary() {
-      const quienMap = { boda: 'Bote', lis: 'Lis', cesar: 'César' };
-      ['boda', 'lis', 'cesar'].forEach(key => {
-        const gastado   = currentGastos.reduce((acc, g) =>
-          g.quien === quienMap[key] ? acc + (g.pagadoEUR ?? 0) : acc, 0);
-        const disp      = totales[key] - gastado;
-        const dispFmt   = (disp >= 0 ? '' : '−') + fmt(Math.abs(disp));
-        document.getElementById(`summary-${key}`).textContent      = fmt(totales[key]);
-        document.getElementById(`summary-${key}-disp`).textContent = `Disponible: ${dispFmt}`;
-        document.getElementById(`bote-${key}-total`).textContent   = fmt(totales[key]);
-        document.getElementById(`bote-${key}-disp`).textContent    =
-          `Disponible: ${dispFmt} · Gastado: ${fmt(gastado)}`;
+      const totalAportado  = totales.lis + totales.cesar + totales.boda;
+      const totalGastado   = currentGastos.reduce((acc, g) => acc + (g.pagadoEUR ?? 0), 0);
+      const totalPendiente = currentGastos.reduce((acc, g) => {
+        const imp = g.importeEUR ?? 0;
+        const pag = g.pagadoEUR  ?? 0;
+        return acc + Math.max(0, imp - pag);
+      }, 0);
+      const balance = totalAportado - totalGastado;
+
+      document.getElementById('summary-total').textContent    = fmt(totalAportado);
+      document.getElementById('summary-gastado').textContent  = fmt(totalGastado);
+      document.getElementById('summary-pendiente').textContent = fmt(totalPendiente);
+      document.getElementById('summary-balance-sub').textContent =
+        `Balance: ${balance >= 0 ? '' : '−'}${fmt(Math.abs(balance))}`;
+
+      ['lis', 'cesar', 'boda'].forEach(key => {
+        document.getElementById(`bote-${key}-total`).textContent = fmt(totales[key]);
       });
     }
 
@@ -990,7 +967,7 @@
       const moneda  = document.getElementById(`${bote}-moneda`).value;
       if (!importe || importe <= 0) { alert('Introduce la cantidad.'); return; }
       const btn = document.getElementById(`btn-add-${bote}`);
-      btn.disabled = true;
+      btn.disabled = true; btn.textContent = 'Guardando…';
       try {
         await addDoc(collection(db, 'ingresos'), {
           bote, importe, moneda,
@@ -999,22 +976,26 @@
         });
         document.getElementById(`${bote}-importe`).value = '';
       } catch (err) { alert('Error al guardar.'); console.error(err); }
-      finally { btn.disabled = false; }
+      finally {
+        btn.disabled = false;
+        btn.textContent = '+ Añadir';
+      }
     }
 
     /* ── Botes: renderizar los 3 ── */
-    function renderBote(ingresos) {
+    function renderBotes(ingresos) {
       totales = { boda: 0, lis: 0, cesar: 0 };
       ingresos.forEach(i => {
-        const key = i.bote ?? 'boda'; /* entradas antiguas sin campo bote → boda */
+        const key = i.bote ?? 'boda';
         if (totales[key] !== undefined) totales[key] += (i.importeEUR || 0);
       });
       updateSummary();
 
-      ['boda', 'lis', 'cesar'].forEach(key => {
-        const items = ingresos.filter(i => (i.bote ?? 'boda') === key)
+      ['lis', 'cesar', 'boda'].forEach(key => {
+        const items = ingresos
+          .filter(i => (i.bote ?? 'boda') === key)
           .sort((a, b) => (b.timestamp?.seconds ?? 0) - (a.timestamp?.seconds ?? 0));
-        const list  = document.getElementById(`list-${key}`);
+        const list = document.getElementById(`list-${key}`);
 
         if (!items.length) {
           list.innerHTML = `<li class="empty-state" style="font-size:.8rem;padding:.75rem 1rem;">Sin aportaciones</li>`;
@@ -1032,6 +1013,7 @@
             <button class="btn-delete" data-col="ingresos" data-id="${i.id}" title="Eliminar">✕</button>
           </li>`;
         }).join('');
+
         list.querySelectorAll('.btn-delete').forEach(btn => {
           btn.addEventListener('click', async () => {
             if (!confirm('¿Eliminar esta aportación?')) return;
@@ -1070,14 +1052,14 @@
       finally { btn.disabled = false; btn.textContent = '+ Añadir'; }
     }
 
-    /* ── Gastos: renderizar ── */
+    /* ── Gastos: fila de edición ── */
     function makeEditRow(g) {
       const cats   = ['Venue','Catering','Flores','Música','Fotografía','Belleza','Vestimenta','Transporte','Invitaciones','Otros'];
       const catOpts = cats.map(c => `<option value="${c}"${g.categoria===c?' selected':''}>${c}</option>`).join('');
       const monOpts = [['EUR','€ EUR'],['USD','$ USD'],['DOP','$ DOP']]
         .map(([v,l]) => `<option value="${v}"${g.moneda===v?' selected':''}>${l}</option>`).join('');
-      const quiOpts = [['Bote','Bote de la boda'],['César','César'],['Lis','Lis']]
-        .map(([v,l]) => `<option value="${v}"${(g.quien??'Bote')===v?' selected':''}>${l}</option>`).join('');
+      const quiOpts = [['Lis','Lis'],['César','César'],['Bote','Bote invitados']]
+        .map(([v,l]) => `<option value="${v}"${(g.quien??'Lis')===v?' selected':''}>${l}</option>`).join('');
       return `
       <li class="budget-row--editing">
         <div class="edit-grid">
@@ -1095,6 +1077,7 @@
       </li>`;
     }
 
+    /* ── Gastos: renderizar tabla ── */
     function renderBudget(gastos) {
       updateSummary();
 
@@ -1104,27 +1087,34 @@
         return;
       }
 
+      const quienChipClass = q => {
+        if (q === 'Lis')   return 'quien-chip--lis';
+        if (q === 'César') return 'quien-chip--cesar';
+        return 'quien-chip--bote';
+      };
+
       list.innerHTML = gastos.map(g => {
         if (g.id === editingId) return makeEditRow(g);
 
-        const fecha      = g.timestamp?.toDate
+        const fecha        = g.timestamp?.toDate
           ? g.timestamp.toDate().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: '2-digit' })
           : '—';
-        const importe    = g.importe  ?? 0;
-        const pagado     = g.pagado   ?? 0;
-        const pendiente  = importe - pagado;
-        const moneda     = g.moneda ?? '';
-        const importeEUR = g.importeEUR ?? toEUR(importe, moneda);
-        const pagadoEUR  = g.pagadoEUR  ?? toEUR(pagado,  moneda);
+        const importe      = g.importe    ?? 0;
+        const pagado       = g.pagado     ?? 0;
+        const pendiente    = importe - pagado;
+        const moneda       = g.moneda     ?? '';
+        const importeEUR   = g.importeEUR ?? toEUR(importe, moneda);
+        const pagadoEUR    = g.pagadoEUR  ?? toEUR(pagado,  moneda);
         const pendienteEUR = importeEUR - pagadoEUR;
-        const pct        = importe > 0 ? pagado / importe : 1;
-        const badgeClass = pct >= 1 ? 'pendiente-badge--ok'
-                         : pct > 0  ? 'pendiente-badge--parcial'
-                                    : 'pendiente-badge--sin-pago';
-        const badgeText  = pct >= 1
+        const pct          = importe > 0 ? pagado / importe : 1;
+        const badgeClass   = pct >= 1 ? 'pendiente-badge--ok'
+                           : pct > 0  ? 'pendiente-badge--parcial'
+                                      : 'pendiente-badge--sin-pago';
+        const badgeText    = pct >= 1
           ? '✓ Pagado'
           : pendiente.toLocaleString('es-ES', { maximumFractionDigits: 2 }) + ' ' + moneda;
         const fmtS = n => n.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+        const quien = g.quien ?? '—';
 
         return `
         <li class="budget-row">
@@ -1142,7 +1132,7 @@
             <span class="pendiente-badge ${badgeClass}">${badgeText}</span>
             ${pct < 1 ? `<span class="amount-eur">${fmtS(pendienteEUR)}</span>` : ''}
           </div>
-          <div><span class="quien-chip">${esc(g.quien ?? '—')}</span></div>
+          <div><span class="quien-chip ${quienChipClass(quien)}">${esc(quien)}</span></div>
           <div class="budget-fecha">${fecha}</div>
           <div class="row-actions">
             <button class="btn-edit" data-id="${g.id}" title="Editar">✎</button>
@@ -1151,7 +1141,6 @@
         </li>`;
       }).join('');
 
-      /* Editar */
       list.querySelectorAll('.btn-edit').forEach(btn => {
         btn.addEventListener('click', () => {
           editingId = btn.dataset.id;
@@ -1159,12 +1148,10 @@
         });
       });
 
-      /* Cancelar edición */
       list.querySelectorAll('.btn-cancel-edit').forEach(btn => {
         btn.addEventListener('click', () => { editingId = null; renderBudget(currentGastos); });
       });
 
-      /* Guardar edición */
       list.querySelectorAll('.btn-save-edit').forEach(btn => {
         btn.addEventListener('click', async () => {
           const id        = btn.dataset.id;
@@ -1191,7 +1178,6 @@
         });
       });
 
-      /* Eliminar */
       list.querySelectorAll('.btn-delete').forEach(btn => {
         btn.addEventListener('click', async () => {
           if (!confirm('¿Eliminar este gasto?')) return;
