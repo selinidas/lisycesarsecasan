@@ -308,8 +308,14 @@
     .ctrl-btn.photos-on { color: var(--sage); border-color: var(--sage); }
     .ctrl-btn svg { width: 14px; height: 14px; pointer-events: none; }
 
-    /* ── ADD SECTION ─────────────────────────── */
-    .add-section { display: flex; justify-content: center; padding: 8px 0 24px; }
+    /* ── ADD / RESTORE ──────────────────────────── */
+    .add-section-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 0 40px;
+    }
     .add-btn {
       display: flex; align-items: center; gap: 8px;
       padding: 12px 32px;
@@ -358,6 +364,48 @@
     .field-inp:focus { border-color: var(--mauve); }
     .field-inp::placeholder { color: var(--muted); opacity: .5; }
     .new-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+    /* ── RESTORE BOX ─────────────────────────── */
+    .restore-box {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 18px 24px;
+      width: min(420px, 90vw);
+      box-shadow: 0 2px 14px rgba(44,58,40,.08);
+    }
+    .restore-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mauve);
+      margin-bottom: 12px;
+    }
+    .restore-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--light);
+    }
+    .restore-row:last-child { border-bottom: none; }
+    .restore-name {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .btn-restore {
+      padding: 6px 16px;
+      border-radius: 8px;
+      border: 1.5px solid var(--sage);
+      background: none;
+      color: var(--sage);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .btn-restore:hover { background: var(--sage); color: #fff; }
 
     /* ── RESPONSIVE ──────────────────────────── */
     @media (max-width: 680px) {
@@ -707,11 +755,46 @@ function buildCard(sec) {
   return card;
 }
 
+function restoreSection(secId) {
+  const s = { ...state.settings[secId] };
+  delete s.hidden;
+  state.settings[secId] = s;
+  persistState();
+  renderAll();
+}
+
 function renderAddSection(container) {
+  const hidden = BASE_SECTIONS.filter(s => state.settings[s.id]?.hidden);
+
   const wrap = document.createElement('div');
-  wrap.id = 'add-area'; wrap.className = 'add-section';
-  wrap.innerHTML = `<button class="add-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Añadir sección</button>`;
-  wrap.querySelector('button').addEventListener('click', () => showAddForm(container));
+  wrap.id = 'add-area'; wrap.className = 'add-section-area';
+
+  let restoreHTML = '';
+  if (hidden.length) {
+    restoreHTML = `<div class="restore-box">
+      <p class="restore-title">Secciones ocultas</p>
+      ${hidden.map(s => `
+        <div class="restore-row">
+          <span class="restore-name">${s.title}</span>
+          <button class="btn-restore" data-restore="${s.id}">Recuperar</button>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  wrap.innerHTML = `
+    <button class="add-btn" id="add-btn-main">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="16"/>
+        <line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+      Añadir sección
+    </button>
+    ${restoreHTML}`;
+
+  wrap.querySelector('#add-btn-main').addEventListener('click', () => showAddForm(container));
+  wrap.querySelectorAll('[data-restore]').forEach(btn =>
+    btn.addEventListener('click', () => restoreSection(btn.dataset.restore)));
   container.appendChild(wrap);
 }
 
