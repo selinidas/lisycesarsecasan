@@ -456,9 +456,12 @@ const db        = getFirestore(app);
 const INSPO_REF = doc(db, 'inspo', 'data');
 
 // ── Estado ────────────────────────────────────────────────
-let state = { notes: {}, answers: {}, photos: {}, settings: {}, customSections: [] };
+let state = { notes: {}, answers: {}, photos: {}, settings: {}, customSections: [], _sv: 0 };
 let firstLoad = true;
 let lastFp = '';
+
+// Incrementa el contador de versión cada vez que cambia la estructura (settings/secciones)
+function bumpSv() { state._sv = (state._sv || 0) + 1; }
 
 const BASE_SECTIONS = [
   {
@@ -583,11 +586,17 @@ function persistState() {
 onSnapshot(INSPO_REF, snap => {
   if (snap.exists()) {
     const d = snap.data();
-    state.notes          = d.notes          || {};
-    state.answers        = d.answers        || {};
-    state.photos         = d.photos         || {};
-    state.settings       = d.settings       || {};
-    state.customSections = d.customSections || [];
+    // Siempre sincronizar contenido (notas, respuestas, fotos)
+    state.notes   = d.notes   || {};
+    state.answers = d.answers || {};
+    state.photos  = d.photos  || {};
+    // Solo actualizar estructura si el snapshot es igual o más nuevo que nuestro estado local
+    const remoteSv = d._sv || 0;
+    if (remoteSv >= (state._sv || 0)) {
+      state.settings       = d.settings       || {};
+      state.customSections = d.customSections || [];
+      state._sv = remoteSv;
+    }
   }
   const fp = sectionsFp();
   if (firstLoad || fp !== lastFp) {
@@ -624,7 +633,7 @@ function getSettings(secId) {
 function togglePhotos(secId) {
   const cur = getSettings(secId).showPhotos;
   state.settings[secId] = { ...getSettings(secId), showPhotos: !cur };
-  persistState();
+  bumpSv(); persistState();
   const photosEl = document.querySelector(`.photos[data-id="${secId}"]`);
   if (photosEl) photosEl.style.display = !cur ? '' : 'none';
   const btn = document.querySelector(`[data-toggle="${secId}"]`);
@@ -634,7 +643,7 @@ function togglePhotos(secId) {
 
 function hideSection(secId) {
   state.settings[secId] = { ...getSettings(secId), hidden: true };
-  persistState();
+  bumpSv(); persistState();
   document.querySelector(`.card[data-sec="${secId}"]`)?.remove();
   lastFp = sectionsFp();
 }
@@ -642,7 +651,7 @@ function hideSection(secId) {
 function deleteCustom(secId) {
   state.customSections = state.customSections.filter(s => s.id !== secId);
   delete state.photos[secId]; delete state.notes[secId];
-  persistState();
+  bumpSv(); persistState();
   document.querySelector(`.card[data-sec="${secId}"]`)?.remove();
   lastFp = sectionsFp();
 }
@@ -759,7 +768,7 @@ function restoreSection(secId) {
   const s = { ...state.settings[secId] };
   delete s.hidden;
   state.settings[secId] = s;
-  persistState();
+  bumpSv(); persistState();
   renderAll();
 }
 
@@ -821,7 +830,7 @@ function showAddForm(container) {
     const id = 'c_' + Date.now();
     const num = String(getSections().length + 1).padStart(2, '0');
     state.customSections.push({ id, num, label, title, ph: 'Notas…', questions: [], custom: true });
-    persistState(); renderAll();
+    bumpSv(); persistState(); renderAll();
   });
   document.getElementById('nt').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('nl').focus(); });
   document.getElementById('nl').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('nc-ok').click(); });
