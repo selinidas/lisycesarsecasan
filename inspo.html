@@ -72,6 +72,7 @@
 
     /* ── CARD ────────────────────────────────── */
     .card {
+      position: relative;
       background: var(--card);
       border-radius: 18px;
       padding: 34px 38px;
@@ -282,11 +283,88 @@
     .btn-cancel { background: var(--light); color: var(--muted); }
     .btn-confirm { background: var(--rust); color: #fff; }
 
+    /* ── CARD CONTROLS ───────────────────────── */
+    .card-controls {
+      position: absolute;
+      top: 14px; right: 16px;
+      display: flex;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .card:hover .card-controls { opacity: 1; }
+
+    .ctrl-btn {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      border: 1.5px solid var(--light);
+      background: var(--card);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .15s;
+    }
+    .ctrl-btn:hover { border-color: var(--mauve); color: var(--text); }
+    .ctrl-btn.photos-on { color: var(--sage); border-color: var(--sage); }
+    .ctrl-btn svg { width: 14px; height: 14px; pointer-events: none; }
+
+    /* ── ADD SECTION ─────────────────────────── */
+    .add-section { display: flex; justify-content: center; padding: 8px 0 24px; }
+    .add-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 32px;
+      border-radius: 50px;
+      border: 2px dashed var(--light);
+      background: none;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .add-btn:hover { border-color: var(--sage); color: var(--sage); }
+    .add-btn svg { width: 15px; height: 15px; }
+
+    .new-card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 28px 38px;
+      box-shadow: 0 2px 14px rgba(44,58,40,.08);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .new-card h4 {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--text);
+    }
+    .new-row { display: flex; gap: 12px; }
+    .field-inp {
+      flex: 1;
+      background: var(--input-bg);
+      border: 1.5px solid var(--light);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .field-inp:focus { border-color: var(--mauve); }
+    .field-inp::placeholder { color: var(--muted); opacity: .5; }
+    .new-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
     /* ── RESPONSIVE ──────────────────────────── */
     @media (max-width: 680px) {
       .card { grid-template-columns: 1fr; padding: 24px 20px; }
       .questions-grid { grid-template-columns: 1fr; }
       .q-item.full { grid-column: 1; }
+      .card-controls { opacity: 1; }
     }
   </style>
 </head>
@@ -326,14 +404,15 @@ const app = initializeApp({
   appId:             '1:1080316555242:web:48614150034617521ecc93',
 }, 'inspo');
 
-const db       = getFirestore(app);
+const db        = getFirestore(app);
 const INSPO_REF = doc(db, 'inspo', 'data');
 
-// ── Estado local ──────────────────────────────────────────
-let state = { notes: {}, answers: {}, photos: {} };
+// ── Estado ────────────────────────────────────────────────
+let state = { notes: {}, answers: {}, photos: {}, settings: {}, customSections: [] };
 let firstLoad = true;
+let lastFp = '';
 
-const SECTIONS = [
+const BASE_SECTIONS = [
   {
     id: 'general', num: '00', label: 'La boda', title: 'Datos generales',
     ph: 'Notas generales sobre el día…',
@@ -444,7 +523,7 @@ const SECTIONS = [
   },
 ];
 
-// ── Firestore sync ────────────────────────────────────────
+// ── Firestore ─────────────────────────────────────────────
 let saveTimer;
 function persistState() {
   clearTimeout(saveTimer);
@@ -456,29 +535,68 @@ function persistState() {
 onSnapshot(INSPO_REF, snap => {
   if (snap.exists()) {
     const d = snap.data();
-    state.notes   = d.notes   || {};
-    state.answers = d.answers || {};
-    state.photos  = d.photos  || {};
+    state.notes          = d.notes          || {};
+    state.answers        = d.answers        || {};
+    state.photos         = d.photos         || {};
+    state.settings       = d.settings       || {};
+    state.customSections = d.customSections || [];
   }
-  if (firstLoad) { renderAll(); firstLoad = false; }
-  else { syncDOM(); }
+  const fp = sectionsFp();
+  if (firstLoad || fp !== lastFp) {
+    renderAll(); firstLoad = false; lastFp = fp;
+  } else {
+    syncDOM();
+  }
 });
+
+function sectionsFp() {
+  return getSections().map(s => s.id + (getSettings(s.id).showPhotos ? '1' : '0')).join(',');
+}
 
 function syncDOM() {
   const focused = document.activeElement;
   document.querySelectorAll('.notes[data-id]').forEach(el => {
-    if (el !== focused) {
-      const v = state.notes[el.dataset.id] || '';
-      if (el.innerHTML !== v) el.innerHTML = v;
-    }
+    if (el !== focused) { const v = state.notes[el.dataset.id] || ''; if (el.innerHTML !== v) el.innerHTML = v; }
   });
   document.querySelectorAll('.q-input[data-qid]').forEach(el => {
-    if (el !== focused) {
-      const v = state.answers[el.dataset.qid] || '';
-      if (el.value !== v) el.value = v;
-    }
+    if (el !== focused) { const v = state.answers[el.dataset.qid] || ''; if (el.value !== v) el.value = v; }
   });
-  SECTIONS.forEach(sec => renderPhotos(sec.id));
+  getSections().forEach(sec => renderPhotos(sec.id));
+}
+
+// ── Secciones ─────────────────────────────────────────────
+function getSections() {
+  return [...BASE_SECTIONS.filter(s => !state.settings[s.id]?.hidden), ...state.customSections];
+}
+function getSettings(secId) {
+  return { showPhotos: true, ...state.settings[secId] };
+}
+
+// ── Controles por sección ─────────────────────────────────
+function togglePhotos(secId) {
+  const cur = getSettings(secId).showPhotos;
+  state.settings[secId] = { ...getSettings(secId), showPhotos: !cur };
+  persistState();
+  const photosEl = document.querySelector(`.photos[data-id="${secId}"]`);
+  if (photosEl) photosEl.style.display = !cur ? '' : 'none';
+  const btn = document.querySelector(`[data-toggle="${secId}"]`);
+  if (btn) { btn.classList.toggle('photos-on', !cur); btn.title = !cur ? 'Ocultar fotos' : 'Mostrar fotos'; }
+  lastFp = sectionsFp();
+}
+
+function hideSection(secId) {
+  state.settings[secId] = { ...getSettings(secId), hidden: true };
+  persistState();
+  document.querySelector(`.card[data-sec="${secId}"]`)?.remove();
+  lastFp = sectionsFp();
+}
+
+function deleteCustom(secId) {
+  state.customSections = state.customSections.filter(s => s.id !== secId);
+  delete state.photos[secId]; delete state.notes[secId];
+  persistState();
+  document.querySelector(`.card[data-sec="${secId}"]`)?.remove();
+  lastFp = sectionsFp();
 }
 
 // ── Modal ─────────────────────────────────────────────────
@@ -492,16 +610,12 @@ urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') confirmModal(
 document.getElementById('modal-confirm').addEventListener('click', confirmModal);
 
 function confirmModal() {
-  const url = urlInput.value.trim();
-  if (!url) return;
-  setPhoto(pendingSection, pendingIdx, url);
-  closeModal();
+  const url = urlInput.value.trim(); if (!url) return;
+  setPhoto(pendingSection, pendingIdx, url); closeModal();
 }
 function openModal(secId, idx) {
-  pendingSection = secId; pendingIdx = idx;
-  urlInput.value = '';
-  modalBg.classList.add('open');
-  setTimeout(() => urlInput.focus(), 50);
+  pendingSection = secId; pendingIdx = idx; urlInput.value = '';
+  modalBg.classList.add('open'); setTimeout(() => urlInput.focus(), 50);
 }
 function closeModal() { modalBg.classList.remove('open'); }
 
@@ -509,41 +623,27 @@ function closeModal() { modalBg.classList.remove('open'); }
 function getPhotos(secId) { return state.photos[secId] || ['', '', '']; }
 
 function setPhoto(secId, idx, url) {
-  const photos = [...getPhotos(secId)];
-  photos[idx] = url;
-  state.photos[secId] = photos;
-  persistState();
-  renderPhotos(secId);
+  const p = [...getPhotos(secId)]; p[idx] = url;
+  state.photos[secId] = p; persistState(); renderPhotos(secId);
 }
 function removePhoto(secId, idx) {
-  const photos = [...getPhotos(secId)];
-  photos[idx] = '';
-  state.photos[secId] = photos;
-  persistState();
-  renderPhotos(secId);
+  const p = [...getPhotos(secId)]; p[idx] = '';
+  state.photos[secId] = p; persistState(); renderPhotos(secId);
 }
-
 function renderPhotos(secId) {
   const grid = document.querySelector(`.photos[data-id="${secId}"]`);
   if (!grid) return;
-  const photos = getPhotos(secId);
-  grid.innerHTML = photos.map((url, i) => `
+  grid.innerHTML = getPhotos(secId).map((url, i) => `
     <div class="slot ${url ? 'filled' : ''}" data-section="${secId}" data-idx="${i}">
       ${url
         ? `<img src="${url}" alt="" loading="lazy"/>
-           <div class="slot-overlay">
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-             </svg>
-           </div>`
-        : `<div class="add-hint">
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-               <rect x="3" y="3" width="18" height="18" rx="3"/>
-               <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
-             </svg>
-             <span>Añadir<br>foto</span>
-           </div>`
-      }
+           <div class="slot-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+           </svg></div>`
+        : `<div class="add-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+             <rect x="3" y="3" width="18" height="18" rx="3"/>
+             <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+           </svg><span>Añadir<br>foto</span></div>`}
     </div>`).join('');
   grid.querySelectorAll('.slot').forEach(slot => {
     slot.addEventListener('click', () => {
@@ -553,59 +653,103 @@ function renderPhotos(secId) {
   });
 }
 
-// ── Render inicial ────────────────────────────────────────
+// ── Render ────────────────────────────────────────────────
+const IC_CAM = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`;
+const IC_DEL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+
+function buildCard(sec) {
+  const s  = getSettings(sec.id);
+  const qHTML = (sec.questions || []).length ? `
+    <div class="questions-area">
+      <div class="questions-header">Checklist Decoarte</div>
+      <div class="questions-grid">
+        ${sec.questions.map(q => `
+          <div class="q-item${q.full ? ' full' : ''}">
+            <label class="q-label" for="q_${q.id}">${q.label}</label>
+            ${q.multi
+              ? `<textarea class="q-input" id="q_${q.id}" data-qid="${q.id}" placeholder="…">${state.answers[q.id] || ''}</textarea>`
+              : `<input class="q-input" id="q_${q.id}" data-qid="${q.id}" type="text" placeholder="…" value="${(state.answers[q.id] || '').replace(/"/g, '&quot;')}" />`}
+          </div>`).join('')}
+      </div>
+    </div>` : '';
+
+  const card = document.createElement('div');
+  card.className = 'card'; card.dataset.sec = sec.id;
+  card.innerHTML = `
+    <div class="card-controls">
+      <button class="ctrl-btn ${s.showPhotos ? 'photos-on' : ''}" data-toggle="${sec.id}"
+        title="${s.showPhotos ? 'Ocultar fotos' : 'Mostrar fotos'}">${IC_CAM}</button>
+      <button class="ctrl-btn" data-delete="${sec.id}"
+        title="${sec.custom ? 'Eliminar sección' : 'Ocultar sección'}">${IC_DEL}</button>
+    </div>
+    <div class="card-left">
+      <div class="card-num">${sec.num}</div>
+      <div class="card-title">${sec.title}</div>
+      <div class="card-label">${sec.label}</div>
+      <div class="notes" contenteditable="true" data-id="${sec.id}" data-ph="${sec.ph || 'Notas…'}" spellcheck="false">${state.notes[sec.id] || ''}</div>
+    </div>
+    <div class="photos" data-id="${sec.id}" ${s.showPhotos ? '' : 'style="display:none"'}></div>
+    ${qHTML}`;
+
+  card.querySelector('[data-toggle]').addEventListener('click', () => togglePhotos(sec.id));
+  card.querySelector('[data-delete]').addEventListener('click', () =>
+    sec.custom ? deleteCustom(sec.id) : hideSection(sec.id));
+
+  const notesEl = card.querySelector('.notes');
+  let nt; notesEl.addEventListener('input', () => {
+    clearTimeout(nt); nt = setTimeout(() => { state.notes[sec.id] = notesEl.innerHTML; persistState(); }, 400);
+  });
+  card.querySelectorAll('.q-input').forEach(el => {
+    let at; el.addEventListener('input', () => {
+      clearTimeout(at); at = setTimeout(() => { state.answers[el.dataset.qid] = el.value; persistState(); }, 400);
+    });
+  });
+  return card;
+}
+
+function renderAddSection(container) {
+  const wrap = document.createElement('div');
+  wrap.id = 'add-area'; wrap.className = 'add-section';
+  wrap.innerHTML = `<button class="add-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Añadir sección</button>`;
+  wrap.querySelector('button').addEventListener('click', () => showAddForm(container));
+  container.appendChild(wrap);
+}
+
+function showAddForm(container) {
+  document.getElementById('add-area')?.remove();
+  const nc = document.createElement('div'); nc.className = 'new-card'; nc.id = 'add-area';
+  nc.innerHTML = `
+    <h4>Nueva sección</h4>
+    <div class="new-row">
+      <input class="field-inp" id="nt" placeholder="Título  (ej. Transporte)" />
+      <input class="field-inp" id="nl" placeholder="Etiqueta  (ej. Llegada al lugar)" />
+    </div>
+    <div class="new-actions">
+      <button class="btn btn-cancel" id="nc-cancel">Cancelar</button>
+      <button class="btn btn-confirm" id="nc-ok">Crear</button>
+    </div>`;
+  container.appendChild(nc);
+  document.getElementById('nt').focus();
+
+  document.getElementById('nc-cancel').addEventListener('click', renderAll);
+  document.getElementById('nc-ok').addEventListener('click', () => {
+    const title = document.getElementById('nt').value.trim(); if (!title) return;
+    const label = document.getElementById('nl').value.trim() || title;
+    const id = 'c_' + Date.now();
+    const num = String(getSections().length + 1).padStart(2, '0');
+    state.customSections.push({ id, num, label, title, ph: 'Notas…', questions: [], custom: true });
+    persistState(); renderAll();
+  });
+  document.getElementById('nt').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('nl').focus(); });
+  document.getElementById('nl').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('nc-ok').click(); });
+}
+
 function renderAll() {
   const container = document.getElementById('container');
   container.innerHTML = '';
-
-  SECTIONS.forEach(sec => {
-    const card = document.createElement('div');
-    card.className = 'card';
-
-    const questionsHTML = sec.questions.length ? `
-      <div class="questions-area">
-        <div class="questions-header">Checklist Decoarte</div>
-        <div class="questions-grid">
-          ${sec.questions.map(q => `
-            <div class="q-item${q.full ? ' full' : ''}">
-              <label class="q-label" for="q_${q.id}">${q.label}</label>
-              ${q.multi
-                ? `<textarea class="q-input" id="q_${q.id}" data-qid="${q.id}" placeholder="…">${state.answers[q.id] || ''}</textarea>`
-                : `<input class="q-input" id="q_${q.id}" data-qid="${q.id}" type="text" placeholder="…" value="${(state.answers[q.id] || '').replace(/"/g, '&quot;')}" />`
-              }
-            </div>`).join('')}
-        </div>
-      </div>` : '';
-
-    card.innerHTML = `
-      <div class="card-left">
-        <div class="card-num">${sec.num}</div>
-        <div class="card-title">${sec.title}</div>
-        <div class="card-label">${sec.label}</div>
-        <div class="notes" contenteditable="true" data-id="${sec.id}" data-ph="${sec.ph}" spellcheck="false">${state.notes[sec.id] || ''}</div>
-      </div>
-      <div class="photos" data-id="${sec.id}"></div>
-      ${questionsHTML}
-    `;
-    container.appendChild(card);
-
-    const notesEl = card.querySelector('.notes');
-    let nt;
-    notesEl.addEventListener('input', () => {
-      clearTimeout(nt);
-      nt = setTimeout(() => { state.notes[sec.id] = notesEl.innerHTML; persistState(); }, 400);
-    });
-
-    card.querySelectorAll('.q-input').forEach(el => {
-      let at;
-      el.addEventListener('input', () => {
-        clearTimeout(at);
-        at = setTimeout(() => { state.answers[el.dataset.qid] = el.value; persistState(); }, 400);
-      });
-    });
-
-    renderPhotos(sec.id);
-  });
+  getSections().forEach(sec => { container.appendChild(buildCard(sec)); renderPhotos(sec.id); });
+  renderAddSection(container);
+  lastFp = sectionsFp();
 }
 </script>
 </body>
