@@ -34,6 +34,9 @@
        match /ingresos/{id} {
          allow read, write: if true;
        }
+       match /inspo/{id} {
+         allow read, write: if true;
+       }
      }
    }
 

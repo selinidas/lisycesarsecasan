@@ -249,30 +249,7 @@
       margin-bottom: 20px;
       color: var(--text);
     }
-    .modal-tabs {
-      display: flex;
-      border: 1.5px solid var(--light);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 9px;
-      border: none;
-      background: none;
-      font-family: 'Lato', sans-serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.05em;
-      cursor: pointer;
-      color: var(--muted);
-      transition: background .15s, color .15s;
-    }
-    .tab-btn.active { background: var(--rust); color: #fff; }
-    .tab-pane { display: none; }
-    .tab-pane.active { display: block; }
-    .modal input[type="url"],
-    .modal input[type="file"] {
+    .modal input[type="url"] {
       width: 100%;
       padding: 11px 14px;
       border: 1.5px solid var(--light);
@@ -285,7 +262,6 @@
       transition: border-color .2s;
     }
     .modal input[type="url"]:focus { border-color: var(--mauve); }
-    .modal input[type="file"] { padding: 9px; cursor: pointer; }
     .modal-hint { font-size: 0.75rem; color: var(--muted); margin-top: 8px; }
     .modal-actions {
       display: flex;
@@ -327,18 +303,8 @@
 <div class="modal-bg" id="modal">
   <div class="modal">
     <h3>Añadir inspiración</h3>
-    <div class="modal-tabs">
-      <button class="tab-btn active" data-tab="url">Pegar URL</button>
-      <button class="tab-btn" data-tab="file">Subir archivo</button>
-    </div>
-    <div class="tab-pane active" id="pane-url">
-      <input type="url" id="url-input" placeholder="https://i.pinimg.com/…" />
-      <p class="modal-hint">Copia la URL de imagen desde Pinterest, Google, etc.</p>
-    </div>
-    <div class="tab-pane" id="pane-file">
-      <input type="file" id="file-input" accept="image/*" />
-      <p class="modal-hint">Se guardará localmente en este navegador.</p>
-    </div>
+    <input type="url" id="url-input" placeholder="https://i.pinimg.com/…" />
+    <p class="modal-hint">Pega la URL de la imagen desde Pinterest, Google Images, etc.</p>
     <div class="modal-actions">
       <button class="btn btn-cancel" id="modal-cancel">Cancelar</button>
       <button class="btn btn-confirm" id="modal-confirm">Guardar</button>
@@ -346,7 +312,27 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
+import { getFirestore, doc, setDoc, onSnapshot }
+  from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
+
+const app = initializeApp({
+  apiKey:            'AIzaSyATR-1uUqpJFZAG9OPOjxYas7DjvEEVRCo',
+  authDomain:        'boda-cesar-lissette.firebaseapp.com',
+  projectId:         'boda-cesar-lissette',
+  storageBucket:     'boda-cesar-lissette.firebasestorage.app',
+  messagingSenderId: '1080316555242',
+  appId:             '1:1080316555242:web:48614150034617521ecc93',
+}, 'inspo');
+
+const db       = getFirestore(app);
+const INSPO_REF = doc(db, 'inspo', 'data');
+
+// ── Estado local ──────────────────────────────────────────
+let state = { notes: {}, answers: {}, photos: {} };
+let firstLoad = true;
+
 const SECTIONS = [
   {
     id: 'general', num: '00', label: 'La boda', title: 'Datos generales',
@@ -458,68 +444,83 @@ const SECTIONS = [
   },
 ];
 
-// ── Storage ──────────────────────────────────────────────
-const load = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch { return {}; } };
-const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { alert('Almacenamiento lleno. Usa URLs en lugar de archivos.'); } };
+// ── Firestore sync ────────────────────────────────────────
+let saveTimer;
+function persistState() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    setDoc(INSPO_REF, state, { merge: true }).catch(console.error);
+  }, 600);
+}
+
+onSnapshot(INSPO_REF, snap => {
+  if (snap.exists()) {
+    const d = snap.data();
+    state.notes   = d.notes   || {};
+    state.answers = d.answers || {};
+    state.photos  = d.photos  || {};
+  }
+  if (firstLoad) { renderAll(); firstLoad = false; }
+  else { syncDOM(); }
+});
+
+function syncDOM() {
+  const focused = document.activeElement;
+  document.querySelectorAll('.notes[data-id]').forEach(el => {
+    if (el !== focused) {
+      const v = state.notes[el.dataset.id] || '';
+      if (el.innerHTML !== v) el.innerHTML = v;
+    }
+  });
+  document.querySelectorAll('.q-input[data-qid]').forEach(el => {
+    if (el !== focused) {
+      const v = state.answers[el.dataset.qid] || '';
+      if (el.value !== v) el.value = v;
+    }
+  });
+  SECTIONS.forEach(sec => renderPhotos(sec.id));
+}
 
 // ── Modal ─────────────────────────────────────────────────
-let pendingSection = null, pendingIdx = null, activeTab = 'url';
+let pendingSection = null, pendingIdx = null;
 const modalBg  = document.getElementById('modal');
 const urlInput = document.getElementById('url-input');
-const fileInput= document.getElementById('file-input');
-const paneUrl  = document.getElementById('pane-url');
-const paneFile = document.getElementById('pane-file');
-
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    activeTab = btn.dataset.tab;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    paneUrl.classList.toggle('active', activeTab === 'url');
-    paneFile.classList.toggle('active', activeTab === 'file');
-  });
-});
 
 document.getElementById('modal-cancel').addEventListener('click', closeModal);
 modalBg.addEventListener('click', e => { if (e.target === modalBg) closeModal(); });
+urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') confirmModal(); });
+document.getElementById('modal-confirm').addEventListener('click', confirmModal);
 
-document.getElementById('modal-confirm').addEventListener('click', () => {
-  if (activeTab === 'url') {
-    const url = urlInput.value.trim();
-    if (!url) return;
-    setPhoto(pendingSection, pendingIdx, url);
-    closeModal();
-  } else {
-    const file = fileInput.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => { setPhoto(pendingSection, pendingIdx, e.target.result); closeModal(); };
-    reader.readAsDataURL(file);
-  }
-});
-
+function confirmModal() {
+  const url = urlInput.value.trim();
+  if (!url) return;
+  setPhoto(pendingSection, pendingIdx, url);
+  closeModal();
+}
 function openModal(secId, idx) {
   pendingSection = secId; pendingIdx = idx;
-  urlInput.value = ''; fileInput.value = '';
+  urlInput.value = '';
   modalBg.classList.add('open');
   setTimeout(() => urlInput.focus(), 50);
 }
 function closeModal() { modalBg.classList.remove('open'); }
 
-// ── Photos ────────────────────────────────────────────────
-function getPhotos(secId) { return load('boda_photos')[secId] || ['', '', '']; }
+// ── Fotos ─────────────────────────────────────────────────
+function getPhotos(secId) { return state.photos[secId] || ['', '', '']; }
 
 function setPhoto(secId, idx, url) {
-  const data = load('boda_photos');
-  const photos = data[secId] || ['', '', ''];
-  photos[idx] = url; data[secId] = photos;
-  save('boda_photos', data); renderPhotos(secId);
+  const photos = [...getPhotos(secId)];
+  photos[idx] = url;
+  state.photos[secId] = photos;
+  persistState();
+  renderPhotos(secId);
 }
 function removePhoto(secId, idx) {
-  const data = load('boda_photos');
-  const photos = data[secId] || ['', '', ''];
-  photos[idx] = ''; data[secId] = photos;
-  save('boda_photos', data); renderPhotos(secId);
+  const photos = [...getPhotos(secId)];
+  photos[idx] = '';
+  state.photos[secId] = photos;
+  persistState();
+  renderPhotos(secId);
 }
 
 function renderPhotos(secId) {
@@ -544,7 +545,6 @@ function renderPhotos(secId) {
            </div>`
       }
     </div>`).join('');
-
   grid.querySelectorAll('.slot').forEach(slot => {
     slot.addEventListener('click', () => {
       const s = slot.dataset.section, i = parseInt(slot.dataset.idx);
@@ -553,14 +553,12 @@ function renderPhotos(secId) {
   });
 }
 
-// ── Render ────────────────────────────────────────────────
+// ── Render inicial ────────────────────────────────────────
 function renderAll() {
   const container = document.getElementById('container');
   container.innerHTML = '';
-  const answers = load('boda_answers');
 
   SECTIONS.forEach(sec => {
-    const notes = load('boda_notes')[sec.id] || '';
     const card = document.createElement('div');
     card.className = 'card';
 
@@ -572,8 +570,8 @@ function renderAll() {
             <div class="q-item${q.full ? ' full' : ''}">
               <label class="q-label" for="q_${q.id}">${q.label}</label>
               ${q.multi
-                ? `<textarea class="q-input" id="q_${q.id}" data-qid="${q.id}" placeholder="…">${answers[q.id] || ''}</textarea>`
-                : `<input  class="q-input" id="q_${q.id}" data-qid="${q.id}" type="text" placeholder="…" value="${(answers[q.id] || '').replace(/"/g, '&quot;')}" />`
+                ? `<textarea class="q-input" id="q_${q.id}" data-qid="${q.id}" placeholder="…">${state.answers[q.id] || ''}</textarea>`
+                : `<input class="q-input" id="q_${q.id}" data-qid="${q.id}" type="text" placeholder="…" value="${(state.answers[q.id] || '').replace(/"/g, '&quot;')}" />`
               }
             </div>`).join('')}
         </div>
@@ -584,39 +582,31 @@ function renderAll() {
         <div class="card-num">${sec.num}</div>
         <div class="card-title">${sec.title}</div>
         <div class="card-label">${sec.label}</div>
-        <div class="notes" contenteditable="true" data-id="${sec.id}" data-ph="${sec.ph}" spellcheck="false">${notes}</div>
+        <div class="notes" contenteditable="true" data-id="${sec.id}" data-ph="${sec.ph}" spellcheck="false">${state.notes[sec.id] || ''}</div>
       </div>
       <div class="photos" data-id="${sec.id}"></div>
       ${questionsHTML}
     `;
     container.appendChild(card);
 
-    // Notes auto-save
     const notesEl = card.querySelector('.notes');
     let nt;
     notesEl.addEventListener('input', () => {
       clearTimeout(nt);
-      nt = setTimeout(() => {
-        const d = load('boda_notes'); d[sec.id] = notesEl.innerHTML; save('boda_notes', d);
-      }, 400);
+      nt = setTimeout(() => { state.notes[sec.id] = notesEl.innerHTML; persistState(); }, 400);
     });
 
-    // Answers auto-save
     card.querySelectorAll('.q-input').forEach(el => {
       let at;
       el.addEventListener('input', () => {
         clearTimeout(at);
-        at = setTimeout(() => {
-          const d = load('boda_answers'); d[el.dataset.qid] = el.value || el.innerText; save('boda_answers', d);
-        }, 400);
+        at = setTimeout(() => { state.answers[el.dataset.qid] = el.value; persistState(); }, 400);
       });
     });
 
     renderPhotos(sec.id);
   });
 }
-
-renderAll();
 </script>
 </body>
 </html>
