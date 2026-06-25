@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuestra Boda · Inspiración</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rust:     #9B4A2E;
+      --mauve:    #A85C78;
+      --sage:     #4A6B44;
+      --bg:       #F7F2EA;
+      --card:     #FDFAF6;
+      --input-bg: #F2EDE4;
+      --text:     #2C3A28;
+      --muted:    #5A6E52;
+      --light:    #D4C5B5;
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ──────────────────────────────── */
+    header {
+      text-align: center;
+      padding: 64px 20px 36px;
+    }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      font-weight: 400;
+      letter-spacing: 0.03em;
+      color: var(--text);
+    }
+    header .subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      margin-top: 10px;
+    }
+    .ornament {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 22px;
+    }
+    .ornament::before, .ornament::after {
+      content: '';
+      height: 1px;
+      width: 72px;
+      background: var(--mauve);
+    }
+    .ornament span { color: var(--mauve); font-size: 9px; }
+
+    /* ── MAIN ────────────────────────────────── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px 20px 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* ── CARD ────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 34px 38px;
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      grid-template-rows: auto auto;
+      column-gap: 30px;
+      row-gap: 0;
+      align-items: start;
+      box-shadow: 0 2px 14px rgba(44,58,40,.08);
+    }
+
+    .card-left { display: flex; flex-direction: column; gap: 10px; }
+
+    .card-num {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--mauve);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-num::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--light);
+    }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.55rem;
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--text);
+    }
+    .card-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sage);
+      opacity: 0.9;
+    }
+    .notes {
+      background: var(--input-bg);
+      border: 1.5px solid var(--light);
+      border-radius: 10px;
+      padding: 13px 15px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.86rem;
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 82px;
+      outline: none;
+      resize: vertical;
+      transition: border-color .2s;
+      margin-top: 4px;
+    }
+    .notes:focus { border-color: var(--mauve); }
+    .notes:empty::before { content: attr(data-ph); color: var(--muted); opacity: .6; }
+
+    /* ── PHOTOS ──────────────────────────────── */
+    .photos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .slot {
+      aspect-ratio: 3 / 4;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      background: var(--input-bg);
+      border: 2px dashed var(--light);
+      transition: border-color .2s, transform .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .slot:hover { border-color: var(--mauve); transform: scale(1.015); }
+    .slot.filled { border: none; }
+    .slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .slot-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity .2s;
+      border-radius: 12px;
+    }
+    .slot.filled:hover .slot-overlay { opacity: 1; }
+    .slot-overlay svg { color: #fff; width: 28px; height: 28px; }
+    .add-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      text-align: center;
+      padding: 8px;
+    }
+    .add-hint svg { width: 26px; height: 26px; opacity: .5; }
+
+    /* ── QUESTIONS AREA ──────────────────────── */
+    .questions-area {
+      grid-column: 1 / -1;
+      border-top: 1px solid var(--light);
+      margin-top: 28px;
+      padding-top: 24px;
+    }
+    .questions-header {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mauve);
+      margin-bottom: 16px;
+    }
+    .questions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px 24px;
+    }
+    .q-item { display: flex; flex-direction: column; gap: 5px; }
+    .q-item.full { grid-column: 1 / -1; }
+    .q-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    .q-input {
+      background: var(--input-bg);
+      border: 1.5px solid var(--light);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+      width: 100%;
+    }
+    .q-input:focus { border-color: var(--mauve); }
+    .q-input::placeholder { color: var(--muted); opacity: .5; }
+    textarea.q-input { resize: vertical; min-height: 72px; line-height: 1.5; }
+
+    /* ── MODAL ───────────────────────────────── */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(44,58,40,.45);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-bg.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 32px 36px;
+      width: min(440px, 90vw);
+      box-shadow: 0 20px 60px rgba(44,58,40,.18);
+    }
+    .modal h3 {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.3rem;
+      font-weight: 400;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+    .modal-tabs {
+      display: flex;
+      border: 1.5px solid var(--light);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      background: none;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      color: var(--muted);
+      transition: background .15s, color .15s;
+    }
+    .tab-btn.active { background: var(--rust); color: #fff; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    .modal input[type="url"],
+    .modal input[type="file"] {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--light);
+      border-radius: 10px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text);
+      background: var(--input-bg);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .modal input[type="url"]:focus { border-color: var(--mauve); }
+    .modal input[type="file"] { padding: 9px; cursor: pointer; }
+    .modal-hint { font-size: 0.75rem; color: var(--muted); margin-top: 8px; }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+      justify-content: flex-end;
+    }
+    .btn {
+      padding: 9px 22px;
+      border-radius: 8px;
+      border: none;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.83rem;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn-cancel { background: var(--light); color: var(--muted); }
+    .btn-confirm { background: var(--rust); color: #fff; }
+
+    /* ── RESPONSIVE ──────────────────────────── */
+    @media (max-width: 680px) {
+      .card { grid-template-columns: 1fr; padding: 24px 20px; }
+      .questions-grid { grid-template-columns: 1fr; }
+      .q-item.full { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Nuestra Boda</h1>
+  <p class="subtitle">Cesar &amp; Lissette · 13 Marzo 2027</p>
+  <div class="ornament"><span>◆</span></div>
+</header>
+
+<main id="container"></main>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h3>Añadir inspiración</h3>
+    <div class="modal-tabs">
+      <button class="tab-btn active" data-tab="url">Pegar URL</button>
+      <button class="tab-btn" data-tab="file">Subir archivo</button>
+    </div>
+    <div class="tab-pane active" id="pane-url">
+      <input type="url" id="url-input" placeholder="https://i.pinimg.com/…" />
+      <p class="modal-hint">Copia la URL de imagen desde Pinterest, Google, etc.</p>
+    </div>
+    <div class="tab-pane" id="pane-file">
+      <input type="file" id="file-input" accept="image/*" />
+      <p class="modal-hint">Se guardará localmente en este navegador.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" id="modal-cancel">Cancelar</button>
+      <button class="btn btn-confirm" id="modal-confirm">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SECTIONS = [
+  {
+    id: 'general', num: '00', label: 'La boda', title: 'Datos generales',
+    ph: 'Notas generales sobre el día…',
+    questions: [
+      { id: 'nombre_novia',    label: 'Nombre de la novia' },
+      { id: 'nombre_novio',    label: 'Nombre del novio' },
+      { id: 'fecha_boda',      label: 'Fecha de la boda' },
+      { id: 'lugar_ceremonia', label: 'Lugar de la ceremonia' },
+      { id: 'tipo_ceremonia',  label: 'Iglesia o ceremonia con juez' },
+      { id: 'hora_ceremonia',  label: 'Horario de inicio de la ceremonia' },
+      { id: 'hora_recepcion',  label: 'Horario de la recepción' },
+      { id: 'lista_invitados', label: '¿Tiene el listado de invitados listo?' },
+      { id: 'orden_mesas',     label: '¿Sentará las personas por orden de mesas?' },
+      { id: 'contacto_dia',    label: 'Persona de contacto el día de la boda' },
+      { id: 'tel_contacto',    label: 'Teléfono de contacto' },
+      { id: 'observaciones',   label: 'Observaciones importantes', multi: true, full: true },
+    ]
+  },
+  {
+    id: 'vestido', num: '01', label: 'El Vestido', title: 'Vestido de novia',
+    ph: 'Estilo, silueta, tela, escote, cola, detalles…',
+    questions: [
+      { id: 'estilo_vestido', label: 'Estilo del vestido' },
+      { id: 'tiene_vestido',  label: '¿Tiene el vestido?' },
+    ]
+  },
+  {
+    id: 'maquillaje', num: '02', label: 'Beauty Look', title: 'Maquillaje & Peinado',
+    ph: 'Estilo de maquillaje, tipo de peinado, accesorios…',
+    questions: [
+      { id: 'estilo_maquillaje',  label: 'Estilo de maquillaje' },
+      { id: 'tiene_maquillista',  label: '¿Tiene maquillista?' },
+      { id: 'hora_maquillista',   label: 'Hora de llegada de la maquillista' },
+      { id: 'hora_novia_lista',   label: 'Hora estimada en que la novia estará lista' },
+    ]
+  },
+  {
+    id: 'flores', num: '03', label: 'Inspiración floral', title: 'Flores y arreglos',
+    ph: 'Flores favoritas, paleta de colores, estilo del ramo…',
+    questions: [
+      { id: 'estilo_ramo',    label: 'Estilo de ramo para novia' },
+      { id: 'cant_ramos',     label: 'Cantidad de ramos' },
+    ]
+  },
+  {
+    id: 'damas', num: '04', label: 'Las damas', title: 'Damas de honor',
+    ph: 'Color de vestidos, estilo, cantidad de damas…',
+    questions: [
+      { id: 'color_damas',        label: 'Color de vestido de las damas' },
+      { id: 'cant_damas',         label: 'Cantidad de damas' },
+      { id: 'tiene_dama_honor',   label: '¿Tiene dama de honor?' },
+      { id: 'dama_honor_ramo',    label: '¿La dama de honor lleva ramo?' },
+    ]
+  },
+  {
+    id: 'decoracion', num: '05', label: 'Ambiente y decor', title: 'Decoración',
+    ph: 'Mesas, centros de mesa, iluminación, mobiliario…',
+    questions: [
+      { id: 'tiene_mobiliario',    label: '¿Tiene alquiler de mobiliario?' },
+      { id: 'prov_mobiliario',     label: 'Proveedor y teléfono (mobiliario)' },
+      { id: 'tiene_tarima',        label: '¿Tiene tarima?' },
+      { id: 'prov_tarima',         label: 'Proveedor y teléfono (tarima)' },
+    ]
+  },
+  {
+    id: 'pastel', num: '06', label: 'El dulce momento', title: 'Pastel de boda',
+    ph: 'Sabores, pisos, decoración, colores…',
+    questions: [
+      { id: 'tiene_pastelera',  label: '¿Tiene pastelera?' },
+      { id: 'nombre_pastelera', label: 'Nombre y teléfono (pastelera)' },
+    ]
+  },
+  {
+    id: 'foto', num: '07', label: 'Memorias', title: 'Fotografía & Video',
+    ph: 'Estilo fotográfico, referencias, momentos clave…',
+    questions: [
+      { id: 'tiene_fotografo',  label: '¿Tiene fotógrafo contratado?' },
+      { id: 'nombre_fotografo', label: 'Nombre del fotógrafo' },
+      { id: 'tel_fotografo',    label: 'Teléfono del fotógrafo' },
+      { id: 'tiene_videografo', label: '¿Tiene videógrafo contratado?' },
+      { id: 'nombre_videografo',label: 'Nombre del videógrafo' },
+      { id: 'tel_videografo',   label: 'Teléfono del videógrafo' },
+    ]
+  },
+  {
+    id: 'musica', num: '08', label: 'La música', title: 'DJ & Entretenimiento',
+    ph: 'Géneros, artistas, momentos especiales…',
+    questions: [
+      { id: 'tiene_dj',       label: '¿Tiene DJ?' },
+      { id: 'nombre_dj',      label: 'Nombre y teléfono del DJ' },
+      { id: 'tiene_musicos',  label: '¿Tiene músicos en vivo?' },
+      { id: 'nombre_musicos', label: 'Nombre o agrupación y teléfono' },
+      { id: 'tiene_mc',       label: '¿Tiene maestro de ceremonias?' },
+      { id: 'nombre_mc',      label: 'Nombre y teléfono (MC)' },
+      { id: 'tiene_sonido',   label: '¿Tiene servicio de sonido?' },
+      { id: 'prov_sonido',    label: 'Proveedor y teléfono (sonido)' },
+    ]
+  },
+  {
+    id: 'catering', num: '09', label: 'Catering & logística', title: 'Buffet & Bebidas',
+    ph: 'Menú, bebidas, detalles de servicio…',
+    questions: [
+      { id: 'tiene_bufe',    label: '¿Tiene servicio de bufé?' },
+      { id: 'nombre_bufe',   label: 'Nombre y teléfono del bufé' },
+      { id: 'tiene_bebidas', label: '¿Tiene suplidor de bebidas?' },
+      { id: 'prov_bebidas',  label: 'Proveedor y teléfono (bebidas)' },
+    ]
+  },
+];
+
+// ── Storage ──────────────────────────────────────────────
+const load = k => { try { return JSON.parse(localStorage.getItem(k)) || {}; } catch { return {}; } };
+const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { alert('Almacenamiento lleno. Usa URLs en lugar de archivos.'); } };
+
+// ── Modal ─────────────────────────────────────────────────
+let pendingSection = null, pendingIdx = null, activeTab = 'url';
+const modalBg  = document.getElementById('modal');
+const urlInput = document.getElementById('url-input');
+const fileInput= document.getElementById('file-input');
+const paneUrl  = document.getElementById('pane-url');
+const paneFile = document.getElementById('pane-file');
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeTab = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    paneUrl.classList.toggle('active', activeTab === 'url');
+    paneFile.classList.toggle('active', activeTab === 'file');
+  });
+});
+
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+modalBg.addEventListener('click', e => { if (e.target === modalBg) closeModal(); });
+
+document.getElementById('modal-confirm').addEventListener('click', () => {
+  if (activeTab === 'url') {
+    const url = urlInput.value.trim();
+    if (!url) return;
+    setPhoto(pendingSection, pendingIdx, url);
+    closeModal();
+  } else {
+    const file = fileInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => { setPhoto(pendingSection, pendingIdx, e.target.result); closeModal(); };
+    reader.readAsDataURL(file);
+  }
+});
+
+function openModal(secId, idx) {
+  pendingSection = secId; pendingIdx = idx;
+  urlInput.value = ''; fileInput.value = '';
+  modalBg.classList.add('open');
+  setTimeout(() => urlInput.focus(), 50);
+}
+function closeModal() { modalBg.classList.remove('open'); }
+
+// ── Photos ────────────────────────────────────────────────
+function getPhotos(secId) { return load('boda_photos')[secId] || ['', '', '']; }
+
+function setPhoto(secId, idx, url) {
+  const data = load('boda_photos');
+  const photos = data[secId] || ['', '', ''];
+  photos[idx] = url; data[secId] = photos;
+  save('boda_photos', data); renderPhotos(secId);
+}
+function removePhoto(secId, idx) {
+  const data = load('boda_photos');
+  const photos = data[secId] || ['', '', ''];
+  photos[idx] = ''; data[secId] = photos;
+  save('boda_photos', data); renderPhotos(secId);
+}
+
+function renderPhotos(secId) {
+  const grid = document.querySelector(`.photos[data-id="${secId}"]`);
+  if (!grid) return;
+  const photos = getPhotos(secId);
+  grid.innerHTML = photos.map((url, i) => `
+    <div class="slot ${url ? 'filled' : ''}" data-section="${secId}" data-idx="${i}">
+      ${url
+        ? `<img src="${url}" alt="" loading="lazy"/>
+           <div class="slot-overlay">
+             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+             </svg>
+           </div>`
+        : `<div class="add-hint">
+             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+               <rect x="3" y="3" width="18" height="18" rx="3"/>
+               <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+             </svg>
+             <span>Añadir<br>foto</span>
+           </div>`
+      }
+    </div>`).join('');
+
+  grid.querySelectorAll('.slot').forEach(slot => {
+    slot.addEventListener('click', () => {
+      const s = slot.dataset.section, i = parseInt(slot.dataset.idx);
+      slot.classList.contains('filled') ? removePhoto(s, i) : openModal(s, i);
+    });
+  });
+}
+
+// ── Render ────────────────────────────────────────────────
+function renderAll() {
+  const container = document.getElementById('container');
+  container.innerHTML = '';
+  const answers = load('boda_answers');
+
+  SECTIONS.forEach(sec => {
+    const notes = load('boda_notes')[sec.id] || '';
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const questionsHTML = sec.questions.length ? `
+      <div class="questions-area">
+        <div class="questions-header">Checklist Decoarte</div>
+        <div class="questions-grid">
+          ${sec.questions.map(q => `
+            <div class="q-item${q.full ? ' full' : ''}">
+              <label class="q-label" for="q_${q.id}">${q.label}</label>
+              ${q.multi
+                ? `<textarea class="q-input" id="q_${q.id}" data-qid="${q.id}" placeholder="…">${answers[q.id] || ''}</textarea>`
+                : `<input  class="q-input" id="q_${q.id}" data-qid="${q.id}" type="text" placeholder="…" value="${(answers[q.id] || '').replace(/"/g, '&quot;')}" />`
+              }
+            </div>`).join('')}
+        </div>
+      </div>` : '';
+
+    card.innerHTML = `
+      <div class="card-left">
+        <div class="card-num">${sec.num}</div>
+        <div class="card-title">${sec.title}</div>
+        <div class="card-label">${sec.label}</div>
+        <div class="notes" contenteditable="true" data-id="${sec.id}" data-ph="${sec.ph}" spellcheck="false">${notes}</div>
+      </div>
+      <div class="photos" data-id="${sec.id}"></div>
+      ${questionsHTML}
+    `;
+    container.appendChild(card);
+
+    // Notes auto-save
+    const notesEl = card.querySelector('.notes');
+    let nt;
+    notesEl.addEventListener('input', () => {
+      clearTimeout(nt);
+      nt = setTimeout(() => {
+        const d = load('boda_notes'); d[sec.id] = notesEl.innerHTML; save('boda_notes', d);
+      }, 400);
+    });
+
+    // Answers auto-save
+    card.querySelectorAll('.q-input').forEach(el => {
+      let at;
+      el.addEventListener('input', () => {
+        clearTimeout(at);
+        at = setTimeout(() => {
+          const d = load('boda_answers'); d[el.dataset.qid] = el.value || el.innerText; save('boda_answers', d);
+        }, 400);
+      });
+    });
+
+    renderPhotos(sec.id);
+  });
+}
+
+renderAll();
+</script>
+</body>
+</html>
