@@ -953,11 +953,27 @@
 
     function initEnvios() {
       enviosLoaded = true;
-      onSnapshot(collection(db, 'invitados'), snap => {
-        allInvitados = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-          .sort((a, b) => a.nombre.localeCompare(b.nombre));
-        renderEnvios();
-      });
+
+      // Estado de carga
+      document.getElementById('envios-list').innerHTML =
+        '<p style="padding:1.5rem 0;color:var(--text-muted);font-size:.85rem">Cargando lista…</p>';
+
+      onSnapshot(
+        collection(db, 'invitados'),
+        snap => {
+          allInvitados = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => a.nombre.localeCompare(b.nombre));
+          renderEnvios();
+        },
+        err => {
+          console.error('Error invitados:', err);
+          document.getElementById('envios-list').innerHTML =
+            `<p style="padding:1rem;color:#c0392b;font-size:.85rem">
+              Error al cargar: ${err.message}<br>
+              Comprueba las reglas de Firestore en Firebase Console.
+            </p>`;
+        }
+      );
 
       // Filtros
       document.querySelectorAll('[data-efilter]').forEach(btn => {
@@ -980,23 +996,33 @@
       });
 
       // Añadir persona
-      const addBtn   = document.getElementById('btn-envio-add');
-      const nomInp   = document.getElementById('envio-nombre');
-      const notaInp  = document.getElementById('envio-nota');
+      const addBtn  = document.getElementById('btn-envio-add');
+      const nomInp  = document.getElementById('envio-nombre');
+      const notaInp = document.getElementById('envio-nota');
 
       async function addInvitado() {
-        const nombre = nomInp.value.trim(); if (!nombre) { nomInp.focus(); return; }
+        const nombre = nomInp.value.trim();
+        if (!nombre) { nomInp.focus(); nomInp.style.borderColor = 'var(--rust)'; return; }
+        nomInp.style.borderColor = '';
         addBtn.disabled = true;
-        await addDoc(collection(db, 'invitados'), {
-          nombre,
-          nota:      notaInp.value.trim(),
-          lado:      ladoSeleccionado,
-          enviado:   false,
-          fechaEnvio: null,
-          createdAt: serverTimestamp(),
-        });
-        nomInp.value = ''; notaInp.value = '';
-        nomInp.focus(); addBtn.disabled = false;
+        addBtn.textContent = 'Añadiendo…';
+        try {
+          await addDoc(collection(db, 'invitados'), {
+            nombre,
+            nota:       notaInp.value.trim(),
+            lado:       ladoSeleccionado,
+            enviado:    false,
+            fechaEnvio: null,
+            createdAt:  serverTimestamp(),
+          });
+          nomInp.value = ''; notaInp.value = '';
+          nomInp.focus();
+        } catch (e) {
+          console.error('addDoc error:', e);
+          alert('No se pudo añadir: ' + e.message);
+        }
+        addBtn.disabled = false;
+        addBtn.textContent = '＋ Añadir';
       }
 
       addBtn.addEventListener('click', addInvitado);
