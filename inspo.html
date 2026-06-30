@@ -442,12 +442,65 @@
     }
     .btn-restore:hover { background: var(--sage); color: #fff; }
 
+    /* ── EXPORT BUTTON ───────────────────────── */
+    .export-btn {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      display: flex; align-items: center; gap: 8px;
+      padding: 13px 26px;
+      background: var(--rust); color: #fff;
+      border: none; border-radius: 50px;
+      font-family: 'Lato', sans-serif; font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      cursor: pointer; z-index: 50;
+      box-shadow: 0 4px 20px rgba(155,74,46,.35);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .export-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(155,74,46,.45); }
+    .export-btn svg { width: 15px; height: 15px; }
+
     /* ── RESPONSIVE ──────────────────────────── */
     @media (max-width: 680px) {
       .card { grid-template-columns: 1fr; padding: 24px 20px; }
       .questions-grid { grid-template-columns: 1fr; }
       .q-item.full { grid-column: 1; }
       .card-controls { opacity: 1; }
+    }
+
+    /* ── PRINT / PDF ─────────────────────────── */
+    @media print {
+      @page { size: A4; margin: 12mm 14mm; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+      .export-btn, .card-controls, .add-section-area, #modal { display: none !important; }
+
+      body { background: #F7F2EA !important; }
+
+      header { padding: 28px 0 16px; }
+
+      main { max-width: 100%; padding: 0; gap: 10px; }
+
+      .card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        box-shadow: none !important;
+        border: 1px solid #d4c5b5;
+        padding: 20px 24px;
+      }
+
+      .notes { background: #f5f0e6 !important; min-height: 40px; }
+
+      .q-input {
+        background: transparent !important;
+        border: none !important;
+        border-bottom: 1px solid #d4c5b5 !important;
+        border-radius: 0 !important;
+        padding: 3px 0 !important;
+      }
+
+      .slot { border: 1px solid #d4c5b5; }
+      .slot-overlay { display: none !important; }
+      .add-hint { display: none !important; }
     }
   </style>
 </head>
@@ -461,6 +514,14 @@
 
 <main id="container"></main>
 
+<button class="export-btn" onclick="window.print()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+    <rect x="6" y="14" width="12" height="8"/>
+  </svg>
+  Exportar PDF
+</button>
+
 <div class="modal-bg" id="modal">
   <div class="modal">
     <h3>Añadir inspiración</h3>
@@ -470,7 +531,7 @@
     </div>
     <div class="tab-pane active" id="pane-file">
       <input type="file" id="file-input" accept="image/*" />
-      <p class="modal-hint">JPG, PNG, HEIC… se sube a Firebase y queda guardada para siempre.</p>
+      <p class="modal-hint">JPG, PNG, HEIC… Se comprime y guarda en este navegador.</p>
       <div class="upload-progress" id="upload-progress">
         <div class="upload-progress-bar" id="upload-bar"></div>
       </div>
@@ -487,11 +548,9 @@
 </div>
 
 <script type="module">
-import { initializeApp }      from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
+import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
 import { getFirestore, doc, setDoc, onSnapshot }
   from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
-import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL }
-  from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-storage.js';
 
 const app = initializeApp({
   apiKey:            'AIzaSyATR-1uUqpJFZAG9OPOjxYas7DjvEEVRCo',
@@ -503,7 +562,6 @@ const app = initializeApp({
 }, 'inspo');
 
 const db        = getFirestore(app);
-const storage   = getStorage(app);
 const INSPO_REF = doc(db, 'inspo', 'data');
 
 // ── Estado ────────────────────────────────────────────────
@@ -711,6 +769,29 @@ function deleteCustom(secId) {
   lastFp = sectionsFp();
 }
 
+// ── Fotos locales (localStorage) ──────────────────────────
+function loadLocal() { try { return JSON.parse(localStorage.getItem('inspo_local_photos')) || {}; } catch { return {}; } }
+function saveLocal(d) { try { localStorage.setItem('inspo_local_photos', JSON.stringify(d)); } catch { alert('Espacio local lleno. Intenta con fotos más pequeñas.'); } }
+
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const MAX = 900;
+      const r = Math.min(MAX / img.width, MAX / img.height, 1);
+      const w = Math.round(img.width * r), h = Math.round(img.height * r);
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', 0.78));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
 // ── Modal ─────────────────────────────────────────────────
 let pendingSection = null, pendingIdx = null, activeTab = 'file';
 const modalBg   = document.getElementById('modal');
@@ -736,41 +817,31 @@ modalBg.addEventListener('click', e => { if (e.target === modalBg) closeModal();
 urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') confirmModal(); });
 document.getElementById('modal-confirm').addEventListener('click', confirmModal);
 
-function confirmModal() {
+async function confirmModal() {
   if (activeTab === 'url') {
     const url = urlInput.value.trim(); if (!url) return;
     setPhoto(pendingSection, pendingIdx, url); closeModal();
   } else {
     const file = fileInput.files[0]; if (!file) return;
-    uploadPhoto(file);
-  }
-}
-
-function uploadPhoto(file) {
-  const path = `inspo/${pendingSection}/${Date.now()}_${file.name}`;
-  const ref  = storageRef(storage, path);
-  const task = uploadBytesResumable(ref, file);
-
-  progressWrap.style.display = 'block';
-  document.getElementById('modal-confirm').disabled = true;
-
-  task.on('state_changed',
-    snap => {
-      const pct = (snap.bytesTransferred / snap.totalBytes) * 100;
-      progressBar.style.width = pct + '%';
-    },
-    err => {
-      console.error(err);
-      alert('Error al subir la foto. Comprueba las reglas de Firebase Storage.');
-      progressWrap.style.display = 'none';
-      document.getElementById('modal-confirm').disabled = false;
-    },
-    async () => {
-      const url = await getDownloadURL(task.snapshot.ref);
-      setPhoto(pendingSection, pendingIdx, url);
+    const btn = document.getElementById('modal-confirm');
+    btn.disabled = true; btn.textContent = 'Procesando…';
+    progressWrap.style.display = 'block';
+    progressBar.style.width = '60%';
+    try {
+      const dataUrl = await compressImage(file);
+      progressBar.style.width = '100%';
+      const local = loadLocal();
+      const arr = local[pendingSection] || ['', '', ''];
+      arr[pendingIdx] = dataUrl;
+      local[pendingSection] = arr;
+      saveLocal(local);
+      renderPhotos(pendingSection);
       closeModal();
+    } catch(e) {
+      alert('No se pudo procesar la imagen.');
     }
-  );
+    btn.disabled = false; btn.textContent = 'Guardar';
+  }
 }
 
 function openModal(secId, idx) {
@@ -778,20 +849,28 @@ function openModal(secId, idx) {
   urlInput.value = ''; fileInput.value = '';
   progressWrap.style.display = 'none'; progressBar.style.width = '0%';
   document.getElementById('modal-confirm').disabled = false;
+  document.getElementById('modal-confirm').textContent = 'Guardar';
   modalBg.classList.add('open');
 }
 function closeModal() { modalBg.classList.remove('open'); }
 
 // ── Fotos ─────────────────────────────────────────────────
-function getPhotos(secId) { return state.photos[secId] || ['', '', '']; }
+function getPhotos(secId) {
+  const local  = loadLocal()[secId]       || ['', '', ''];
+  const remote = state.photos[secId]      || ['', '', ''];
+  return [0, 1, 2].map(i => local[i] || remote[i] || '');
+}
 
 function setPhoto(secId, idx, url) {
-  const p = [...getPhotos(secId)]; p[idx] = url;
+  const p = [...(state.photos[secId] || ['', '', ''])]; p[idx] = url;
   state.photos[secId] = p; persistState(); renderPhotos(secId);
 }
 function removePhoto(secId, idx) {
-  const p = [...getPhotos(secId)]; p[idx] = '';
-  state.photos[secId] = p; persistState(); renderPhotos(secId);
+  const p = [...(state.photos[secId] || ['', '', ''])]; p[idx] = '';
+  state.photos[secId] = p; persistState();
+  const local = loadLocal();
+  if (local[secId]) { local[secId][idx] = ''; saveLocal(local); }
+  renderPhotos(secId);
 }
 function renderPhotos(secId) {
   const grid = document.querySelector(`.photos[data-id="${secId}"]`);
