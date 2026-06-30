@@ -586,16 +586,20 @@ function persistState() {
 onSnapshot(INSPO_REF, snap => {
   if (snap.exists()) {
     const d = snap.data();
-    // Siempre sincronizar contenido (notas, respuestas, fotos)
-    state.notes   = d.notes   || {};
-    state.answers = d.answers || {};
-    state.photos  = d.photos  || {};
-    // Solo actualizar estructura si el snapshot es igual o más nuevo que nuestro estado local
-    const remoteSv = d._sv || 0;
-    if (remoteSv >= (state._sv || 0)) {
+    if (firstLoad) {
+      // Primera carga: sincronizar todo desde Firestore
+      state.notes          = d.notes          || {};
+      state.answers        = d.answers        || {};
+      state.photos         = d.photos         || {};
       state.settings       = d.settings       || {};
       state.customSections = d.customSections || [];
-      state._sv = remoteSv;
+      state._sv            = d._sv            || 0;
+    } else {
+      // Después: solo sincronizar contenido, nunca la estructura
+      // (evita que snapshots antiguos deshagan cambios de secciones)
+      state.notes   = d.notes   || {};
+      state.answers = d.answers || {};
+      state.photos  = d.photos  || {};
     }
   }
   const fp = sectionsFp();
