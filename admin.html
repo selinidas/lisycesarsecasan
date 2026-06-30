@@ -512,6 +512,41 @@
     }
     .envio-nota { font-size: .75rem; color: var(--text-muted); }
     .envio-date { font-size: .72rem; color: var(--sage); margin-left: auto; }
+    .envio-del  {
+      background: none; border: none; color: #ddd; font-size: 1rem;
+      cursor: pointer; padding: 0 .2rem; line-height: 1;
+      transition: color .15s; margin-left: .5rem;
+    }
+    .envio-del:hover { color: #c0392b; }
+
+    .envio-add-card {
+      background: var(--off-white); border-radius: var(--r);
+      padding: 1rem 1.25rem; box-shadow: var(--shadow); margin-bottom: 1rem;
+    }
+    .envio-add-row {
+      display: flex; gap: .6rem; flex-wrap: wrap; align-items: center;
+    }
+    .envio-inp {
+      flex: 1; min-width: 140px;
+      padding: .55rem .85rem; border: 1.5px solid var(--border); border-radius: 8px;
+      font-family: var(--font-sans); font-size: .85rem; color: var(--text);
+      background: white; outline: none; transition: border-color .2s;
+    }
+    .envio-inp:focus { border-color: var(--rust); }
+    .envio-lado-btns { display: flex; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--border); }
+    .envio-lado-btn {
+      padding: .5rem .85rem; border: none; background: none;
+      font-family: var(--font-sans); font-size: .78rem; cursor: pointer;
+      color: var(--text-muted); transition: background .15s, color .15s;
+    }
+    .envio-lado-btn.active { background: var(--rust); color: white; }
+    .btn-envio-add {
+      padding: .55rem 1.1rem; background: var(--rust); color: white;
+      border: none; border-radius: 8px; font-family: var(--font-sans);
+      font-size: .85rem; cursor: pointer; white-space: nowrap;
+      transition: background .2s;
+    }
+    .btn-envio-add:hover { background: var(--rust-light); }
 
     /* ── Responsive general ── */
     @media (max-width: 700px) {
@@ -797,7 +832,20 @@
           <div class="progress-envios__bar" id="env-bar" style="width:0%"></div>
         </div>
 
-        <div class="envios-filters">
+        <!-- Formulario añadir -->
+        <div class="envio-add-card" id="envio-add-card">
+          <div class="envio-add-row">
+            <input class="envio-inp" id="envio-nombre" type="text" placeholder="Nombre completo" />
+            <input class="envio-inp" id="envio-nota"   type="text" placeholder="Relación (ej. prima, amiga…)" />
+            <div class="envio-lado-btns">
+              <button class="envio-lado-btn active" data-lado="lissette">💚 Lissette</button>
+              <button class="envio-lado-btn"        data-lado="cesar">💜 Cesar</button>
+            </div>
+            <button class="btn-envio-add" id="btn-envio-add">＋ Añadir</button>
+          </div>
+        </div>
+
+        <div class="envios-filters" style="margin-top:.5rem">
           <button class="filter-btn active" data-efilter="all">Todos</button>
           <button class="filter-btn" data-efilter="pending">Pendientes</button>
           <button class="filter-btn" data-efilter="sent">Enviadas</button>
@@ -911,6 +959,7 @@
         renderEnvios();
       });
 
+      // Filtros
       document.querySelectorAll('[data-efilter]').forEach(btn => {
         btn.addEventListener('click', () => {
           document.querySelectorAll('[data-efilter]').forEach(b => b.classList.remove('active'));
@@ -919,13 +968,52 @@
           renderEnvios();
         });
       });
+
+      // Selector lado (Lissette / Cesar)
+      let ladoSeleccionado = 'lissette';
+      document.querySelectorAll('.envio-lado-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.envio-lado-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          ladoSeleccionado = btn.dataset.lado;
+        });
+      });
+
+      // Añadir persona
+      const addBtn   = document.getElementById('btn-envio-add');
+      const nomInp   = document.getElementById('envio-nombre');
+      const notaInp  = document.getElementById('envio-nota');
+
+      async function addInvitado() {
+        const nombre = nomInp.value.trim(); if (!nombre) { nomInp.focus(); return; }
+        addBtn.disabled = true;
+        await addDoc(collection(db, 'invitados'), {
+          nombre,
+          nota:      notaInp.value.trim(),
+          lado:      ladoSeleccionado,
+          enviado:   false,
+          fechaEnvio: null,
+          createdAt: serverTimestamp(),
+        });
+        nomInp.value = ''; notaInp.value = '';
+        nomInp.focus(); addBtn.disabled = false;
+      }
+
+      addBtn.addEventListener('click', addInvitado);
+      nomInp.addEventListener('keydown',  e => { if (e.key === 'Enter') notaInp.focus(); });
+      notaInp.addEventListener('keydown', e => { if (e.key === 'Enter') addInvitado(); });
     }
 
     async function toggleEnviado(id, current) {
       await updateDoc(doc(db, 'invitados', id), {
-        enviado: !current,
+        enviado:    !current,
         fechaEnvio: !current ? serverTimestamp() : null,
       });
+    }
+
+    async function eliminarInvitado(id) {
+      if (!confirm('¿Eliminar esta persona de la lista?')) return;
+      await deleteDoc(doc(db, 'invitados', id));
     }
 
     function renderEnvios() {
@@ -969,11 +1057,12 @@
                 : '';
               return `<div class="envio-row ${inv.enviado ? 'sent' : ''}" data-id="${inv.id}">
                 <input type="checkbox" class="envio-check" ${inv.enviado ? 'checked' : ''} />
-                <div>
+                <div style="flex:1">
                   <div class="envio-nombre">${inv.nombre}</div>
                   ${inv.nota ? `<div class="envio-nota">${inv.nota}</div>` : ''}
                 </div>
                 ${fecha ? `<div class="envio-date">${fecha}</div>` : ''}
+                <button class="envio-del" title="Eliminar">✕</button>
               </div>`;
             }).join('')}
           </div>`;
@@ -981,10 +1070,14 @@
       });
 
       container.querySelectorAll('.envio-row').forEach(row => {
-        const cb = row.querySelector('.envio-check');
+        const cb  = row.querySelector('.envio-check');
+        const del = row.querySelector('.envio-del');
         const inv = allInvitados.find(i => i.id === row.dataset.id);
         cb.addEventListener('change', () => toggleEnviado(inv.id, inv.enviado));
-        row.addEventListener('click', e => { if (e.target !== cb) cb.click(); });
+        del.addEventListener('click', e => { e.stopPropagation(); eliminarInvitado(inv.id); });
+        row.addEventListener('click', e => {
+          if (e.target !== cb && e.target !== del) cb.click();
+        });
       });
     }
 
