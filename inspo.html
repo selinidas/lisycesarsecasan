@@ -250,7 +250,25 @@
       margin-bottom: 20px;
       color: var(--text);
     }
-    .modal input[type="url"] {
+    .modal-tabs {
+      display: flex;
+      border: 1.5px solid var(--light);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    .tab-btn {
+      flex: 1; padding: 9px; border: none; background: none;
+      font-family: 'Lato', sans-serif; font-size: 0.8rem;
+      letter-spacing: 0.04em; cursor: pointer; color: var(--muted);
+      transition: background .15s, color .15s;
+    }
+    .tab-btn.active { background: var(--rust); color: #fff; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .modal input[type="url"],
+    .modal input[type="file"] {
       width: 100%;
       padding: 11px 14px;
       border: 1.5px solid var(--light);
@@ -263,7 +281,24 @@
       transition: border-color .2s;
     }
     .modal input[type="url"]:focus { border-color: var(--mauve); }
+    .modal input[type="file"] { padding: 9px; cursor: pointer; }
     .modal-hint { font-size: 0.75rem; color: var(--muted); margin-top: 8px; }
+
+    .upload-progress {
+      margin-top: 10px;
+      height: 4px;
+      background: var(--light);
+      border-radius: 2px;
+      overflow: hidden;
+      display: none;
+    }
+    .upload-progress-bar {
+      height: 100%;
+      background: var(--sage);
+      border-radius: 2px;
+      width: 0%;
+      transition: width .2s;
+    }
     .modal-actions {
       display: flex;
       gap: 10px;
@@ -429,8 +464,21 @@
 <div class="modal-bg" id="modal">
   <div class="modal">
     <h3>Añadir inspiración</h3>
-    <input type="url" id="url-input" placeholder="https://i.pinimg.com/…" />
-    <p class="modal-hint">Pega la URL de la imagen desde Pinterest, Google Images, etc.</p>
+    <div class="modal-tabs">
+      <button class="tab-btn active" data-tab="file">Subir foto</button>
+      <button class="tab-btn" data-tab="url">Pegar URL</button>
+    </div>
+    <div class="tab-pane active" id="pane-file">
+      <input type="file" id="file-input" accept="image/*" />
+      <p class="modal-hint">JPG, PNG, HEIC… se sube a Firebase y queda guardada para siempre.</p>
+      <div class="upload-progress" id="upload-progress">
+        <div class="upload-progress-bar" id="upload-bar"></div>
+      </div>
+    </div>
+    <div class="tab-pane" id="pane-url">
+      <input type="url" id="url-input" placeholder="https://i.pinimg.com/…" />
+      <p class="modal-hint">Pega la URL desde Pinterest, Google Images, etc.</p>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-cancel" id="modal-cancel">Cancelar</button>
       <button class="btn btn-confirm" id="modal-confirm">Guardar</button>
@@ -439,9 +487,11 @@
 </div>
 
 <script type="module">
-import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
+import { initializeApp }      from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
 import { getFirestore, doc, setDoc, onSnapshot }
   from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
+import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL }
+  from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-storage.js';
 
 const app = initializeApp({
   apiKey:            'AIzaSyATR-1uUqpJFZAG9OPOjxYas7DjvEEVRCo',
@@ -453,6 +503,7 @@ const app = initializeApp({
 }, 'inspo');
 
 const db        = getFirestore(app);
+const storage   = getStorage(app);
 const INSPO_REF = doc(db, 'inspo', 'data');
 
 // ── Estado ────────────────────────────────────────────────
@@ -661,9 +712,24 @@ function deleteCustom(secId) {
 }
 
 // ── Modal ─────────────────────────────────────────────────
-let pendingSection = null, pendingIdx = null;
-const modalBg  = document.getElementById('modal');
-const urlInput = document.getElementById('url-input');
+let pendingSection = null, pendingIdx = null, activeTab = 'file';
+const modalBg   = document.getElementById('modal');
+const urlInput  = document.getElementById('url-input');
+const fileInput = document.getElementById('file-input');
+const paneFile  = document.getElementById('pane-file');
+const paneUrl   = document.getElementById('pane-url');
+const progressWrap = document.getElementById('upload-progress');
+const progressBar  = document.getElementById('upload-bar');
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeTab = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    paneFile.classList.toggle('active', activeTab === 'file');
+    paneUrl.classList.toggle('active',  activeTab === 'url');
+  });
+});
 
 document.getElementById('modal-cancel').addEventListener('click', closeModal);
 modalBg.addEventListener('click', e => { if (e.target === modalBg) closeModal(); });
@@ -671,12 +737,48 @@ urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') confirmModal(
 document.getElementById('modal-confirm').addEventListener('click', confirmModal);
 
 function confirmModal() {
-  const url = urlInput.value.trim(); if (!url) return;
-  setPhoto(pendingSection, pendingIdx, url); closeModal();
+  if (activeTab === 'url') {
+    const url = urlInput.value.trim(); if (!url) return;
+    setPhoto(pendingSection, pendingIdx, url); closeModal();
+  } else {
+    const file = fileInput.files[0]; if (!file) return;
+    uploadPhoto(file);
+  }
 }
+
+function uploadPhoto(file) {
+  const path = `inspo/${pendingSection}/${Date.now()}_${file.name}`;
+  const ref  = storageRef(storage, path);
+  const task = uploadBytesResumable(ref, file);
+
+  progressWrap.style.display = 'block';
+  document.getElementById('modal-confirm').disabled = true;
+
+  task.on('state_changed',
+    snap => {
+      const pct = (snap.bytesTransferred / snap.totalBytes) * 100;
+      progressBar.style.width = pct + '%';
+    },
+    err => {
+      console.error(err);
+      alert('Error al subir la foto. Comprueba las reglas de Firebase Storage.');
+      progressWrap.style.display = 'none';
+      document.getElementById('modal-confirm').disabled = false;
+    },
+    async () => {
+      const url = await getDownloadURL(task.snapshot.ref);
+      setPhoto(pendingSection, pendingIdx, url);
+      closeModal();
+    }
+  );
+}
+
 function openModal(secId, idx) {
-  pendingSection = secId; pendingIdx = idx; urlInput.value = '';
-  modalBg.classList.add('open'); setTimeout(() => urlInput.focus(), 50);
+  pendingSection = secId; pendingIdx = idx;
+  urlInput.value = ''; fileInput.value = '';
+  progressWrap.style.display = 'none'; progressBar.style.width = '0%';
+  document.getElementById('modal-confirm').disabled = false;
+  modalBg.classList.add('open');
 }
 function closeModal() { modalBg.classList.remove('open'); }
 

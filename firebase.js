@@ -49,6 +49,17 @@
        }
      }
    }
+
+   ── Firebase Storage Rules (para fotos del tablero inspo) ───
+   Storage → Rules:
+   rules_version = '2';
+   service firebase.storage {
+     match /b/{bucket}/o {
+       match /inspo/{allPaths=**} {
+         allow read, write: if true;
+       }
+     }
+   }
    ============================================================ */
 
 import { initializeApp }
