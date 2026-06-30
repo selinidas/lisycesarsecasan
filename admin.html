@@ -456,6 +456,63 @@
       .budget-fecha { display: none; }
     }
 
+    /* ── Envíos ── */
+    .envios-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem; margin-bottom: 1.75rem;
+    }
+    .envios-stat {
+      background: var(--off-white); border-radius: var(--r);
+      padding: 1.1rem 1rem; text-align: center; box-shadow: var(--shadow);
+    }
+    .envios-stat__num {
+      font-family: var(--font-serif); font-size: 2.2rem;
+      font-weight: 500; line-height: 1; color: var(--text);
+    }
+    .envios-stat__num.sent { color: var(--sage); }
+    .envios-stat__num.pct  { color: var(--rust); font-size: 1.6rem; }
+    .envios-stat__label {
+      font-size: .7rem; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text-muted); margin-top: .3rem;
+    }
+    .progress-envios {
+      height: 8px; background: var(--border); border-radius: 4px;
+      margin-bottom: 1.75rem; overflow: hidden;
+    }
+    .progress-envios__bar {
+      height: 100%; background: var(--sage); border-radius: 4px;
+      transition: width .4s ease;
+    }
+    .envios-filters { display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+
+    .envios-group { margin-bottom: 1.5rem; }
+    .envios-group__title {
+      font-size: .72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text-muted);
+      padding: .5rem .25rem; border-bottom: 1px solid var(--border);
+      margin-bottom: .5rem; display: flex; justify-content: space-between;
+    }
+    .envios-list { display: flex; flex-direction: column; gap: .35rem; }
+
+    .envio-row {
+      display: flex; align-items: center; gap: .85rem;
+      background: var(--off-white); border-radius: 8px;
+      padding: .65rem 1rem; box-shadow: 0 1px 4px rgba(60,30,20,.05);
+      transition: background .15s;
+    }
+    .envio-row.sent { background: #f0faf0; }
+
+    .envio-check {
+      width: 20px; height: 20px; flex-shrink: 0;
+      accent-color: var(--sage); cursor: pointer;
+    }
+    .envio-nombre {
+      flex: 1; font-size: .9rem; color: var(--text);
+    }
+    .envio-nota { font-size: .75rem; color: var(--text-muted); }
+    .envio-date { font-size: .72rem; color: var(--sage); margin-left: auto; }
+
     /* ── Responsive general ── */
     @media (max-width: 700px) {
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -465,6 +522,7 @@
       .guest-row > :nth-child(4),
       .guest-row > :nth-child(5) { display: none; }
       .admin-header { padding: 1rem; }
+      .envios-stats { grid-template-columns: repeat(3, 1fr); }
     }
   </style>
 </head>
@@ -497,6 +555,7 @@
       <!-- Tabs -->
       <div class="tabs">
         <button class="tab-btn active" data-tab="rsvp">Confirmaciones</button>
+        <button class="tab-btn" data-tab="envios">Envíos</button>
         <button class="tab-btn" data-tab="presupuesto">Presupuesto</button>
       </div>
 
@@ -716,6 +775,40 @@
 
       </div><!-- /#tab-presupuesto -->
 
+      <!-- ══ TAB: ENVÍOS ══ -->
+      <div id="tab-envios" hidden>
+
+        <div class="envios-stats">
+          <div class="envios-stat">
+            <div class="envios-stat__num sent" id="env-sent">—</div>
+            <div class="envios-stat__label">Enviadas</div>
+          </div>
+          <div class="envios-stat">
+            <div class="envios-stat__num" id="env-total">—</div>
+            <div class="envios-stat__label">Total invitados</div>
+          </div>
+          <div class="envios-stat">
+            <div class="envios-stat__num pct" id="env-pct">—</div>
+            <div class="envios-stat__label">Completado</div>
+          </div>
+        </div>
+
+        <div class="progress-envios">
+          <div class="progress-envios__bar" id="env-bar" style="width:0%"></div>
+        </div>
+
+        <div class="envios-filters">
+          <button class="filter-btn active" data-efilter="all">Todos</button>
+          <button class="filter-btn" data-efilter="pending">Pendientes</button>
+          <button class="filter-btn" data-efilter="sent">Enviadas</button>
+          <button class="filter-btn" data-efilter="lissette">Lissette</button>
+          <button class="filter-btn" data-efilter="cesar">Cesar</button>
+        </div>
+
+        <div id="envios-list"></div>
+
+      </div><!-- /#tab-envios -->
+
     </main>
   </div>
 
@@ -798,8 +891,102 @@
         const target = btn.dataset.tab;
         document.getElementById('tab-rsvp').hidden        = target !== 'rsvp';
         document.getElementById('tab-presupuesto').hidden = target !== 'presupuesto';
+        document.getElementById('tab-envios').hidden      = target !== 'envios';
+        if (target === 'envios' && !enviosLoaded) initEnvios();
       });
     });
+
+    /* ═══════════════════════════════════════════
+       ENVÍOS
+    ═══════════════════════════════════════════ */
+    let allInvitados = [];
+    let enviosLoaded = false;
+    let eFilter = 'all';
+
+    function initEnvios() {
+      enviosLoaded = true;
+      onSnapshot(collection(db, 'invitados'), snap => {
+        allInvitados = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => a.nombre.localeCompare(b.nombre));
+        renderEnvios();
+      });
+
+      document.querySelectorAll('[data-efilter]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('[data-efilter]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          eFilter = btn.dataset.efilter;
+          renderEnvios();
+        });
+      });
+    }
+
+    async function toggleEnviado(id, current) {
+      await updateDoc(doc(db, 'invitados', id), {
+        enviado: !current,
+        fechaEnvio: !current ? serverTimestamp() : null,
+      });
+    }
+
+    function renderEnvios() {
+      const total  = allInvitados.length;
+      const sent   = allInvitados.filter(i => i.enviado).length;
+      const pct    = total ? Math.round(sent / total * 100) : 0;
+
+      document.getElementById('env-sent').textContent  = sent;
+      document.getElementById('env-total').textContent = total;
+      document.getElementById('env-pct').textContent   = pct + '%';
+      document.getElementById('env-bar').style.width   = pct + '%';
+
+      let filtered = allInvitados;
+      if (eFilter === 'pending')   filtered = allInvitados.filter(i => !i.enviado);
+      if (eFilter === 'sent')      filtered = allInvitados.filter(i =>  i.enviado);
+      if (eFilter === 'lissette')  filtered = allInvitados.filter(i => i.lado === 'lissette');
+      if (eFilter === 'cesar')     filtered = allInvitados.filter(i => i.lado === 'cesar');
+
+      const groups = {
+        lissette: filtered.filter(i => i.lado === 'lissette'),
+        cesar:    filtered.filter(i => i.lado === 'cesar'),
+      };
+
+      const container = document.getElementById('envios-list');
+      container.innerHTML = '';
+
+      Object.entries(groups).forEach(([lado, list]) => {
+        if (!list.length) return;
+        const sentInGroup = list.filter(i => i.enviado).length;
+        const g = document.createElement('div');
+        g.className = 'envios-group';
+        g.innerHTML = `
+          <div class="envios-group__title">
+            <span>${lado === 'lissette' ? '💚 Lissette' : '💜 Cesar'} — ${list.length} personas</span>
+            <span>${sentInGroup} enviadas</span>
+          </div>
+          <div class="envios-list">
+            ${list.map(inv => {
+              const fecha = inv.fechaEnvio?.toDate
+                ? inv.fechaEnvio.toDate().toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })
+                : '';
+              return `<div class="envio-row ${inv.enviado ? 'sent' : ''}" data-id="${inv.id}">
+                <input type="checkbox" class="envio-check" ${inv.enviado ? 'checked' : ''} />
+                <div>
+                  <div class="envio-nombre">${inv.nombre}</div>
+                  ${inv.nota ? `<div class="envio-nota">${inv.nota}</div>` : ''}
+                </div>
+                ${fecha ? `<div class="envio-date">${fecha}</div>` : ''}
+              </div>`;
+            }).join('')}
+          </div>`;
+        container.appendChild(g);
+      });
+
+      container.querySelectorAll('.envio-row').forEach(row => {
+        const cb = row.querySelector('.envio-check');
+        const inv = allInvitados.find(i => i.id === row.dataset.id);
+        cb.addEventListener('change', () => toggleEnviado(inv.id, inv.enviado));
+        row.addEventListener('click', e => { if (e.target !== cb) cb.click(); });
+      });
+    }
 
     /* ═══════════════════════════════════════════
        RSVP
