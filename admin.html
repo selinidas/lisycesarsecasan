@@ -459,7 +459,7 @@
     /* ── Envíos ── */
     .envios-stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 1rem; margin-bottom: 1.75rem;
     }
     .envios-stat {
@@ -471,6 +471,7 @@
       font-weight: 500; line-height: 1; color: var(--text);
     }
     .envios-stat__num.sent { color: var(--sage); }
+    .envios-stat__num.conf { color: var(--rust); }
     .envios-stat__num.pct  { color: var(--rust); font-size: 1.6rem; }
     .envios-stat__label {
       font-size: .7rem; text-transform: uppercase;
@@ -503,10 +504,21 @@
     }
     .envio-row.sent { background: #f0faf0; }
 
-    .envio-check {
-      width: 20px; height: 20px; flex-shrink: 0;
-      accent-color: var(--sage); cursor: pointer;
+    .envio-checks { display: flex; gap: .7rem; flex-shrink: 0; }
+    .envio-check-wrap {
+      display: flex; flex-direction: column; align-items: center; gap: .2rem;
+      cursor: pointer;
     }
+    .envio-check-wrap span {
+      font-size: .55rem; text-transform: uppercase; letter-spacing: .03em;
+      color: var(--text-muted); white-space: nowrap;
+    }
+    .envio-cb {
+      width: 20px; height: 20px; flex-shrink: 0; cursor: pointer;
+    }
+    .envio-check { accent-color: var(--sage); }
+    .confirm-check { accent-color: var(--rust); }
+    .envio-row.confirmed { border-left: 3px solid var(--rust); }
     .envio-nombre {
       flex: 1; font-size: .9rem; color: var(--text);
     }
@@ -557,7 +569,7 @@
       .guest-row > :nth-child(4),
       .guest-row > :nth-child(5) { display: none; }
       .admin-header { padding: 1rem; }
-      .envios-stats { grid-template-columns: repeat(3, 1fr); }
+      .envios-stats { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -819,6 +831,10 @@
             <div class="envios-stat__label">Enviadas</div>
           </div>
           <div class="envios-stat">
+            <div class="envios-stat__num conf" id="env-confirmed">—</div>
+            <div class="envios-stat__label">Confirmadas</div>
+          </div>
+          <div class="envios-stat">
             <div class="envios-stat__num" id="env-total">—</div>
             <div class="envios-stat__label">Total invitados</div>
           </div>
@@ -849,6 +865,7 @@
           <button class="filter-btn active" data-efilter="all">Todos</button>
           <button class="filter-btn" data-efilter="pending">Pendientes</button>
           <button class="filter-btn" data-efilter="sent">Enviadas</button>
+          <button class="filter-btn" data-efilter="confirmed">Confirmados</button>
           <button class="filter-btn" data-efilter="lissette">Lissette</button>
           <button class="filter-btn" data-efilter="cesar">Cesar</button>
         </div>
@@ -1009,11 +1026,13 @@
         try {
           await addDoc(collection(db, 'invitados'), {
             nombre,
-            nota:       notaInp.value.trim(),
-            lado:       ladoSeleccionado,
-            enviado:    false,
-            fechaEnvio: null,
-            createdAt:  serverTimestamp(),
+            nota:            notaInp.value.trim(),
+            lado:            ladoSeleccionado,
+            enviado:         false,
+            fechaEnvio:      null,
+            confirmado:      false,
+            fechaConfirmado: null,
+            createdAt:       serverTimestamp(),
           });
           nomInp.value = ''; notaInp.value = '';
           nomInp.focus();
@@ -1037,24 +1056,34 @@
       });
     }
 
+    async function toggleConfirmado(id, current) {
+      await updateDoc(doc(db, 'invitados', id), {
+        confirmado:      !current,
+        fechaConfirmado: !current ? serverTimestamp() : null,
+      });
+    }
+
     async function eliminarInvitado(id) {
       if (!confirm('¿Eliminar esta persona de la lista?')) return;
       await deleteDoc(doc(db, 'invitados', id));
     }
 
     function renderEnvios() {
-      const total  = allInvitados.length;
-      const sent   = allInvitados.filter(i => i.enviado).length;
-      const pct    = total ? Math.round(sent / total * 100) : 0;
+      const total     = allInvitados.length;
+      const sent      = allInvitados.filter(i => i.enviado).length;
+      const confirmed = allInvitados.filter(i => i.confirmado).length;
+      const pct       = total ? Math.round(sent / total * 100) : 0;
 
-      document.getElementById('env-sent').textContent  = sent;
-      document.getElementById('env-total').textContent = total;
-      document.getElementById('env-pct').textContent   = pct + '%';
-      document.getElementById('env-bar').style.width   = pct + '%';
+      document.getElementById('env-sent').textContent      = sent;
+      document.getElementById('env-confirmed').textContent = confirmed;
+      document.getElementById('env-total').textContent     = total;
+      document.getElementById('env-pct').textContent       = pct + '%';
+      document.getElementById('env-bar').style.width       = pct + '%';
 
       let filtered = allInvitados;
       if (eFilter === 'pending')   filtered = allInvitados.filter(i => !i.enviado);
       if (eFilter === 'sent')      filtered = allInvitados.filter(i =>  i.enviado);
+      if (eFilter === 'confirmed') filtered = allInvitados.filter(i =>  i.confirmado);
       if (eFilter === 'lissette')  filtered = allInvitados.filter(i => i.lado === 'lissette');
       if (eFilter === 'cesar')     filtered = allInvitados.filter(i => i.lado === 'cesar');
 
@@ -1068,21 +1097,31 @@
 
       Object.entries(groups).forEach(([lado, list]) => {
         if (!list.length) return;
-        const sentInGroup = list.filter(i => i.enviado).length;
+        const sentInGroup      = list.filter(i => i.enviado).length;
+        const confirmedInGroup = list.filter(i => i.confirmado).length;
         const g = document.createElement('div');
         g.className = 'envios-group';
         g.innerHTML = `
           <div class="envios-group__title">
             <span>${lado === 'lissette' ? '💚 Lissette' : '💜 Cesar'} — ${list.length} personas</span>
-            <span>${sentInGroup} enviadas</span>
+            <span>${sentInGroup} enviadas · ${confirmedInGroup} confirmadas</span>
           </div>
           <div class="envios-list">
             ${list.map(inv => {
               const fecha = inv.fechaEnvio?.toDate
                 ? inv.fechaEnvio.toDate().toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })
                 : '';
-              return `<div class="envio-row ${inv.enviado ? 'sent' : ''}" data-id="${inv.id}">
-                <input type="checkbox" class="envio-check" ${inv.enviado ? 'checked' : ''} />
+              return `<div class="envio-row ${inv.enviado ? 'sent' : ''} ${inv.confirmado ? 'confirmed' : ''}" data-id="${inv.id}">
+                <div class="envio-checks">
+                  <label class="envio-check-wrap" title="Invitación enviada">
+                    <input type="checkbox" class="envio-cb envio-check" ${inv.enviado ? 'checked' : ''} />
+                    <span>Enviada</span>
+                  </label>
+                  <label class="envio-check-wrap" title="Ha confirmado asistencia">
+                    <input type="checkbox" class="envio-cb confirm-check" ${inv.confirmado ? 'checked' : ''} />
+                    <span>Confirma</span>
+                  </label>
+                </div>
                 <div style="flex:1">
                   <div class="envio-nombre">${inv.nombre}</div>
                   ${inv.nota ? `<div class="envio-nota">${inv.nota}</div>` : ''}
@@ -1096,14 +1135,13 @@
       });
 
       container.querySelectorAll('.envio-row').forEach(row => {
-        const cb  = row.querySelector('.envio-check');
-        const del = row.querySelector('.envio-del');
-        const inv = allInvitados.find(i => i.id === row.dataset.id);
+        const cb        = row.querySelector('.envio-check');
+        const confirmCb = row.querySelector('.confirm-check');
+        const del       = row.querySelector('.envio-del');
+        const inv       = allInvitados.find(i => i.id === row.dataset.id);
         cb.addEventListener('change', () => toggleEnviado(inv.id, inv.enviado));
+        confirmCb.addEventListener('change', () => toggleConfirmado(inv.id, inv.confirmado));
         del.addEventListener('click', e => { e.stopPropagation(); eliminarInvitado(inv.id); });
-        row.addEventListener('click', e => {
-          if (e.target !== cb && e.target !== del) cb.click();
-        });
       });
     }
 
