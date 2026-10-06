@@ -188,10 +188,11 @@
     /* ── Presupuesto — resumen global ── */
     .budget-summary {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 1rem;
       margin-bottom: 2rem;
     }
+    @media (max-width: 900px) { .budget-summary { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 700px) { .budget-summary { grid-template-columns: repeat(2, 1fr); } }
 
     .bsum-card {
@@ -208,6 +209,7 @@
     .bsum-card__sub { font-size: .68rem; opacity: .7; margin-top: .3rem; }
 
     .bsum-card--aportado { background: var(--sage);  color: white; }
+    .bsum-card--coste    { background: var(--text);  color: white; }
     .bsum-card--gastado  { background: var(--rust);  color: white; }
     .bsum-card--pendiente{ background: var(--peach); color: white; }
     .bsum-card--rates {
@@ -661,15 +663,20 @@
             <div class="bsum-card__num" id="summary-total">— €</div>
             <div class="bsum-card__sub">Lis + César + Invitados</div>
           </div>
+          <div class="bsum-card bsum-card--coste">
+            <div class="bsum-card__label">Coste total contratado</div>
+            <div class="bsum-card__num" id="summary-coste">— €</div>
+            <div class="bsum-card__sub">Suma de todos los gastos, pagados o no</div>
+          </div>
           <div class="bsum-card bsum-card--gastado">
             <div class="bsum-card__label">Total pagado</div>
             <div class="bsum-card__num" id="summary-gastado">— €</div>
-            <div class="bsum-card__sub">De los gastos registrados</div>
+            <div class="bsum-card__sub">Lo que ya ha salido del bolsillo</div>
           </div>
           <div class="bsum-card bsum-card--pendiente">
             <div class="bsum-card__label">Pendiente de pagar</div>
             <div class="bsum-card__num" id="summary-pendiente">— €</div>
-            <div class="bsum-card__sub" id="summary-balance-sub">Balance: —</div>
+            <div class="bsum-card__sub">A proveedores, aún sin pagar</div>
           </div>
           <div class="bsum-card bsum-card--rates">
             <div class="budget-rates-title">Tipo de cambio</div>
@@ -1286,19 +1293,18 @@
     /* ── Resumen global ── */
     function updateSummary() {
       const totalAportado  = totales.lis + totales.cesar + totales.boda;
+      const totalComprometido = currentGastos.reduce((acc, g) => acc + (g.importeEUR ?? 0), 0);
       const totalGastado   = currentGastos.reduce((acc, g) => acc + (g.pagadoEUR ?? 0), 0);
       const totalPendiente = currentGastos.reduce((acc, g) => {
         const imp = g.importeEUR ?? 0;
         const pag = g.pagadoEUR  ?? 0;
         return acc + Math.max(0, imp - pag);
       }, 0);
-      const balance = totalAportado - totalGastado;
 
-      document.getElementById('summary-total').textContent    = fmt(totalAportado);
-      document.getElementById('summary-gastado').textContent  = fmt(totalGastado);
+      document.getElementById('summary-total').textContent     = fmt(totalAportado);
+      document.getElementById('summary-coste').textContent     = fmt(totalComprometido);
+      document.getElementById('summary-gastado').textContent   = fmt(totalGastado);
       document.getElementById('summary-pendiente').textContent = fmt(totalPendiente);
-      document.getElementById('summary-balance-sub').textContent =
-        `Balance: ${balance >= 0 ? '' : '−'}${fmt(Math.abs(balance))}`;
 
       ['lis', 'cesar', 'boda'].forEach(key => {
         document.getElementById(`bote-${key}-total`).textContent = fmt(totales[key]);
