@@ -498,7 +498,6 @@ let activeMomento = MOMENTOS[0].id;
 // photos: { [ownerId]: [url0,url1,url2] } — viene de la query de fotos, no se persiste aquí
 let state = { blocks: {}, itinerary: [], photos: {}, _sv: 0 };
 let firstLoad = true;
-let lastFp = '';
 
 // ── Migración desde el modelo viejo de "fichas" (título+notas+3 fotos) ──
 // Las primeras versiones de esta página guardaban cards+notes en vez de
@@ -552,19 +551,27 @@ function persistItinerary() {
 onSnapshot(MOMENTOS_REF, snap => {
   if (snap.exists()) {
     const d = snap.data();
-    state.blocks    = d.blocks    || {};
-    state.itinerary = d.itinerary || [];
-    state._sv       = d._sv       || 0;
-    oldCards = d.cards || [];
-    oldNotes = d.notes || {};
+    // Solo se hidrata el estado desde Firestore en la primera carga. Después,
+    // cada guardado (incluso el nuestro, con el debounce de 400ms) dispara
+    // este mismo listener otra vez — si volviéramos a reemplazar
+    // state.blocks/state.itinerary aquí, los objetos que los bloques ya
+    // renderizados tienen capturados en sus propios listeners de 'input'
+    // quedarían huérfanos (apuntando a un objeto que ya no es el que vive en
+    // state), y lo que se siguiera escribiendo se guardaría sobre datos
+    // viejos o directamente no se guardaría. El estado local manda una vez
+    // cargado; los cambios de otra persona/dispositivo se ven al recargar.
+    if (firstLoad) {
+      state.blocks    = d.blocks    || {};
+      state.itinerary = d.itinerary || [];
+    }
+    state._sv = d._sv || 0;
+    oldCards  = d.cards || [];
+    oldNotes  = d.notes || {};
   }
   momentosLoaded = true;
   tryMigrate();
-  const fp = viewFp();
-  if (firstLoad || fp !== lastFp) {
-    renderAll(); firstLoad = false; lastFp = fp;
-  } else {
-    syncDOM();
+  if (firstLoad) {
+    renderAll(); firstLoad = false;
   }
 }, err => {
   console.error('Error cargando momentos:', err);
@@ -587,29 +594,6 @@ onSnapshot(photosQuery, snap => {
   tryMigrate();
   syncBlockImages();
 }, err => console.error('Error cargando fotos:', err));
-
-function viewFp() {
-  if (activeMomento === ITINERARIO_ID) return 'itin:' + state.itinerary.map(r => r.id).join(',');
-  return 'blk:' + (state.blocks[activeMomento] || []).map(b => b.id).join(',');
-}
-
-function syncDOM() {
-  const focused = document.activeElement;
-  (state.blocks[activeMomento] || []).forEach(b => {
-    if (b.type === 'text') {
-      const el = document.querySelector(`.block-text[data-id="${b.id}"]`);
-      if (el && el !== focused) { const v = b.content || ''; if (el.innerHTML !== v) el.innerHTML = v; }
-    } else if (b.type === 'check') {
-      const blockEl = document.querySelector(`.block[data-id="${b.id}"]`);
-      const txt = blockEl?.querySelector('.check-text');
-      if (txt && txt !== focused) { const v = b.text || ''; if (txt.innerHTML !== v) txt.innerHTML = v; }
-      const cb = blockEl?.querySelector('.check-box');
-      if (cb) cb.checked = !!b.done;
-      blockEl?.classList.toggle('done', !!b.done);
-    }
-  });
-  syncBlockImages();
-}
 
 function syncBlockImages() {
   document.querySelectorAll('.block-image[data-owner]').forEach(el => {
@@ -822,7 +806,6 @@ function deleteBlock(id) {
   persistBlocks();
   if (!newList.length) { renderAll(); return; }
   renderTabs();
-  lastFp = viewFp();
   document.querySelector(`.block[data-id="${id}"]`)?.remove();
 }
 
@@ -831,7 +814,6 @@ function appendNewBlock(block) {
   state.blocks[activeMomento].push(block);
   persistBlocks();
   renderTabs();
-  lastFp = viewFp();
   const container = document.getElementById('container');
   container.querySelector('.empty-hint')?.remove();
   const addBar = container.querySelector('.block-add-bar');
@@ -882,7 +864,6 @@ function renderAll() {
     }
     renderBlockAddBar(container);
   }
-  lastFp = viewFp();
 }
 
 // ── Itinerario ──────────────────────────────────────────────
