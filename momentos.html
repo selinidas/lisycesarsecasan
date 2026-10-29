@@ -686,11 +686,9 @@ document.getElementById('modal-confirm').addEventListener('click', confirmModal)
 async function finishPhoto(url) {
   await setPhoto(pendingSection, pendingIdx, url);
   if (pendingNewImageBlock === pendingSection) {
-    state.blocks[activeMomento] = state.blocks[activeMomento] || [];
-    state.blocks[activeMomento].push({ id: pendingNewImageBlock, type: 'image', photoOwner: pendingSection, photoIdx: 0 });
+    const id = pendingNewImageBlock;
     pendingNewImageBlock = null;
-    persistBlocks();
-    renderAll();
+    appendNewBlock({ id, type: 'image', photoOwner: id, photoIdx: 0 });
   }
 }
 
@@ -776,7 +774,8 @@ function buildBlock(b) {
       <div class="block-text" contenteditable="true" data-id="${b.id}" data-ph="Escribe aquí…" spellcheck="false">${b.content || ''}</div>`;
     const t = el.querySelector('.block-text');
     let tm; t.addEventListener('input', () => {
-      clearTimeout(tm); tm = setTimeout(() => { b.content = t.innerHTML; persistBlocksDebounced(); }, 400);
+      b.content = t.innerHTML; // al momento en memoria, para que un redibujado no lo pierda
+      clearTimeout(tm); tm = setTimeout(persistBlocksDebounced, 400); // solo el guardado en red se retrasa
     });
   } else if (b.type === 'check') {
     el.innerHTML = `
@@ -792,7 +791,8 @@ function buildBlock(b) {
     });
     const txt = el.querySelector('.check-text');
     let tm; txt.addEventListener('input', () => {
-      clearTimeout(tm); tm = setTimeout(() => { b.text = txt.innerHTML; persistBlocksDebounced(); }, 400);
+      b.text = txt.innerHTML;
+      clearTimeout(tm); tm = setTimeout(persistBlocksDebounced, 400);
     });
   } else if (b.type === 'image') {
     const url = getPhotos(b.photoOwner)[b.photoIdx] || '';
@@ -806,15 +806,36 @@ function buildBlock(b) {
   return el;
 }
 
+// Las altas/bajas de bloques tocan solo su propio elemento en el DOM, sin
+// reconstruir los demás — si no, un redibujado completo mientras escribes
+// en otro bloque te haría perder el foco (y, antes de este arreglo,
+// incluso lo que acababas de escribir si el guardado con debounce aún no
+// había llegado a actualizar el estado en memoria).
 function deleteBlock(id) {
   const list = state.blocks[activeMomento] || [];
   const b = list.find(x => x.id === id);
   if (!b) return;
   if (!confirm('¿Eliminar esto?')) return;
-  state.blocks[activeMomento] = list.filter(x => x.id !== id);
+  const newList = list.filter(x => x.id !== id);
+  state.blocks[activeMomento] = newList;
   if (b.type === 'image') deletePhotoDoc(b.photoOwner, b.photoIdx);
   persistBlocks();
-  renderAll();
+  if (!newList.length) { renderAll(); return; }
+  renderTabs();
+  lastFp = viewFp();
+  document.querySelector(`.block[data-id="${id}"]`)?.remove();
+}
+
+function appendNewBlock(block) {
+  state.blocks[activeMomento] = state.blocks[activeMomento] || [];
+  state.blocks[activeMomento].push(block);
+  persistBlocks();
+  renderTabs();
+  lastFp = viewFp();
+  const container = document.getElementById('container');
+  container.querySelector('.empty-hint')?.remove();
+  const addBar = container.querySelector('.block-add-bar');
+  container.insertBefore(buildBlock(block), addBar);
 }
 
 function renderBlockAddBar(container) {
@@ -826,16 +847,12 @@ function renderBlockAddBar(container) {
     <button class="add-btn" id="add-check-btn">☑ Check</button>`;
   wrap.querySelector('#add-text-btn').addEventListener('click', () => {
     const id = 'b_' + Date.now();
-    state.blocks[activeMomento] = state.blocks[activeMomento] || [];
-    state.blocks[activeMomento].push({ id, type: 'text', content: '' });
-    persistBlocks(); renderAll();
+    appendNewBlock({ id, type: 'text', content: '' });
     requestAnimationFrame(() => document.querySelector(`.block[data-id="${id}"] .block-text`)?.focus());
   });
   wrap.querySelector('#add-check-btn').addEventListener('click', () => {
     const id = 'b_' + Date.now();
-    state.blocks[activeMomento] = state.blocks[activeMomento] || [];
-    state.blocks[activeMomento].push({ id, type: 'check', text: '', done: false });
-    persistBlocks(); renderAll();
+    appendNewBlock({ id, type: 'check', text: '', done: false });
     requestAnimationFrame(() => document.querySelector(`.block[data-id="${id}"] .check-text`)?.focus());
   });
   wrap.querySelector('#add-image-btn').addEventListener('click', () => {
@@ -885,12 +902,14 @@ function buildItinRow(r) {
 
   const evEl = row.querySelector('.itin-evento');
   let et; evEl.addEventListener('input', () => {
-    clearTimeout(et); et = setTimeout(() => updateItinField(r.id, 'evento', evEl.value), 400);
+    r.evento = evEl.value;
+    clearTimeout(et); et = setTimeout(persistItinerary, 400);
   });
 
   const noEl = row.querySelector('.itin-nota');
   let nt; noEl.addEventListener('input', () => {
-    clearTimeout(nt); nt = setTimeout(() => updateItinField(r.id, 'nota', noEl.value), 400);
+    r.nota = noEl.value;
+    clearTimeout(nt); nt = setTimeout(persistItinerary, 400);
   });
 
   row.querySelector('.itin-del').addEventListener('click', () => deleteItinRow(r.id));
