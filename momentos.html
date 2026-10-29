@@ -123,7 +123,7 @@
       border-radius: 18px;
       padding: 34px 38px;
       display: grid;
-      grid-template-columns: 210px 1fr;
+      grid-template-columns: 1fr 200px;
       align-items: start;
       column-gap: 30px;
       box-shadow: 0 2px 14px rgba(44,58,40,.08);
@@ -164,28 +164,28 @@
       background: var(--input-bg);
       border: 1.5px solid var(--light);
       border-radius: 10px;
-      padding: 13px 15px;
+      padding: 16px 18px;
       font-family: 'Lato', sans-serif;
-      font-size: 0.86rem;
+      font-size: 0.95rem;
       color: var(--text);
-      line-height: 1.65;
-      min-height: 82px;
+      line-height: 1.75;
+      min-height: 200px;
       outline: none;
       resize: vertical;
       transition: border-color .2s;
-      margin-top: 4px;
+      margin-top: 8px;
     }
     .notes:focus { border-color: var(--mauve); }
     .notes:empty::before { content: attr(data-ph); color: var(--muted); opacity: .6; }
 
-    /* ── PHOTOS ──────────────────────────────── */
+    /* ── PHOTOS (columna lateral, más pequeñas que el texto) ──── */
     .photos {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr;
       gap: 10px;
     }
     .slot {
-      aspect-ratio: 3 / 4;
+      aspect-ratio: 4 / 3;
       border-radius: 12px;
       overflow: hidden;
       cursor: pointer;
@@ -785,7 +785,7 @@ function buildCard(c, num) {
       <div class="card-num">${num}${c.createdAt ? ` · ${formatDate(c.createdAt)}` : ''}</div>
       <div class="card-title">${c.title}</div>
       ${c.label ? `<div class="card-label">${c.label}</div>` : ''}
-      <div class="notes" contenteditable="true" data-id="${c.id}" data-ph="Notas…" spellcheck="false">${state.notes[c.id] || ''}</div>
+      <div class="notes" contenteditable="true" data-id="${c.id}" data-ph="Cuéntanos cómo fue…" spellcheck="false">${state.notes[c.id] || ''}</div>
     </div>
     <div class="photos" data-id="${c.id}"></div>`;
 
