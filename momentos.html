@@ -160,6 +160,47 @@
       color: var(--sage);
       opacity: 0.9;
     }
+    .card-sub-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 50px;
+      border: 1.5px solid var(--light);
+      background: none;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.64rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .15s;
+      color: var(--muted);
+    }
+    .status-badge:hover { opacity: .8; }
+    .status-badge.status-pendiente { border-color: var(--light); color: var(--muted); }
+    .status-badge.status-seleccionado { border-color: var(--mauve); color: var(--mauve); }
+    .status-badge.status-confirmado { border-color: var(--sage); background: var(--sage); color: #fff; }
+
+    /* ── FILTRO DE ESTADO ─────────────────────── */
+    .status-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .status-filter-btn {
+      padding: 7px 16px;
+      border-radius: 50px;
+      border: 1.5px solid var(--light);
+      background: var(--card);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.78rem;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .status-filter-btn:hover { border-color: var(--mauve); color: var(--text); }
+    .status-filter-btn.active { background: var(--rust); border-color: var(--rust); color: #fff; }
+
     .notes {
       background: var(--input-bg);
       border: 1.5px solid var(--light);
@@ -485,7 +526,7 @@
       @page { size: A4; margin: 12mm 14mm; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 
-      .export-btn, .card-controls, .add-section-area, .momento-tabs, .itin-del, #modal { display: none !important; }
+      .export-btn, .card-controls, .add-section-area, .momento-tabs, .itin-del, .status-bar, #modal { display: none !important; }
 
       body { background: #F7F2EA !important; }
 
@@ -693,6 +734,7 @@ function renderTabs() {
   nav.querySelectorAll('[data-momento]').forEach(btn => {
     btn.addEventListener('click', () => {
       activeMomento = btn.dataset.momento;
+      statusFilter = 'all';
       renderAll();
     });
   });
@@ -828,12 +870,26 @@ function renderPhotos(secId) {
 // ── Fichas (cards) ────────────────────────────────────────
 const IC_DEL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
 
+const STATUSES = [
+  { id: 'pendiente',   label: 'Pendiente'   },
+  { id: 'seleccionado', label: 'Seleccionado' },
+  { id: 'confirmado',  label: 'Confirmado'  },
+];
+function nextStatus(s) {
+  const i = STATUSES.findIndex(x => x.id === s);
+  return STATUSES[(i + 1) % STATUSES.length].id;
+}
+function statusLabel(s) {
+  return (STATUSES.find(x => x.id === s) || STATUSES[0]).label;
+}
+
 function formatDate(ms) {
   if (!ms) return '';
   return new Date(ms).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 function buildCard(c, num) {
+  const status = c.status || 'pendiente';
   const card = document.createElement('div');
   card.className = 'card'; card.dataset.id = c.id;
   card.innerHTML = `
@@ -843,18 +899,35 @@ function buildCard(c, num) {
     <div class="card-left">
       <div class="card-num">${num}${c.createdAt ? ` · ${formatDate(c.createdAt)}` : ''}</div>
       <div class="card-title">${c.title}</div>
-      ${c.label ? `<div class="card-label">${c.label}</div>` : ''}
+      <div class="card-sub-row">
+        ${c.label ? `<div class="card-label">${c.label}</div>` : ''}
+        <button class="status-badge status-${status}" data-status-id="${c.id}" title="Cambiar estado">${statusLabel(status)}</button>
+      </div>
       <div class="notes" contenteditable="true" data-id="${c.id}" data-ph="Cuéntanos cómo fue…" spellcheck="false">${state.notes[c.id] || ''}</div>
     </div>
     <div class="photos" data-id="${c.id}"></div>`;
 
   card.querySelector('[data-delete]').addEventListener('click', () => deleteCard(c.id));
+  card.querySelector('[data-status-id]').addEventListener('click', () => cycleStatus(c.id));
 
   const notesEl = card.querySelector('.notes');
   let nt; notesEl.addEventListener('input', () => {
     clearTimeout(nt); nt = setTimeout(() => { state.notes[c.id] = notesEl.innerHTML; persistNotes(); }, 400);
   });
   return card;
+}
+
+function cycleStatus(id) {
+  const c = state.cards.find(x => x.id === id);
+  if (!c) return;
+  c.status = nextStatus(c.status || 'pendiente');
+  persistCards();
+  const btn = document.querySelector(`[data-status-id="${id}"]`);
+  if (btn) {
+    btn.className = `status-badge status-${c.status}`;
+    btn.textContent = statusLabel(c.status);
+  }
+  renderStatusBar();
 }
 
 function deleteCard(id) {
@@ -907,11 +980,39 @@ function showAddForm(container) {
     const title = document.getElementById('nt').value.trim(); if (!title) return;
     const fieldLabel = document.getElementById('nl').value.trim();
     const id = 'm_' + Date.now();
-    state.cards.push({ id, momento: activeMomento, title, label: fieldLabel, createdAt: Date.now() });
+    state.cards.push({ id, momento: activeMomento, title, label: fieldLabel, createdAt: Date.now(), status: 'pendiente' });
     bumpSv(); persistCards(); renderAll();
   });
   document.getElementById('nt').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('nl').focus(); });
   document.getElementById('nl').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('nc-ok').click(); });
+}
+
+// ── Filtro por estado (dentro de cada momento) ──────────────
+let statusFilter = 'all';
+
+function visibleCards() {
+  const all = cardsForActive();
+  if (statusFilter === 'all') return all;
+  return all.filter(c => (c.status || 'pendiente') === statusFilter);
+}
+
+function renderStatusBar(container) {
+  const all = cardsForActive();
+  if (!all.length) return;
+  const counts = { pendiente: 0, seleccionado: 0, confirmado: 0 };
+  all.forEach(c => { counts[c.status || 'pendiente']++; });
+
+  const bar = document.createElement('div');
+  bar.className = 'status-bar';
+  bar.innerHTML = `
+    <button class="status-filter-btn ${statusFilter === 'all' ? 'active' : ''}" data-filter="all">Todas · ${all.length}</button>
+    ${STATUSES.map(s => `
+      <button class="status-filter-btn ${statusFilter === s.id ? 'active' : ''}" data-filter="${s.id}">${s.label} · ${counts[s.id]}</button>
+    `).join('')}`;
+  bar.querySelectorAll('[data-filter]').forEach(btn => {
+    btn.addEventListener('click', () => { statusFilter = btn.dataset.filter; renderAll(); });
+  });
+  container.appendChild(bar);
 }
 
 function renderAll() {
@@ -921,12 +1022,15 @@ function renderAll() {
   if (activeMomento === ITINERARIO_ID) {
     renderItinerario(container);
   } else {
-    const cards = cardsForActive();
+    renderStatusBar(container);
+    const cards = visibleCards();
     if (!cards.length) {
       const hint = document.createElement('div');
       hint.className = 'empty-hint';
       const label = MOMENTOS.find(m => m.id === activeMomento)?.label || '';
-      hint.innerHTML = `<strong>Nada por aquí todavía</strong>Añade la primera ficha de ${label} — fotos, ideas, notas…`;
+      hint.innerHTML = cardsForActive().length
+        ? `<strong>Nada con ese estado</strong>Prueba con otro filtro de arriba`
+        : `<strong>Nada por aquí todavía</strong>Añade la primera ficha de ${label} — fotos, ideas, notas…`;
       container.appendChild(hint);
     } else {
       cards.forEach((c, i) => {
