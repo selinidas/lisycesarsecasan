@@ -115,15 +115,19 @@
 
     /* ── BLOQUES (hoja en blanco por momento) ──── */
     .block { position: relative; }
-    .block-del {
+    .block-controls {
       position: absolute;
       top: -8px; right: -8px;
+      display: flex;
+      gap: 4px;
       opacity: 0;
       transition: opacity .15s;
       z-index: 2;
-      background: var(--card);
     }
-    .block:hover .block-del, .block:focus-within .block-del { opacity: 1; }
+    .block:hover .block-controls, .block:focus-within .block-controls { opacity: 1; }
+    .block-controls .ctrl-btn { background: var(--card); font-size: 13px; font-weight: 700; }
+    .ctrl-btn:disabled { opacity: .3; cursor: default; }
+    .ctrl-btn:disabled:hover { border-color: var(--light); color: var(--muted); }
 
     .block-text {
       background: var(--card);
@@ -384,7 +388,7 @@
       @page { size: A4; margin: 12mm 14mm; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 
-      .export-btn, .add-section-area, .momento-tabs, .itin-del, .block-del, #modal { display: none !important; }
+      .export-btn, .add-section-area, .momento-tabs, .itin-del, .block-controls, #modal { display: none !important; }
 
       body { background: #F7F2EA !important; }
 
@@ -748,13 +752,24 @@ function renderBlockImageInner(el, url) {
 const IC_DEL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
 
 function buildBlock(b) {
+  const list = state.blocks[activeMomento] || [];
+  const idx = list.indexOf(b);
+  const isFirst = idx <= 0;
+  const isLast = idx === -1 || idx === list.length - 1;
+
   const el = document.createElement('div');
   el.className = `block block-${b.type}${b.type === 'check' && b.done ? ' done' : ''}`;
   el.dataset.id = b.id;
 
-  if (b.type === 'text') {
-    el.innerHTML = `
+  const controlsHTML = `
+    <div class="block-controls">
+      <button class="ctrl-btn block-up" title="Subir" ${isFirst ? 'disabled' : ''}>↑</button>
+      <button class="ctrl-btn block-down" title="Bajar" ${isLast ? 'disabled' : ''}>↓</button>
       <button class="ctrl-btn block-del" title="Eliminar">${IC_DEL}</button>
+    </div>`;
+
+  if (b.type === 'text') {
+    el.innerHTML = `${controlsHTML}
       <div class="block-text" contenteditable="true" data-id="${b.id}" data-ph="Escribe aquí…" spellcheck="false">${b.content || ''}</div>`;
     const t = el.querySelector('.block-text');
     let tm; t.addEventListener('input', () => {
@@ -762,8 +777,7 @@ function buildBlock(b) {
       clearTimeout(tm); tm = setTimeout(persistBlocksDebounced, 400); // solo el guardado en red se retrasa
     });
   } else if (b.type === 'check') {
-    el.innerHTML = `
-      <button class="ctrl-btn block-del" title="Eliminar">${IC_DEL}</button>
+    el.innerHTML = `${controlsHTML}
       <div class="check-row">
         <input type="checkbox" class="check-box" ${b.done ? 'checked' : ''} />
         <div class="check-text" contenteditable="true" data-ph="Algo por decidir…" spellcheck="false">${b.text || ''}</div>
@@ -780,14 +794,49 @@ function buildBlock(b) {
     });
   } else if (b.type === 'image') {
     const url = getPhotos(b.photoOwner)[b.photoIdx] || '';
-    el.innerHTML = `
-      <button class="ctrl-btn block-del" title="Eliminar">${IC_DEL}</button>
+    el.innerHTML = `${controlsHTML}
       <div class="block-image" data-owner="${b.photoOwner}" data-idx="${b.photoIdx}">${url ? `<img src="${url}" alt="" loading="lazy"/>` : addHintHtml()}</div>`;
     el.querySelector('.block-image').addEventListener('click', () => openModal(b.photoOwner, b.photoIdx));
   }
 
   el.querySelector('.block-del').addEventListener('click', () => deleteBlock(b.id));
+  el.querySelector('.block-up').addEventListener('click', () => moveBlock(b.id, -1));
+  el.querySelector('.block-down').addEventListener('click', () => moveBlock(b.id, 1));
   return el;
+}
+
+// Mueve un bloque un puesto arriba (dir -1) o abajo (dir 1) dentro de su
+// momento. Solo reordena el DOM (insertBefore) y actualiza el estado de
+// los botones ↑/↓ afectados — nunca reconstruye los demás bloques, por la
+// misma razón que añadir/borrar: no perder el foco de otro bloque en edición.
+function moveBlock(id, dir) {
+  const list = state.blocks[activeMomento] || [];
+  const i = list.findIndex(x => x.id === id);
+  if (i === -1) return;
+  const j = i + dir;
+  if (j < 0 || j >= list.length) return;
+  [list[i], list[j]] = [list[j], list[i]];
+  persistBlocks();
+
+  const container = document.getElementById('container');
+  const el = container.querySelector(`.block[data-id="${id}"]`);
+  if (el) {
+    if (dir < 0 && el.previousElementSibling) container.insertBefore(el, el.previousElementSibling);
+    else if (dir > 0 && el.nextElementSibling) container.insertBefore(el.nextElementSibling, el);
+  }
+  updateBlockControlsState();
+}
+
+function updateBlockControlsState() {
+  const list = state.blocks[activeMomento] || [];
+  list.forEach((b, i) => {
+    const el = document.querySelector(`.block[data-id="${b.id}"]`);
+    if (!el) return;
+    const up = el.querySelector('.block-up');
+    const down = el.querySelector('.block-down');
+    if (up) up.disabled = (i === 0);
+    if (down) down.disabled = (i === list.length - 1);
+  });
 }
 
 // Las altas/bajas de bloques tocan solo su propio elemento en el DOM, sin
@@ -807,6 +856,7 @@ function deleteBlock(id) {
   if (!newList.length) { renderAll(); return; }
   renderTabs();
   document.querySelector(`.block[data-id="${id}"]`)?.remove();
+  updateBlockControlsState();
 }
 
 function appendNewBlock(block) {
@@ -819,6 +869,7 @@ function appendNewBlock(block) {
   const addBar = container.querySelector('.block-add-bar');
   const el = buildBlock(block);
   container.insertBefore(el, addBar);
+  updateBlockControlsState();
   return el;
 }
 
