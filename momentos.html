@@ -817,7 +817,9 @@ function appendNewBlock(block) {
   const container = document.getElementById('container');
   container.querySelector('.empty-hint')?.remove();
   const addBar = container.querySelector('.block-add-bar');
-  container.insertBefore(buildBlock(block), addBar);
+  const el = buildBlock(block);
+  container.insertBefore(el, addBar);
+  return el;
 }
 
 function renderBlockAddBar(container) {
@@ -827,15 +829,20 @@ function renderBlockAddBar(container) {
     <button class="add-btn" id="add-text-btn">✎ Texto</button>
     <button class="add-btn" id="add-image-btn">🖼 Foto</button>
     <button class="add-btn" id="add-check-btn">☑ Check</button>`;
+  // El foco se dispara en el mismo clic (sin requestAnimationFrame): en
+  // iOS Safari, si el foco a un campo editable no ocurre de forma
+  // síncrona dentro del gesto del usuario, el teclado en pantalla no
+  // aparece — parece que "no deja escribir" aunque el campo sí esté
+  // enfocado.
   wrap.querySelector('#add-text-btn').addEventListener('click', () => {
     const id = 'b_' + Date.now();
-    appendNewBlock({ id, type: 'text', content: '' });
-    requestAnimationFrame(() => document.querySelector(`.block[data-id="${id}"] .block-text`)?.focus());
+    const el = appendNewBlock({ id, type: 'text', content: '' });
+    el.querySelector('.block-text')?.focus();
   });
   wrap.querySelector('#add-check-btn').addEventListener('click', () => {
     const id = 'b_' + Date.now();
-    appendNewBlock({ id, type: 'check', text: '', done: false });
-    requestAnimationFrame(() => document.querySelector(`.block[data-id="${id}"] .check-text`)?.focus());
+    const el = appendNewBlock({ id, type: 'check', text: '', done: false });
+    el.querySelector('.check-text')?.focus();
   });
   wrap.querySelector('#add-image-btn').addEventListener('click', () => {
     const id = 'b_' + Date.now();
@@ -941,9 +948,7 @@ function renderItinerario(container) {
     state.itinerary.push({ id, hora: '', evento: '', nota: '' });
     persistItinerary();
     renderAll();
-    requestAnimationFrame(() => {
-      document.querySelector(`.itin-row[data-id="${id}"] .itin-evento`)?.focus();
-    });
+    document.querySelector(`.itin-row[data-id="${id}"] .itin-evento`)?.focus();
   });
   container.appendChild(wrap);
 }
