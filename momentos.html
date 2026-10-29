@@ -66,7 +66,7 @@
       justify-content: center;
       flex-wrap: wrap;
       gap: 10px;
-      max-width: 960px;
+      max-width: 720px;
       margin: 32px auto 0;
       padding: 0 20px;
     }
@@ -85,19 +85,16 @@
     }
     .momento-tab:hover { border-color: var(--mauve); color: var(--text); }
     .momento-tab.active { background: var(--rust); border-color: var(--rust); color: #fff; }
-    .momento-tab .count {
-      font-size: 0.7rem;
-      opacity: 0.75;
-    }
+    .momento-tab .count { font-size: 0.7rem; opacity: 0.75; }
 
     /* ── MAIN ────────────────────────────────── */
     main {
-      max-width: 960px;
+      max-width: 720px;
       margin: 0 auto;
       padding: 28px 20px 100px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 14px;
     }
 
     .empty-hint {
@@ -116,144 +113,57 @@
       font-weight: 400;
     }
 
-    /* ── CARD ────────────────────────────────── */
-    .card {
-      position: relative;
+    /* ── BLOQUES (hoja en blanco por momento) ──── */
+    .block { position: relative; }
+    .block-del {
+      position: absolute;
+      top: -8px; right: -8px;
+      opacity: 0;
+      transition: opacity .15s;
+      z-index: 2;
       background: var(--card);
-      border-radius: 18px;
-      padding: 34px 38px;
-      display: grid;
-      grid-template-columns: 1fr 200px;
-      align-items: start;
-      column-gap: 30px;
-      box-shadow: 0 2px 14px rgba(44,58,40,.08);
     }
+    .block:hover .block-del, .block:focus-within .block-del { opacity: 1; }
 
-    .card-left { display: flex; flex-direction: column; gap: 10px; }
-
-    .card-num {
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      color: var(--mauve);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .card-num::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--light);
-    }
-    .card-title {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: 1.55rem;
-      font-weight: 400;
-      line-height: 1.2;
-      color: var(--text);
-    }
-    .card-label {
-      font-size: 0.62rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--sage);
-      opacity: 0.9;
-    }
-    .card-sub-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 2px;
-    }
-    .status-badge {
-      padding: 4px 12px;
-      border-radius: 50px;
-      border: 1.5px solid var(--light);
-      background: none;
-      font-family: 'Lato', sans-serif;
-      font-size: 0.64rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all .15s;
-      color: var(--muted);
-    }
-    .status-badge:hover { opacity: .8; }
-    .status-badge.status-pendiente { border-color: var(--light); color: var(--muted); }
-    .status-badge.status-seleccionado { border-color: var(--mauve); color: var(--mauve); }
-    .status-badge.status-confirmado { border-color: var(--sage); background: var(--sage); color: #fff; }
-
-    /* ── FILTRO DE ESTADO ─────────────────────── */
-    .status-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-    .status-filter-btn {
-      padding: 7px 16px;
-      border-radius: 50px;
-      border: 1.5px solid var(--light);
+    .block-text {
       background: var(--card);
-      font-family: 'Lato', sans-serif;
-      font-size: 0.78rem;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all .15s;
-    }
-    .status-filter-btn:hover { border-color: var(--mauve); color: var(--text); }
-    .status-filter-btn.active { background: var(--rust); border-color: var(--rust); color: #fff; }
-
-    .notes {
-      background: var(--input-bg);
-      border: 1.5px solid var(--light);
-      border-radius: 10px;
-      padding: 16px 18px;
+      border-radius: 14px;
+      padding: 20px 24px;
       font-family: 'Lato', sans-serif;
       font-size: 0.95rem;
-      color: var(--text);
       line-height: 1.75;
-      min-height: 200px;
+      color: var(--text);
       outline: none;
-      resize: vertical;
-      transition: border-color .2s;
-      margin-top: 8px;
+      box-shadow: 0 2px 14px rgba(44,58,40,.08);
+      min-height: 56px;
+      transition: box-shadow .2s;
     }
-    .notes:focus { border-color: var(--mauve); }
-    .notes:empty::before { content: attr(data-ph); color: var(--muted); opacity: .6; }
+    .block-text:focus { box-shadow: 0 0 0 2px var(--mauve); }
+    .block-text:empty::before { content: attr(data-ph); color: var(--muted); opacity: .6; }
 
-    /* ── PHOTOS (columna lateral, más pequeñas que el texto) ──── */
-    .photos {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    .slot {
-      aspect-ratio: 4 / 3;
-      border-radius: 12px;
+    .block-image {
+      border-radius: 14px;
       overflow: hidden;
       cursor: pointer;
-      position: relative;
-      background: var(--input-bg);
-      border: 2px dashed var(--light);
-      transition: border-color .2s, transform .15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      box-shadow: 0 2px 14px rgba(44,58,40,.08);
+      max-width: 420px;
     }
-    .slot:hover { border-color: var(--mauve); transform: scale(1.015); }
-    .slot.filled { border: none; }
-    .slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .slot-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,.5);
+    .block-image img { width: 100%; display: block; }
+
+    .check-row {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity .2s;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--card);
       border-radius: 12px;
+      padding: 14px 18px;
+      box-shadow: 0 2px 14px rgba(44,58,40,.08);
     }
-    .slot.filled:hover .slot-overlay { opacity: 1; }
-    .slot-overlay svg { color: #fff; width: 28px; height: 28px; }
+    .check-box { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--sage); cursor: pointer; flex-shrink: 0; }
+    .check-text { flex: 1; font-size: 0.92rem; outline: none; line-height: 1.5; }
+    .check-text:empty::before { content: attr(data-ph); color: var(--muted); opacity: .6; }
+    .block-check.done .check-text { text-decoration: line-through; color: var(--muted); }
+
     .add-hint {
       display: flex;
       flex-direction: column;
@@ -263,7 +173,10 @@
       font-size: 0.68rem;
       letter-spacing: 0.05em;
       text-align: center;
-      padding: 8px;
+      padding: 40px 20px;
+      background: var(--input-bg);
+      border: 2px dashed var(--light);
+      border-radius: 14px;
     }
     .add-hint svg { width: 26px; height: 26px; opacity: .5; }
 
@@ -361,17 +274,6 @@
     .btn-cancel { background: var(--light); color: var(--muted); }
     .btn-confirm { background: var(--rust); color: #fff; }
 
-    /* ── CARD CONTROLS ───────────────────────── */
-    .card-controls {
-      position: absolute;
-      top: 14px; right: 16px;
-      display: flex;
-      gap: 6px;
-      opacity: 0;
-      transition: opacity .2s;
-    }
-    .card:hover .card-controls { opacity: 1; }
-
     .ctrl-btn {
       width: 30px; height: 30px;
       border-radius: 8px;
@@ -431,7 +333,7 @@
       .itin-main { flex-basis: 100%; order: 3; }
     }
 
-    /* ── ADD / NEW CARD FORM ──────────────────── */
+    /* ── BARRA DE AÑADIR ──────────────────────── */
     .add-section-area {
       display: flex;
       flex-direction: column;
@@ -439,9 +341,10 @@
       gap: 16px;
       padding: 8px 0 40px;
     }
+    .block-add-bar { flex-direction: row; justify-content: center; flex-wrap: wrap; }
     .add-btn {
       display: flex; align-items: center; gap: 8px;
-      padding: 12px 32px;
+      padding: 12px 28px;
       border-radius: 50px;
       border: 2px dashed var(--light);
       background: none;
@@ -453,49 +356,6 @@
       transition: all .2s;
     }
     .add-btn:hover { border-color: var(--sage); color: var(--sage); }
-    .add-btn svg { width: 15px; height: 15px; }
-
-    .new-card {
-      background: var(--card);
-      border-radius: 18px;
-      padding: 28px 38px;
-      box-shadow: 0 2px 14px rgba(44,58,40,.08);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      width: 100%;
-    }
-    .new-card h4 {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: 1.1rem;
-      font-weight: 400;
-      color: var(--text);
-    }
-    .new-card .new-sub {
-      font-size: 0.68rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--sage);
-      margin-top: -8px;
-    }
-    .new-row { display: flex; gap: 12px; flex-wrap: wrap; }
-    .field-inp {
-      flex: 1;
-      min-width: 160px;
-      background: var(--input-bg);
-      border: 1.5px solid var(--light);
-      border-radius: 8px;
-      padding: 9px 12px;
-      font-family: 'Lato', sans-serif;
-      font-size: 0.85rem;
-      color: var(--text);
-      outline: none;
-      transition: border-color .2s;
-    }
-    .field-inp:focus { border-color: var(--mauve); }
-    .field-inp::placeholder { color: var(--muted); opacity: .5; }
-    .new-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
     /* ── EXPORT BUTTON ───────────────────────── */
     .export-btn {
@@ -516,8 +376,6 @@
 
     /* ── RESPONSIVE ──────────────────────────── */
     @media (max-width: 680px) {
-      .card { grid-template-columns: 1fr; padding: 24px 20px; }
-      .card-controls { opacity: 1; }
       .momento-tab { padding: 9px 14px; font-size: 0.78rem; }
     }
 
@@ -526,7 +384,7 @@
       @page { size: A4; margin: 12mm 14mm; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 
-      .export-btn, .card-controls, .add-section-area, .momento-tabs, .itin-del, .status-bar, #modal { display: none !important; }
+      .export-btn, .add-section-area, .momento-tabs, .itin-del, .block-del, #modal { display: none !important; }
 
       body { background: #F7F2EA !important; }
 
@@ -534,18 +392,13 @@
 
       main { max-width: 100%; padding: 0; gap: 10px; }
 
-      .card {
+      .block-text, .check-row, .itin-row {
         break-inside: avoid;
         page-break-inside: avoid;
         box-shadow: none !important;
         border: 1px solid #d4c5b5;
-        padding: 20px 24px;
       }
 
-      .notes { background: #f5f0e6 !important; min-height: 40px; }
-
-      .slot { border: 1px solid #d4c5b5; }
-      .slot-overlay { display: none !important; }
       .add-hint { display: none !important; }
     }
   </style>
@@ -572,7 +425,7 @@
 
 <div class="modal-bg" id="modal">
   <div class="modal">
-    <h3>Añadir inspiración</h3>
+    <h3>Añadir foto</h3>
     <div class="modal-tabs">
       <button class="tab-btn active" data-tab="file">Subir foto</button>
       <button class="tab-btn" data-tab="url">Pegar URL</button>
@@ -610,19 +463,19 @@ const app = initializeApp({
 }, 'momentos');
 
 const db          = getFirestore(app);
-// Usa un documento nuevo dentro de la colección "inspo" (ya autorizada en las
-// reglas de Firestore) en vez de una colección "momentos" propia, que las
-// reglas actuales no cubren y rechazarían con permission-denied.
+// Documento dentro de la colección "inspo" (ya autorizada en las reglas de
+// Firestore) en vez de una colección "momentos" propia, que las reglas
+// actuales no cubren y rechazarían con permission-denied.
 const MOMENTOS_REF = doc(db, 'inspo', 'momentos');
 
 // Cada foto es su propio documento dentro de "inspo" (id determinista
-// photo_<cardId>_<idx>) en vez de vivir dentro del documento grande de
-// arriba. Firebase Storage no está activado en este proyecto (probado:
-// el bucket da 404), así que las fotos subidas desde el ordenador también
-// se guardan aquí como dataURL comprimido — así sincronizan igual que las
-// pegadas por URL, entre cualquier dispositivo/persona que abra la página.
+// photo_<ownerId>_<idx>). Firebase Storage no está activado en este
+// proyecto (probado: el bucket da 404), así que las fotos subidas desde
+// el ordenador también se guardan aquí como dataURL comprimido — así
+// sincronizan igual que las pegadas por URL, entre cualquier
+// dispositivo/persona que abra la página.
 const photosQuery = query(collection(db, 'inspo'), where('kind', '==', 'momento_photo'));
-function photoDocId(cardId, idx) { return `photo_${cardId}_${idx}`; }
+function photoDocId(ownerId, idx) { return `photo_${ownerId}_${idx}`; }
 
 // ── Momentos (pestañas) ─────────────────────────────────────
 const MOMENTOS = [
@@ -633,51 +486,81 @@ const MOMENTOS = [
   { id: 'fiesta',     label: 'Fiesta'     },
   { id: 'otros',      label: 'Otros'      },
 ];
-// El itinerario es una pestaña más, pero no es una ficha libre: es una
+// El itinerario es una pestaña más, pero no es una hoja de bloques: es una
 // lista de hora+evento+nota que se ordena sola por hora.
 const ITINERARIO_ID = 'itinerario';
 const ALL_TABS = [...MOMENTOS, { id: ITINERARIO_ID, label: 'Itinerario' }];
 let activeMomento = MOMENTOS[0].id;
 
 // ── Estado ────────────────────────────────────────────────
-// cards: [{ id, momento, title, label, createdAt }]
+// blocks: { [momentoId]: [ {id,type:'text',content} | {id,type:'image',photoOwner,photoIdx} | {id,type:'check',text,done} ] }
 // itinerary: [{ id, hora, evento, nota }]
-// photos: { [cardId]: [url0, url1, url2] } — viene de la query de fotos, no se persiste aquí
-let state = { notes: {}, photos: {}, cards: [], itinerary: [], _sv: 0 };
+// photos: { [ownerId]: [url0,url1,url2] } — viene de la query de fotos, no se persiste aquí
+let state = { blocks: {}, itinerary: [], photos: {}, _sv: 0 };
 let firstLoad = true;
 let lastFp = '';
 
-function bumpSv() { state._sv = (state._sv || 0) + 1; }
+// ── Migración desde el modelo viejo de "fichas" (título+notas+3 fotos) ──
+// Las primeras versiones de esta página guardaban cards+notes en vez de
+// blocks. Se convierte una sola vez a bloques (texto + imagen) para no
+// perder lo que ya se había escrito, sin borrar los campos viejos.
+let momentosLoaded = false, photosLoaded = false, migrated = false;
+let oldCards = [], oldNotes = {};
+
+function tryMigrate() {
+  if (migrated || !momentosLoaded || !photosLoaded || !oldCards.length) return;
+  migrated = true;
+  let changed = false;
+  oldCards.forEach(c => {
+    if (!c.momento) return;
+    state.blocks[c.momento] = state.blocks[c.momento] || [];
+    const already = state.blocks[c.momento].some(b => b._migratedFrom === c.id);
+    if (already) return;
+    const titleLine = c.title
+      ? `<strong>${c.title}</strong>${c.label ? ` <span style="opacity:.6">(${c.label})</span>` : ''}<br>`
+      : '';
+    const body = oldNotes[c.id] || '';
+    if (titleLine || body) {
+      state.blocks[c.momento].push({ id: 'b_mig_' + c.id + '_t', type: 'text', content: titleLine + body, _migratedFrom: c.id });
+      changed = true;
+    }
+    (state.photos[c.id] || []).forEach((url, idx) => {
+      if (!url) return;
+      state.blocks[c.momento].push({ id: 'b_mig_' + c.id + '_i' + idx, type: 'image', photoOwner: c.id, photoIdx: idx, _migratedFrom: c.id });
+      changed = true;
+    });
+  });
+  if (changed) { persistBlocks(); renderAll(); }
+}
 
 // ── Firestore ─────────────────────────────────────────────
-// Las fichas (altas/bajas) se guardan al instante, sin debounce: es una
-// acción puntual del usuario, y escribir ya mismo evita que un snapshot
-// ajeno (p.ej. la wedding planner escribiendo notas a la vez) llegue de
-// por medio y pise localmente una ficha que aún no se había guardado.
-function persistCards() {
-  setDoc(MOMENTOS_REF, { cards: state.cards, _sv: state._sv }, { merge: true }).catch(console.error);
+let blocksSaveTimer;
+function persistBlocks() {
+  clearTimeout(blocksSaveTimer);
+  setDoc(MOMENTOS_REF, { blocks: state.blocks }, { merge: true }).catch(console.error);
+}
+function persistBlocksDebounced() {
+  clearTimeout(blocksSaveTimer);
+  blocksSaveTimer = setTimeout(() => {
+    setDoc(MOMENTOS_REF, { blocks: state.blocks }, { merge: true }).catch(console.error);
+  }, 600);
 }
 function persistItinerary() {
   setDoc(MOMENTOS_REF, { itinerary: state.itinerary }, { merge: true }).catch(console.error);
-}
-// Las notas sí lo son a cada tecleo, así que van con debounce.
-let notesSaveTimer;
-function persistNotes() {
-  clearTimeout(notesSaveTimer);
-  notesSaveTimer = setTimeout(() => {
-    setDoc(MOMENTOS_REF, { notes: state.notes }, { merge: true }).catch(console.error);
-  }, 600);
 }
 
 onSnapshot(MOMENTOS_REF, snap => {
   if (snap.exists()) {
     const d = snap.data();
-    state.notes     = d.notes     || {};
-    state.cards     = d.cards     || [];
+    state.blocks    = d.blocks    || {};
     state.itinerary = d.itinerary || [];
     state._sv       = d._sv       || 0;
+    oldCards = d.cards || [];
+    oldNotes = d.notes || {};
   }
-  const fp = cardsFp();
+  momentosLoaded = true;
+  tryMigrate();
+  const fp = viewFp();
   if (firstLoad || fp !== lastFp) {
     renderAll(); firstLoad = false; lastFp = fp;
   } else {
@@ -700,33 +583,49 @@ onSnapshot(photosQuery, snap => {
     photos[data.cardId] = arr;
   });
   state.photos = photos;
-  cardsForActive().forEach(c => renderPhotos(c.id));
+  photosLoaded = true;
+  tryMigrate();
+  syncBlockImages();
 }, err => console.error('Error cargando fotos:', err));
 
-function cardsFp() {
+function viewFp() {
   if (activeMomento === ITINERARIO_ID) return 'itin:' + state.itinerary.map(r => r.id).join(',');
-  return cardsForActive().map(c => c.id).join(',');
+  return 'blk:' + (state.blocks[activeMomento] || []).map(b => b.id).join(',');
 }
 
 function syncDOM() {
   const focused = document.activeElement;
-  document.querySelectorAll('.notes[data-id]').forEach(el => {
-    if (el !== focused) { const v = state.notes[el.dataset.id] || ''; if (el.innerHTML !== v) el.innerHTML = v; }
+  (state.blocks[activeMomento] || []).forEach(b => {
+    if (b.type === 'text') {
+      const el = document.querySelector(`.block-text[data-id="${b.id}"]`);
+      if (el && el !== focused) { const v = b.content || ''; if (el.innerHTML !== v) el.innerHTML = v; }
+    } else if (b.type === 'check') {
+      const blockEl = document.querySelector(`.block[data-id="${b.id}"]`);
+      const txt = blockEl?.querySelector('.check-text');
+      if (txt && txt !== focused) { const v = b.text || ''; if (txt.innerHTML !== v) txt.innerHTML = v; }
+      const cb = blockEl?.querySelector('.check-box');
+      if (cb) cb.checked = !!b.done;
+      blockEl?.classList.toggle('done', !!b.done);
+    }
   });
-  cardsForActive().forEach(c => renderPhotos(c.id));
+  syncBlockImages();
+}
+
+function syncBlockImages() {
+  document.querySelectorAll('.block-image[data-owner]').forEach(el => {
+    const owner = el.dataset.owner, idx = parseInt(el.dataset.idx);
+    const url = getPhotos(owner)[idx] || '';
+    renderBlockImageInner(el, url);
+  });
 }
 
 // ── Tabs ──────────────────────────────────────────────────
-function cardsForActive() {
-  return state.cards.filter(c => c.momento === activeMomento);
-}
-
 function renderTabs() {
   const nav = document.getElementById('momento-tabs');
   nav.innerHTML = ALL_TABS.map(m => {
     const n = m.id === ITINERARIO_ID
       ? state.itinerary.length
-      : state.cards.filter(c => c.momento === m.id).length;
+      : (state.blocks[m.id] || []).length;
     return `<button class="momento-tab ${m.id === activeMomento ? 'active' : ''}" data-momento="${m.id}">
       ${m.label} <span class="count">${n ? '· ' + n : ''}</span>
     </button>`;
@@ -734,7 +633,6 @@ function renderTabs() {
   nav.querySelectorAll('[data-momento]').forEach(btn => {
     btn.addEventListener('click', () => {
       activeMomento = btn.dataset.momento;
-      statusFilter = 'all';
       renderAll();
     });
   });
@@ -761,6 +659,7 @@ function compressImage(file) {
 
 // ── Modal ─────────────────────────────────────────────────
 let pendingSection = null, pendingIdx = null, activeTab = 'file';
+let pendingNewImageBlock = null; // si no es null, al guardar se crea un bloque de imagen nuevo
 const modalBg   = document.getElementById('modal');
 const urlInput  = document.getElementById('url-input');
 const fileInput = document.getElementById('file-input');
@@ -784,13 +683,24 @@ modalBg.addEventListener('click', e => { if (e.target === modalBg) closeModal();
 urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') confirmModal(); });
 document.getElementById('modal-confirm').addEventListener('click', confirmModal);
 
+async function finishPhoto(url) {
+  await setPhoto(pendingSection, pendingIdx, url);
+  if (pendingNewImageBlock === pendingSection) {
+    state.blocks[activeMomento] = state.blocks[activeMomento] || [];
+    state.blocks[activeMomento].push({ id: pendingNewImageBlock, type: 'image', photoOwner: pendingSection, photoIdx: 0 });
+    pendingNewImageBlock = null;
+    persistBlocks();
+    renderAll();
+  }
+}
+
 async function confirmModal() {
   const btn = document.getElementById('modal-confirm');
   if (activeTab === 'url') {
     const url = urlInput.value.trim(); if (!url) return;
     btn.disabled = true; btn.textContent = 'Guardando…';
     try {
-      await setPhoto(pendingSection, pendingIdx, url);
+      await finishPhoto(url);
       closeModal();
     } catch (e) {
       alert('No se pudo guardar la foto: ' + e.message);
@@ -804,7 +714,7 @@ async function confirmModal() {
     try {
       const dataUrl = await compressImage(file);
       progressBar.style.width = '85%';
-      await setPhoto(pendingSection, pendingIdx, dataUrl);
+      await finishPhoto(dataUrl);
       progressBar.style.width = '100%';
       closeModal();
     } catch(e) {
@@ -814,205 +724,126 @@ async function confirmModal() {
   }
 }
 
-function openModal(secId, idx) {
-  pendingSection = secId; pendingIdx = idx;
+function openModal(ownerId, idx) {
+  pendingSection = ownerId; pendingIdx = idx;
   urlInput.value = ''; fileInput.value = '';
   progressWrap.style.display = 'none'; progressBar.style.width = '0%';
   document.getElementById('modal-confirm').disabled = false;
   document.getElementById('modal-confirm').textContent = 'Guardar';
   modalBg.classList.add('open');
 }
-function closeModal() { modalBg.classList.remove('open'); }
+function closeModal() { modalBg.classList.remove('open'); pendingNewImageBlock = null; }
 
 // ── Fotos (cada una su propio documento en Firestore) ──────
-function getPhotos(secId) {
-  return state.photos[secId] || ['', '', ''];
+function getPhotos(ownerId) {
+  return state.photos[ownerId] || ['', '', ''];
 }
 
-async function setPhoto(secId, idx, url) {
-  await setDoc(doc(db, 'inspo', photoDocId(secId, idx)), {
-    kind: 'momento_photo', cardId: secId, idx, url,
+async function setPhoto(ownerId, idx, url) {
+  await setDoc(doc(db, 'inspo', photoDocId(ownerId, idx)), {
+    kind: 'momento_photo', cardId: ownerId, idx, url,
   });
-  // Actualiza ya mismo en local: la query puede tardar un instante en confirmar.
-  const p = [...getPhotos(secId)]; p[idx] = url;
-  state.photos[secId] = p;
-  renderPhotos(secId);
+  const p = [...getPhotos(ownerId)]; p[idx] = url;
+  state.photos[ownerId] = p;
+  const el = document.querySelector(`.block-image[data-owner="${ownerId}"][data-idx="${idx}"]`);
+  if (el) renderBlockImageInner(el, url);
 }
-async function removePhoto(secId, idx) {
-  await deleteDoc(doc(db, 'inspo', photoDocId(secId, idx))).catch(console.error);
-  const p = [...getPhotos(secId)]; p[idx] = '';
-  state.photos[secId] = p;
-  renderPhotos(secId);
-}
-function renderPhotos(secId) {
-  const grid = document.querySelector(`.photos[data-id="${secId}"]`);
-  if (!grid) return;
-  grid.innerHTML = getPhotos(secId).map((url, i) => `
-    <div class="slot ${url ? 'filled' : ''}" data-section="${secId}" data-idx="${i}">
-      ${url
-        ? `<img src="${url}" alt="" loading="lazy"/>
-           <div class="slot-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-           </svg></div>`
-        : `<div class="add-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-             <rect x="3" y="3" width="18" height="18" rx="3"/>
-             <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
-           </svg><span>Añadir<br>foto</span></div>`}
-    </div>`).join('');
-  grid.querySelectorAll('.slot').forEach(slot => {
-    slot.addEventListener('click', () => {
-      const s = slot.dataset.section, i = parseInt(slot.dataset.idx);
-      slot.classList.contains('filled') ? removePhoto(s, i) : openModal(s, i);
-    });
-  });
+function deletePhotoDoc(ownerId, idx) {
+  deleteDoc(doc(db, 'inspo', photoDocId(ownerId, idx))).catch(() => {});
 }
 
-// ── Fichas (cards) ────────────────────────────────────────
+function addHintHtml() {
+  return `<div class="add-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <rect x="3" y="3" width="18" height="18" rx="3"/>
+    <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+  </svg><span>Añadir foto</span></div>`;
+}
+function renderBlockImageInner(el, url) {
+  el.innerHTML = url ? `<img src="${url}" alt="" loading="lazy"/>` : addHintHtml();
+}
+
+// ── Bloques (texto / imagen / check) ────────────────────────
 const IC_DEL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
 
-const STATUSES = [
-  { id: 'pendiente',   label: 'Pendiente'   },
-  { id: 'seleccionado', label: 'Seleccionado' },
-  { id: 'confirmado',  label: 'Confirmado'  },
-];
-function nextStatus(s) {
-  const i = STATUSES.findIndex(x => x.id === s);
-  return STATUSES[(i + 1) % STATUSES.length].id;
-}
-function statusLabel(s) {
-  return (STATUSES.find(x => x.id === s) || STATUSES[0]).label;
-}
+function buildBlock(b) {
+  const el = document.createElement('div');
+  el.className = `block block-${b.type}${b.type === 'check' && b.done ? ' done' : ''}`;
+  el.dataset.id = b.id;
 
-function formatDate(ms) {
-  if (!ms) return '';
-  return new Date(ms).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
-}
-
-function buildCard(c, num) {
-  const status = c.status || 'pendiente';
-  const card = document.createElement('div');
-  card.className = 'card'; card.dataset.id = c.id;
-  card.innerHTML = `
-    <div class="card-controls">
-      <button class="ctrl-btn" data-delete="${c.id}" title="Eliminar ficha">${IC_DEL}</button>
-    </div>
-    <div class="card-left">
-      <div class="card-num">${num}${c.createdAt ? ` · ${formatDate(c.createdAt)}` : ''}</div>
-      <div class="card-title">${c.title}</div>
-      <div class="card-sub-row">
-        ${c.label ? `<div class="card-label">${c.label}</div>` : ''}
-        <button class="status-badge status-${status}" data-status-id="${c.id}" title="Cambiar estado">${statusLabel(status)}</button>
-      </div>
-      <div class="notes" contenteditable="true" data-id="${c.id}" data-ph="Cuéntanos cómo fue…" spellcheck="false">${state.notes[c.id] || ''}</div>
-    </div>
-    <div class="photos" data-id="${c.id}"></div>`;
-
-  card.querySelector('[data-delete]').addEventListener('click', () => deleteCard(c.id));
-  card.querySelector('[data-status-id]').addEventListener('click', () => cycleStatus(c.id));
-
-  const notesEl = card.querySelector('.notes');
-  let nt; notesEl.addEventListener('input', () => {
-    clearTimeout(nt); nt = setTimeout(() => { state.notes[c.id] = notesEl.innerHTML; persistNotes(); }, 400);
-  });
-  return card;
-}
-
-function cycleStatus(id) {
-  const c = state.cards.find(x => x.id === id);
-  if (!c) return;
-  c.status = nextStatus(c.status || 'pendiente');
-  persistCards();
-  const btn = document.querySelector(`[data-status-id="${id}"]`);
-  if (btn) {
-    btn.className = `status-badge status-${c.status}`;
-    btn.textContent = statusLabel(c.status);
+  if (b.type === 'text') {
+    el.innerHTML = `
+      <button class="ctrl-btn block-del" title="Eliminar">${IC_DEL}</button>
+      <div class="block-text" contenteditable="true" data-id="${b.id}" data-ph="Escribe aquí…" spellcheck="false">${b.content || ''}</div>`;
+    const t = el.querySelector('.block-text');
+    let tm; t.addEventListener('input', () => {
+      clearTimeout(tm); tm = setTimeout(() => { b.content = t.innerHTML; persistBlocksDebounced(); }, 400);
+    });
+  } else if (b.type === 'check') {
+    el.innerHTML = `
+      <button class="ctrl-btn block-del" title="Eliminar">${IC_DEL}</button>
+      <div class="check-row">
+        <input type="checkbox" class="check-box" ${b.done ? 'checked' : ''} />
+        <div class="check-text" contenteditable="true" data-ph="Algo por decidir…" spellcheck="false">${b.text || ''}</div>
+      </div>`;
+    el.querySelector('.check-box').addEventListener('change', e => {
+      b.done = e.target.checked;
+      el.classList.toggle('done', b.done);
+      persistBlocks();
+    });
+    const txt = el.querySelector('.check-text');
+    let tm; txt.addEventListener('input', () => {
+      clearTimeout(tm); tm = setTimeout(() => { b.text = txt.innerHTML; persistBlocksDebounced(); }, 400);
+    });
+  } else if (b.type === 'image') {
+    const url = getPhotos(b.photoOwner)[b.photoIdx] || '';
+    el.innerHTML = `
+      <button class="ctrl-btn block-del" title="Eliminar">${IC_DEL}</button>
+      <div class="block-image" data-owner="${b.photoOwner}" data-idx="${b.photoIdx}">${url ? `<img src="${url}" alt="" loading="lazy"/>` : addHintHtml()}</div>`;
+    el.querySelector('.block-image').addEventListener('click', () => openModal(b.photoOwner, b.photoIdx));
   }
-  renderStatusBar();
+
+  el.querySelector('.block-del').addEventListener('click', () => deleteBlock(b.id));
+  return el;
 }
 
-function deleteCard(id) {
-  if (!confirm('¿Eliminar esta ficha? También se borrarán sus fotos.')) return;
-  state.cards = state.cards.filter(c => c.id !== id);
-  delete state.notes[id]; delete state.photos[id];
-  bumpSv(); persistCards();
-  [0, 1, 2].forEach(i => deleteDoc(doc(db, 'inspo', photoDocId(id, i))).catch(() => {}));
-  document.querySelector(`.card[data-id="${id}"]`)?.remove();
-  lastFp = cardsFp();
-  renderTabs();
+function deleteBlock(id) {
+  const list = state.blocks[activeMomento] || [];
+  const b = list.find(x => x.id === id);
+  if (!b) return;
+  if (!confirm('¿Eliminar esto?')) return;
+  state.blocks[activeMomento] = list.filter(x => x.id !== id);
+  if (b.type === 'image') deletePhotoDoc(b.photoOwner, b.photoIdx);
+  persistBlocks();
+  renderAll();
 }
 
-function renderAddSection(container) {
+function renderBlockAddBar(container) {
   const wrap = document.createElement('div');
-  wrap.id = 'add-area'; wrap.className = 'add-section-area';
+  wrap.className = 'add-section-area block-add-bar';
   wrap.innerHTML = `
-    <button class="add-btn" id="add-btn-main">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="8" x2="12" y2="16"/>
-        <line x1="8" y1="12" x2="16" y2="12"/>
-      </svg>
-      Añadir ficha
-    </button>`;
-  wrap.querySelector('#add-btn-main').addEventListener('click', () => showAddForm(container));
+    <button class="add-btn" id="add-text-btn">✎ Texto</button>
+    <button class="add-btn" id="add-image-btn">🖼 Foto</button>
+    <button class="add-btn" id="add-check-btn">☑ Check</button>`;
+  wrap.querySelector('#add-text-btn').addEventListener('click', () => {
+    const id = 'b_' + Date.now();
+    state.blocks[activeMomento] = state.blocks[activeMomento] || [];
+    state.blocks[activeMomento].push({ id, type: 'text', content: '' });
+    persistBlocks(); renderAll();
+    requestAnimationFrame(() => document.querySelector(`.block[data-id="${id}"] .block-text`)?.focus());
+  });
+  wrap.querySelector('#add-check-btn').addEventListener('click', () => {
+    const id = 'b_' + Date.now();
+    state.blocks[activeMomento] = state.blocks[activeMomento] || [];
+    state.blocks[activeMomento].push({ id, type: 'check', text: '', done: false });
+    persistBlocks(); renderAll();
+    requestAnimationFrame(() => document.querySelector(`.block[data-id="${id}"] .check-text`)?.focus());
+  });
+  wrap.querySelector('#add-image-btn').addEventListener('click', () => {
+    const id = 'b_' + Date.now();
+    pendingNewImageBlock = id;
+    openModal(id, 0);
+  });
   container.appendChild(wrap);
-}
-
-function showAddForm(container) {
-  document.getElementById('add-area')?.remove();
-  const label = MOMENTOS.find(m => m.id === activeMomento)?.label || '';
-  const nc = document.createElement('div'); nc.className = 'new-card'; nc.id = 'add-area';
-  nc.innerHTML = `
-    <h4>Nueva ficha</h4>
-    <p class="new-sub">en ${label}</p>
-    <div class="new-row">
-      <input class="field-inp" id="nt" placeholder="Título  (ej. Arco floral)" />
-      <input class="field-inp" id="nl" placeholder="Etiqueta  (ej. Entrada a ceremonia)" />
-    </div>
-    <div class="new-actions">
-      <button class="btn btn-cancel" id="nc-cancel">Cancelar</button>
-      <button class="btn btn-confirm" id="nc-ok">Crear</button>
-    </div>`;
-  container.appendChild(nc);
-  document.getElementById('nt').focus();
-
-  document.getElementById('nc-cancel').addEventListener('click', renderAll);
-  document.getElementById('nc-ok').addEventListener('click', () => {
-    const title = document.getElementById('nt').value.trim(); if (!title) return;
-    const fieldLabel = document.getElementById('nl').value.trim();
-    const id = 'm_' + Date.now();
-    state.cards.push({ id, momento: activeMomento, title, label: fieldLabel, createdAt: Date.now(), status: 'pendiente' });
-    bumpSv(); persistCards(); renderAll();
-  });
-  document.getElementById('nt').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('nl').focus(); });
-  document.getElementById('nl').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('nc-ok').click(); });
-}
-
-// ── Filtro por estado (dentro de cada momento) ──────────────
-let statusFilter = 'all';
-
-function visibleCards() {
-  const all = cardsForActive();
-  if (statusFilter === 'all') return all;
-  return all.filter(c => (c.status || 'pendiente') === statusFilter);
-}
-
-function renderStatusBar(container) {
-  const all = cardsForActive();
-  if (!all.length) return;
-  const counts = { pendiente: 0, seleccionado: 0, confirmado: 0 };
-  all.forEach(c => { counts[c.status || 'pendiente']++; });
-
-  const bar = document.createElement('div');
-  bar.className = 'status-bar';
-  bar.innerHTML = `
-    <button class="status-filter-btn ${statusFilter === 'all' ? 'active' : ''}" data-filter="all">Todas · ${all.length}</button>
-    ${STATUSES.map(s => `
-      <button class="status-filter-btn ${statusFilter === s.id ? 'active' : ''}" data-filter="${s.id}">${s.label} · ${counts[s.id]}</button>
-    `).join('')}`;
-  bar.querySelectorAll('[data-filter]').forEach(btn => {
-    btn.addEventListener('click', () => { statusFilter = btn.dataset.filter; renderAll(); });
-  });
-  container.appendChild(bar);
 }
 
 function renderAll() {
@@ -1022,26 +853,19 @@ function renderAll() {
   if (activeMomento === ITINERARIO_ID) {
     renderItinerario(container);
   } else {
-    renderStatusBar(container);
-    const cards = visibleCards();
-    if (!cards.length) {
+    const blocks = state.blocks[activeMomento] || [];
+    if (!blocks.length) {
       const hint = document.createElement('div');
       hint.className = 'empty-hint';
       const label = MOMENTOS.find(m => m.id === activeMomento)?.label || '';
-      hint.innerHTML = cardsForActive().length
-        ? `<strong>Nada con ese estado</strong>Prueba con otro filtro de arriba`
-        : `<strong>Nada por aquí todavía</strong>Añade la primera ficha de ${label} — fotos, ideas, notas…`;
+      hint.innerHTML = `<strong>Hoja en blanco</strong>Añade texto, fotos o checks para ${label}`;
       container.appendChild(hint);
     } else {
-      cards.forEach((c, i) => {
-        const card = buildCard(c, String(i + 1).padStart(2, '0'));
-        container.appendChild(card);
-        renderPhotos(c.id);
-      });
+      blocks.forEach(b => container.appendChild(buildBlock(b)));
     }
-    renderAddSection(container);
+    renderBlockAddBar(container);
   }
-  lastFp = cardsFp();
+  lastFp = viewFp();
 }
 
 // ── Itinerario ──────────────────────────────────────────────
