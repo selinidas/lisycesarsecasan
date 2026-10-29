@@ -302,16 +302,30 @@
       gap: 18px;
       box-shadow: 0 2px 14px rgba(44,58,40,.08);
     }
-    .itin-hora {
+    .itin-hora-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      width: 110px;
+      flex-shrink: 0;
+    }
+    .itin-ampm {
       font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 1.3rem;
       color: var(--rust);
+      line-height: 1.1;
+    }
+    .itin-hora {
+      font-family: 'Lato', sans-serif;
+      font-size: 0.72rem;
+      color: var(--muted);
       background: none;
       border: none;
       outline: none;
-      width: 100px;
-      flex-shrink: 0;
+      padding: 0;
+      cursor: pointer;
     }
     .itin-main { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
     .itin-evento, .itin-nota {
@@ -333,7 +347,7 @@
 
     @media (max-width: 680px) {
       .itin-row { flex-wrap: wrap; }
-      .itin-hora { width: auto; }
+      .itin-hora-wrap { width: auto; }
       .itin-main { flex-basis: 100%; order: 3; }
     }
 
@@ -925,18 +939,37 @@ function renderAll() {
 }
 
 // ── Itinerario ──────────────────────────────────────────────
+// El <input type="time"> nativo se muestra en 12h o 24h según el idioma/
+// región del teléfono, algo que no se puede forzar de forma fiable en
+// todos los navegadores (Safari en iOS, sobre todo, ignora el lang del
+// input). Por eso se calcula aparte una etiqueta con el formato AM/PM,
+// que siempre se ve igual sin importar el dispositivo.
+function formatHora12(hhmm) {
+  if (!hhmm) return '';
+  const [h, m] = hhmm.split(':').map(Number);
+  if (Number.isNaN(h) || Number.isNaN(m)) return '';
+  const period = h < 12 ? 'AM' : 'PM';
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${String(m).padStart(2, '0')} ${period}`;
+}
+
 function buildItinRow(r) {
   const row = document.createElement('div');
   row.className = 'itin-row'; row.dataset.id = r.id;
   row.innerHTML = `
-    <input type="time" class="itin-hora" value="${r.hora || ''}" />
+    <div class="itin-hora-wrap">
+      <input type="time" class="itin-hora" lang="en-US" value="${r.hora || ''}" />
+      <span class="itin-ampm">${formatHora12(r.hora)}</span>
+    </div>
     <div class="itin-main">
       <input type="text" class="itin-evento" placeholder="Evento (ej. Entrada de los novios)" value="${(r.evento || '').replace(/"/g, '&quot;')}" />
       <input type="text" class="itin-nota" placeholder="Nota (opcional)" value="${(r.nota || '').replace(/"/g, '&quot;')}" />
     </div>
     <button class="ctrl-btn itin-del" title="Eliminar">${IC_DEL}</button>`;
 
-  const horaEl = row.querySelector('.itin-hora');
+  const horaEl  = row.querySelector('.itin-hora');
+  const ampmEl  = row.querySelector('.itin-ampm');
+  horaEl.addEventListener('input', () => { ampmEl.textContent = formatHora12(horaEl.value); });
   horaEl.addEventListener('change', () => { updateItinField(r.id, 'hora', horaEl.value); renderAll(); });
 
   const evEl = row.querySelector('.itin-evento');
