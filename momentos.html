@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuestra Boda · El Día</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rust:     #9B4A2E;
+      --mauve:    #A85C78;
+      --sage:     #4A6B44;
+      --bg:       #F7F2EA;
+      --card:     #FDFAF6;
+      --input-bg: #F2EDE4;
+      --text:     #2C3A28;
+      --muted:    #5A6E52;
+      --light:    #D4C5B5;
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ──────────────────────────────── */
+    header {
+      text-align: center;
+      padding: 64px 20px 28px;
+    }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      font-weight: 400;
+      letter-spacing: 0.03em;
+      color: var(--text);
+    }
+    header .subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      margin-top: 10px;
+    }
+    .ornament {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 22px;
+    }
+    .ornament::before, .ornament::after {
+      content: '';
+      height: 1px;
+      width: 72px;
+      background: var(--mauve);
+    }
+    .ornament span { color: var(--mauve); font-size: 9px; }
+
+    /* ── TABS ────────────────────────────────── */
+    .momento-tabs {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      max-width: 960px;
+      margin: 32px auto 0;
+      padding: 0 20px;
+    }
+    .momento-tab {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 20px;
+      border-radius: 50px;
+      border: 1.5px solid var(--light);
+      background: var(--card);
+      font-family: 'Lato', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.03em;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .18s;
+    }
+    .momento-tab:hover { border-color: var(--mauve); color: var(--text); }
+    .momento-tab.active { background: var(--rust); border-color: var(--rust); color: #fff; }
+    .momento-tab .count {
+      font-size: 0.7rem;
+      opacity: 0.75;
+    }
+
+    /* ── MAIN ────────────────────────────────── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 28px 20px 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .empty-hint {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .empty-hint strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.3rem;
+      color: var(--text);
+      margin-bottom: 8px;
+      font-weight: 400;
+    }
+
+    /* ── CARD ────────────────────────────────── */
+    .card {
+      position: relative;
+      background: var(--card);
+      border-radius: 18px;
+      padding: 34px 38px;
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      align-items: start;
+      column-gap: 30px;
+      box-shadow: 0 2px 14px rgba(44,58,40,.08);
+    }
+
+    .card-left { display: flex; flex-direction: column; gap: 10px; }
+
+    .card-num {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--mauve);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-num::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--light);
+    }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.55rem;
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--text);
+    }
+    .card-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sage);
+      opacity: 0.9;
+    }
+    .notes {
+      background: var(--input-bg);
+      border: 1.5px solid var(--light);
+      border-radius: 10px;
+      padding: 13px 15px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.86rem;
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 82px;
+      outline: none;
+      resize: vertical;
+      transition: border-color .2s;
+      margin-top: 4px;
+    }
+    .notes:focus { border-color: var(--mauve); }
+    .notes:empty::before { content: attr(data-ph); color: var(--muted); opacity: .6; }
+
+    /* ── PHOTOS ──────────────────────────────── */
+    .photos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .slot {
+      aspect-ratio: 3 / 4;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      background: var(--input-bg);
+      border: 2px dashed var(--light);
+      transition: border-color .2s, transform .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .slot:hover { border-color: var(--mauve); transform: scale(1.015); }
+    .slot.filled { border: none; }
+    .slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .slot-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity .2s;
+      border-radius: 12px;
+    }
+    .slot.filled:hover .slot-overlay { opacity: 1; }
+    .slot-overlay svg { color: #fff; width: 28px; height: 28px; }
+    .add-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      text-align: center;
+      padding: 8px;
+    }
+    .add-hint svg { width: 26px; height: 26px; opacity: .5; }
+
+    /* ── MODAL ───────────────────────────────── */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(44,58,40,.45);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-bg.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 32px 36px;
+      width: min(440px, 90vw);
+      box-shadow: 0 20px 60px rgba(44,58,40,.18);
+    }
+    .modal h3 {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.3rem;
+      font-weight: 400;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+    .modal-tabs {
+      display: flex;
+      border: 1.5px solid var(--light);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    .tab-btn {
+      flex: 1; padding: 9px; border: none; background: none;
+      font-family: 'Lato', sans-serif; font-size: 0.8rem;
+      letter-spacing: 0.04em; cursor: pointer; color: var(--muted);
+      transition: background .15s, color .15s;
+    }
+    .tab-btn.active { background: var(--rust); color: #fff; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    .modal input[type="url"],
+    .modal input[type="file"] {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--light);
+      border-radius: 10px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text);
+      background: var(--input-bg);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .modal input[type="url"]:focus { border-color: var(--mauve); }
+    .modal input[type="file"] { padding: 9px; cursor: pointer; }
+    .modal-hint { font-size: 0.75rem; color: var(--muted); margin-top: 8px; }
+
+    .upload-progress {
+      margin-top: 10px;
+      height: 4px;
+      background: var(--light);
+      border-radius: 2px;
+      overflow: hidden;
+      display: none;
+    }
+    .upload-progress-bar {
+      height: 100%;
+      background: var(--sage);
+      border-radius: 2px;
+      width: 0%;
+      transition: width .2s;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+      justify-content: flex-end;
+    }
+    .btn {
+      padding: 9px 22px;
+      border-radius: 8px;
+      border: none;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.83rem;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn-cancel { background: var(--light); color: var(--muted); }
+    .btn-confirm { background: var(--rust); color: #fff; }
+
+    /* ── CARD CONTROLS ───────────────────────── */
+    .card-controls {
+      position: absolute;
+      top: 14px; right: 16px;
+      display: flex;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .card:hover .card-controls { opacity: 1; }
+
+    .ctrl-btn {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      border: 1.5px solid var(--light);
+      background: var(--card);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .15s;
+    }
+    .ctrl-btn:hover { border-color: var(--mauve); color: var(--text); }
+    .ctrl-btn svg { width: 14px; height: 14px; pointer-events: none; }
+
+    /* ── ADD / NEW CARD FORM ──────────────────── */
+    .add-section-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 0 40px;
+    }
+    .add-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 32px;
+      border-radius: 50px;
+      border: 2px dashed var(--light);
+      background: none;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .add-btn:hover { border-color: var(--sage); color: var(--sage); }
+    .add-btn svg { width: 15px; height: 15px; }
+
+    .new-card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 28px 38px;
+      box-shadow: 0 2px 14px rgba(44,58,40,.08);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+    }
+    .new-card h4 {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--text);
+    }
+    .new-card .new-sub {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-top: -8px;
+    }
+    .new-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .field-inp {
+      flex: 1;
+      min-width: 160px;
+      background: var(--input-bg);
+      border: 1.5px solid var(--light);
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .field-inp:focus { border-color: var(--mauve); }
+    .field-inp::placeholder { color: var(--muted); opacity: .5; }
+    .new-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+    /* ── EXPORT BUTTON ───────────────────────── */
+    .export-btn {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      display: flex; align-items: center; gap: 8px;
+      padding: 13px 26px;
+      background: var(--rust); color: #fff;
+      border: none; border-radius: 50px;
+      font-family: 'Lato', sans-serif; font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      cursor: pointer; z-index: 50;
+      box-shadow: 0 4px 20px rgba(155,74,46,.35);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .export-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(155,74,46,.45); }
+    .export-btn svg { width: 15px; height: 15px; }
+
+    /* ── RESPONSIVE ──────────────────────────── */
+    @media (max-width: 680px) {
+      .card { grid-template-columns: 1fr; padding: 24px 20px; }
+      .card-controls { opacity: 1; }
+      .momento-tab { padding: 9px 14px; font-size: 0.78rem; }
+    }
+
+    /* ── PRINT / PDF ─────────────────────────── */
+    @media print {
+      @page { size: A4; margin: 12mm 14mm; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+      .export-btn, .card-controls, .add-section-area, .momento-tabs, #modal { display: none !important; }
+
+      body { background: #F7F2EA !important; }
+
+      header { padding: 28px 0 16px; }
+
+      main { max-width: 100%; padding: 0; gap: 10px; }
+
+      .card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        box-shadow: none !important;
+        border: 1px solid #d4c5b5;
+        padding: 20px 24px;
+      }
+
+      .notes { background: #f5f0e6 !important; min-height: 40px; }
+
+      .slot { border: 1px solid #d4c5b5; }
+      .slot-overlay { display: none !important; }
+      .add-hint { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>El Gran Día</h1>
+  <p class="subtitle">Cesar &amp; Lissette · 13 Marzo 2027</p>
+  <div class="ornament"><span>◆</span></div>
+</header>
+
+<nav class="momento-tabs" id="momento-tabs"></nav>
+
+<main id="container"></main>
+
+<button class="export-btn" onclick="window.print()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+    <rect x="6" y="14" width="12" height="8"/>
+  </svg>
+  Exportar PDF
+</button>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h3>Añadir inspiración</h3>
+    <div class="modal-tabs">
+      <button class="tab-btn active" data-tab="file">Subir foto</button>
+      <button class="tab-btn" data-tab="url">Pegar URL</button>
+    </div>
+    <div class="tab-pane active" id="pane-file">
+      <input type="file" id="file-input" accept="image/*" />
+      <p class="modal-hint">JPG, PNG, HEIC… Se comprime y guarda en este navegador.</p>
+      <div class="upload-progress" id="upload-progress">
+        <div class="upload-progress-bar" id="upload-bar"></div>
+      </div>
+    </div>
+    <div class="tab-pane" id="pane-url">
+      <input type="url" id="url-input" placeholder="https://i.pinimg.com/…" />
+      <p class="modal-hint">Pega la URL desde Pinterest, Google Images, etc.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" id="modal-cancel">Cancelar</button>
+      <button class="btn btn-confirm" id="modal-confirm">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
+import { getFirestore, doc, setDoc, onSnapshot }
+  from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
+
+const app = initializeApp({
+  apiKey:            'AIzaSyATR-1uUqpJFZAG9OPOjxYas7DjvEEVRCo',
+  authDomain:        'boda-cesar-lissette.firebaseapp.com',
+  projectId:         'boda-cesar-lissette',
+  storageBucket:     'boda-cesar-lissette.firebasestorage.app',
+  messagingSenderId: '1080316555242',
+  appId:             '1:1080316555242:web:48614150034617521ecc93',
+}, 'momentos');
+
+const db          = getFirestore(app);
+// Usa un documento nuevo dentro de la colección "inspo" (ya autorizada en las
+// reglas de Firestore) en vez de una colección "momentos" propia, que las
+// reglas actuales no cubren y rechazarían con permission-denied.
+const MOMENTOS_REF = doc(db, 'inspo', 'momentos');
+
+// ── Momentos (pestañas) ─────────────────────────────────────
+const MOMENTOS = [
+  { id: 'bienvenida', label: 'Bienvenida' },
+  { id: 'ceremonia',  label: 'Ceremonia'  },
+  { id: 'recepcion',  label: 'Recepción'  },
+  { id: 'cena',       label: 'Cena'       },
+  { id: 'fiesta',     label: 'Fiesta'     },
+];
+let activeMomento = MOMENTOS[0].id;
+
+// ── Estado ────────────────────────────────────────────────
+// cards: [{ id, momento, title, label }]
+let state = { notes: {}, photos: {}, cards: [], _sv: 0 };
+let firstLoad = true;
+let lastFp = '';
+
+function bumpSv() { state._sv = (state._sv || 0) + 1; }
+
+// ── Firestore ─────────────────────────────────────────────
+let saveTimer;
+function persistState() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    setDoc(MOMENTOS_REF, state, { merge: true }).catch(console.error);
+  }, 600);
+}
+
+onSnapshot(MOMENTOS_REF, snap => {
+  if (snap.exists()) {
+    const d = snap.data();
+    if (firstLoad) {
+      state.notes  = d.notes  || {};
+      state.photos = d.photos || {};
+      state.cards  = d.cards  || [];
+      state._sv    = d._sv    || 0;
+    } else {
+      // Después de la primera carga, solo sincroniza contenido,
+      // nunca la lista de fichas (evita pisar cambios locales en curso)
+      state.notes  = d.notes  || {};
+      state.photos = d.photos || {};
+    }
+  }
+  const fp = cardsFp();
+  if (firstLoad || fp !== lastFp) {
+    renderAll(); firstLoad = false; lastFp = fp;
+  } else {
+    syncDOM();
+  }
+}, err => {
+  console.error('Error cargando momentos:', err);
+  document.getElementById('container').innerHTML =
+    `<p style="padding:1rem;color:#9B4A2E;font-size:.85rem;text-align:center">
+      No se pudo cargar: ${err.message}
+    </p>`;
+});
+
+function cardsFp() {
+  return cardsForActive().map(c => c.id).join(',');
+}
+
+function syncDOM() {
+  const focused = document.activeElement;
+  document.querySelectorAll('.notes[data-id]').forEach(el => {
+    if (el !== focused) { const v = state.notes[el.dataset.id] || ''; if (el.innerHTML !== v) el.innerHTML = v; }
+  });
+  cardsForActive().forEach(c => renderPhotos(c.id));
+}
+
+// ── Tabs ──────────────────────────────────────────────────
+function cardsForActive() {
+  return state.cards.filter(c => c.momento === activeMomento);
+}
+
+function renderTabs() {
+  const nav = document.getElementById('momento-tabs');
+  nav.innerHTML = MOMENTOS.map(m => {
+    const n = state.cards.filter(c => c.momento === m.id).length;
+    return `<button class="momento-tab ${m.id === activeMomento ? 'active' : ''}" data-momento="${m.id}">
+      ${m.label} <span class="count">${n ? '· ' + n : ''}</span>
+    </button>`;
+  }).join('');
+  nav.querySelectorAll('[data-momento]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeMomento = btn.dataset.momento;
+      renderAll();
+    });
+  });
+}
+
+// ── Fotos locales (localStorage) ──────────────────────────
+function loadLocal() { try { return JSON.parse(localStorage.getItem('momentos_local_photos')) || {}; } catch { return {}; } }
+function saveLocal(d) { try { localStorage.setItem('momentos_local_photos', JSON.stringify(d)); } catch { alert('Espacio local lleno. Intenta con fotos más pequeñas.'); } }
+
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const MAX = 900;
+      const r = Math.min(MAX / img.width, MAX / img.height, 1);
+      const w = Math.round(img.width * r), h = Math.round(img.height * r);
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', 0.78));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+// ── Modal ─────────────────────────────────────────────────
+let pendingSection = null, pendingIdx = null, activeTab = 'file';
+const modalBg   = document.getElementById('modal');
+const urlInput  = document.getElementById('url-input');
+const fileInput = document.getElementById('file-input');
+const paneFile  = document.getElementById('pane-file');
+const paneUrl   = document.getElementById('pane-url');
+const progressWrap = document.getElementById('upload-progress');
+const progressBar  = document.getElementById('upload-bar');
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeTab = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    paneFile.classList.toggle('active', activeTab === 'file');
+    paneUrl.classList.toggle('active',  activeTab === 'url');
+  });
+});
+
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+modalBg.addEventListener('click', e => { if (e.target === modalBg) closeModal(); });
+urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') confirmModal(); });
+document.getElementById('modal-confirm').addEventListener('click', confirmModal);
+
+async function confirmModal() {
+  if (activeTab === 'url') {
+    const url = urlInput.value.trim(); if (!url) return;
+    setPhoto(pendingSection, pendingIdx, url); closeModal();
+  } else {
+    const file = fileInput.files[0]; if (!file) return;
+    const btn = document.getElementById('modal-confirm');
+    btn.disabled = true; btn.textContent = 'Procesando…';
+    progressWrap.style.display = 'block';
+    progressBar.style.width = '60%';
+    try {
+      const dataUrl = await compressImage(file);
+      progressBar.style.width = '100%';
+      const local = loadLocal();
+      const arr = local[pendingSection] || ['', '', ''];
+      arr[pendingIdx] = dataUrl;
+      local[pendingSection] = arr;
+      saveLocal(local);
+      renderPhotos(pendingSection);
+      closeModal();
+    } catch(e) {
+      alert('No se pudo procesar la imagen.');
+    }
+    btn.disabled = false; btn.textContent = 'Guardar';
+  }
+}
+
+function openModal(secId, idx) {
+  pendingSection = secId; pendingIdx = idx;
+  urlInput.value = ''; fileInput.value = '';
+  progressWrap.style.display = 'none'; progressBar.style.width = '0%';
+  document.getElementById('modal-confirm').disabled = false;
+  document.getElementById('modal-confirm').textContent = 'Guardar';
+  modalBg.classList.add('open');
+}
+function closeModal() { modalBg.classList.remove('open'); }
+
+// ── Fotos ─────────────────────────────────────────────────
+function getPhotos(secId) {
+  const local  = loadLocal()[secId]  || ['', '', ''];
+  const remote = state.photos[secId] || ['', '', ''];
+  return [0, 1, 2].map(i => local[i] || remote[i] || '');
+}
+
+function setPhoto(secId, idx, url) {
+  const p = [...(state.photos[secId] || ['', '', ''])]; p[idx] = url;
+  state.photos[secId] = p; persistState(); renderPhotos(secId);
+}
+function removePhoto(secId, idx) {
+  const p = [...(state.photos[secId] || ['', '', ''])]; p[idx] = '';
+  state.photos[secId] = p; persistState();
+  const local = loadLocal();
+  if (local[secId]) { local[secId][idx] = ''; saveLocal(local); }
+  renderPhotos(secId);
+}
+function renderPhotos(secId) {
+  const grid = document.querySelector(`.photos[data-id="${secId}"]`);
+  if (!grid) return;
+  grid.innerHTML = getPhotos(secId).map((url, i) => `
+    <div class="slot ${url ? 'filled' : ''}" data-section="${secId}" data-idx="${i}">
+      ${url
+        ? `<img src="${url}" alt="" loading="lazy"/>
+           <div class="slot-overlay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+           </svg></div>`
+        : `<div class="add-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+             <rect x="3" y="3" width="18" height="18" rx="3"/>
+             <line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+           </svg><span>Añadir<br>foto</span></div>`}
+    </div>`).join('');
+  grid.querySelectorAll('.slot').forEach(slot => {
+    slot.addEventListener('click', () => {
+      const s = slot.dataset.section, i = parseInt(slot.dataset.idx);
+      slot.classList.contains('filled') ? removePhoto(s, i) : openModal(s, i);
+    });
+  });
+}
+
+// ── Fichas (cards) ────────────────────────────────────────
+const IC_DEL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+
+function buildCard(c, num) {
+  const card = document.createElement('div');
+  card.className = 'card'; card.dataset.id = c.id;
+  card.innerHTML = `
+    <div class="card-controls">
+      <button class="ctrl-btn" data-delete="${c.id}" title="Eliminar ficha">${IC_DEL}</button>
+    </div>
+    <div class="card-left">
+      <div class="card-num">${num}</div>
+      <div class="card-title">${c.title}</div>
+      ${c.label ? `<div class="card-label">${c.label}</div>` : ''}
+      <div class="notes" contenteditable="true" data-id="${c.id}" data-ph="Notas…" spellcheck="false">${state.notes[c.id] || ''}</div>
+    </div>
+    <div class="photos" data-id="${c.id}"></div>`;
+
+  card.querySelector('[data-delete]').addEventListener('click', () => deleteCard(c.id));
+
+  const notesEl = card.querySelector('.notes');
+  let nt; notesEl.addEventListener('input', () => {
+    clearTimeout(nt); nt = setTimeout(() => { state.notes[c.id] = notesEl.innerHTML; persistState(); }, 400);
+  });
+  return card;
+}
+
+function deleteCard(id) {
+  if (!confirm('¿Eliminar esta ficha?')) return;
+  state.cards = state.cards.filter(c => c.id !== id);
+  delete state.notes[id]; delete state.photos[id];
+  const local = loadLocal(); delete local[id]; saveLocal(local);
+  bumpSv(); persistState();
+  document.querySelector(`.card[data-id="${id}"]`)?.remove();
+  lastFp = cardsFp();
+  renderTabs();
+}
+
+function renderAddSection(container) {
+  const wrap = document.createElement('div');
+  wrap.id = 'add-area'; wrap.className = 'add-section-area';
+  wrap.innerHTML = `
+    <button class="add-btn" id="add-btn-main">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="16"/>
+        <line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+      Añadir ficha
+    </button>`;
+  wrap.querySelector('#add-btn-main').addEventListener('click', () => showAddForm(container));
+  container.appendChild(wrap);
+}
+
+function showAddForm(container) {
+  document.getElementById('add-area')?.remove();
+  const label = MOMENTOS.find(m => m.id === activeMomento)?.label || '';
+  const nc = document.createElement('div'); nc.className = 'new-card'; nc.id = 'add-area';
+  nc.innerHTML = `
+    <h4>Nueva ficha</h4>
+    <p class="new-sub">en ${label}</p>
+    <div class="new-row">
+      <input class="field-inp" id="nt" placeholder="Título  (ej. Arco floral)" />
+      <input class="field-inp" id="nl" placeholder="Etiqueta  (ej. Entrada a ceremonia)" />
+    </div>
+    <div class="new-actions">
+      <button class="btn btn-cancel" id="nc-cancel">Cancelar</button>
+      <button class="btn btn-confirm" id="nc-ok">Crear</button>
+    </div>`;
+  container.appendChild(nc);
+  document.getElementById('nt').focus();
+
+  document.getElementById('nc-cancel').addEventListener('click', renderAll);
+  document.getElementById('nc-ok').addEventListener('click', () => {
+    const title = document.getElementById('nt').value.trim(); if (!title) return;
+    const fieldLabel = document.getElementById('nl').value.trim();
+    const id = 'm_' + Date.now();
+    state.cards.push({ id, momento: activeMomento, title, label: fieldLabel });
+    bumpSv(); persistState(); renderAll();
+  });
+  document.getElementById('nt').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('nl').focus(); });
+  document.getElementById('nl').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('nc-ok').click(); });
+}
+
+function renderAll() {
+  renderTabs();
+  const container = document.getElementById('container');
+  container.innerHTML = '';
+  const cards = cardsForActive();
+  if (!cards.length) {
+    const hint = document.createElement('div');
+    hint.className = 'empty-hint';
+    const label = MOMENTOS.find(m => m.id === activeMomento)?.label || '';
+    hint.innerHTML = `<strong>Nada por aquí todavía</strong>Añade la primera ficha de ${label} — fotos, ideas, notas…`;
+    container.appendChild(hint);
+  } else {
+    cards.forEach((c, i) => {
+      const card = buildCard(c, String(i + 1).padStart(2, '0'));
+      container.appendChild(card);
+      renderPhotos(c.id);
+    });
+  }
+  renderAddSection(container);
+  lastFp = cardsFp();
+}
+
+renderAll();
+</script>
+</body>
+</html>
