@@ -492,7 +492,7 @@
     </div>
     <div class="tab-pane active" id="pane-file">
       <input type="file" id="file-input" accept="image/*" />
-      <p class="modal-hint">JPG, PNG, HEIC… Se comprime y guarda en este navegador.</p>
+      <p class="modal-hint">JPG, PNG, HEIC… Se comprime y se comparte con quien tenga el enlace.</p>
       <div class="upload-progress" id="upload-progress">
         <div class="upload-progress-bar" id="upload-bar"></div>
       </div>
@@ -510,7 +510,7 @@
 
 <script type="module">
 import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
-import { getFirestore, doc, setDoc, onSnapshot }
+import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection, query, where }
   from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
 
 const app = initializeApp({
@@ -528,6 +528,15 @@ const db          = getFirestore(app);
 // reglas actuales no cubren y rechazarían con permission-denied.
 const MOMENTOS_REF = doc(db, 'inspo', 'momentos');
 
+// Cada foto es su propio documento dentro de "inspo" (id determinista
+// photo_<cardId>_<idx>) en vez de vivir dentro del documento grande de
+// arriba. Firebase Storage no está activado en este proyecto (probado:
+// el bucket da 404), así que las fotos subidas desde el ordenador también
+// se guardan aquí como dataURL comprimido — así sincronizan igual que las
+// pegadas por URL, entre cualquier dispositivo/persona que abra la página.
+const photosQuery = query(collection(db, 'inspo'), where('kind', '==', 'momento_photo'));
+function photoDocId(cardId, idx) { return `photo_${cardId}_${idx}`; }
+
 // ── Momentos (pestañas) ─────────────────────────────────────
 const MOMENTOS = [
   { id: 'bienvenida', label: 'Bienvenida' },
@@ -539,7 +548,8 @@ const MOMENTOS = [
 let activeMomento = MOMENTOS[0].id;
 
 // ── Estado ────────────────────────────────────────────────
-// cards: [{ id, momento, title, label }]
+// cards: [{ id, momento, title, label, createdAt }]
+// photos: { [cardId]: [url0, url1, url2] } — viene de la query de fotos, no se persiste aquí
 let state = { notes: {}, photos: {}, cards: [], _sv: 0 };
 let firstLoad = true;
 let lastFp = '';
@@ -547,28 +557,28 @@ let lastFp = '';
 function bumpSv() { state._sv = (state._sv || 0) + 1; }
 
 // ── Firestore ─────────────────────────────────────────────
-let saveTimer;
-function persistState() {
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    setDoc(MOMENTOS_REF, state, { merge: true }).catch(console.error);
+// Las fichas (altas/bajas) se guardan al instante, sin debounce: es una
+// acción puntual del usuario, y escribir ya mismo evita que un snapshot
+// ajeno (p.ej. la wedding planner escribiendo notas a la vez) llegue de
+// por medio y pise localmente una ficha que aún no se había guardado.
+function persistCards() {
+  setDoc(MOMENTOS_REF, { cards: state.cards, _sv: state._sv }, { merge: true }).catch(console.error);
+}
+// Las notas sí lo son a cada tecleo, así que van con debounce.
+let notesSaveTimer;
+function persistNotes() {
+  clearTimeout(notesSaveTimer);
+  notesSaveTimer = setTimeout(() => {
+    setDoc(MOMENTOS_REF, { notes: state.notes }, { merge: true }).catch(console.error);
   }, 600);
 }
 
 onSnapshot(MOMENTOS_REF, snap => {
   if (snap.exists()) {
     const d = snap.data();
-    if (firstLoad) {
-      state.notes  = d.notes  || {};
-      state.photos = d.photos || {};
-      state.cards  = d.cards  || [];
-      state._sv    = d._sv    || 0;
-    } else {
-      // Después de la primera carga, solo sincroniza contenido,
-      // nunca la lista de fichas (evita pisar cambios locales en curso)
-      state.notes  = d.notes  || {};
-      state.photos = d.photos || {};
-    }
+    state.notes = d.notes || {};
+    state.cards = d.cards || [];
+    state._sv   = d._sv   || 0;
   }
   const fp = cardsFp();
   if (firstLoad || fp !== lastFp) {
@@ -583,6 +593,18 @@ onSnapshot(MOMENTOS_REF, snap => {
       No se pudo cargar: ${err.message}
     </p>`;
 });
+
+onSnapshot(photosQuery, snap => {
+  const photos = {};
+  snap.forEach(d => {
+    const data = d.data();
+    const arr = photos[data.cardId] || ['', '', ''];
+    arr[data.idx] = data.url || '';
+    photos[data.cardId] = arr;
+  });
+  state.photos = photos;
+  cardsForActive().forEach(c => renderPhotos(c.id));
+}, err => console.error('Error cargando fotos:', err));
 
 function cardsFp() {
   return cardsForActive().map(c => c.id).join(',');
@@ -616,10 +638,6 @@ function renderTabs() {
     });
   });
 }
-
-// ── Fotos locales (localStorage) ──────────────────────────
-function loadLocal() { try { return JSON.parse(localStorage.getItem('momentos_local_photos')) || {}; } catch { return {}; } }
-function saveLocal(d) { try { localStorage.setItem('momentos_local_photos', JSON.stringify(d)); } catch { alert('Espacio local lleno. Intenta con fotos más pequeñas.'); } }
 
 function compressImage(file) {
   return new Promise((resolve, reject) => {
@@ -666,27 +684,30 @@ urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') confirmModal(
 document.getElementById('modal-confirm').addEventListener('click', confirmModal);
 
 async function confirmModal() {
+  const btn = document.getElementById('modal-confirm');
   if (activeTab === 'url') {
     const url = urlInput.value.trim(); if (!url) return;
-    setPhoto(pendingSection, pendingIdx, url); closeModal();
+    btn.disabled = true; btn.textContent = 'Guardando…';
+    try {
+      await setPhoto(pendingSection, pendingIdx, url);
+      closeModal();
+    } catch (e) {
+      alert('No se pudo guardar la foto: ' + e.message);
+    }
+    btn.disabled = false; btn.textContent = 'Guardar';
   } else {
     const file = fileInput.files[0]; if (!file) return;
-    const btn = document.getElementById('modal-confirm');
     btn.disabled = true; btn.textContent = 'Procesando…';
     progressWrap.style.display = 'block';
     progressBar.style.width = '60%';
     try {
       const dataUrl = await compressImage(file);
+      progressBar.style.width = '85%';
+      await setPhoto(pendingSection, pendingIdx, dataUrl);
       progressBar.style.width = '100%';
-      const local = loadLocal();
-      const arr = local[pendingSection] || ['', '', ''];
-      arr[pendingIdx] = dataUrl;
-      local[pendingSection] = arr;
-      saveLocal(local);
-      renderPhotos(pendingSection);
       closeModal();
     } catch(e) {
-      alert('No se pudo procesar la imagen.');
+      alert('No se pudo subir la foto: ' + e.message);
     }
     btn.disabled = false; btn.textContent = 'Guardar';
   }
@@ -702,22 +723,24 @@ function openModal(secId, idx) {
 }
 function closeModal() { modalBg.classList.remove('open'); }
 
-// ── Fotos ─────────────────────────────────────────────────
+// ── Fotos (cada una su propio documento en Firestore) ──────
 function getPhotos(secId) {
-  const local  = loadLocal()[secId]  || ['', '', ''];
-  const remote = state.photos[secId] || ['', '', ''];
-  return [0, 1, 2].map(i => local[i] || remote[i] || '');
+  return state.photos[secId] || ['', '', ''];
 }
 
-function setPhoto(secId, idx, url) {
-  const p = [...(state.photos[secId] || ['', '', ''])]; p[idx] = url;
-  state.photos[secId] = p; persistState(); renderPhotos(secId);
+async function setPhoto(secId, idx, url) {
+  await setDoc(doc(db, 'inspo', photoDocId(secId, idx)), {
+    kind: 'momento_photo', cardId: secId, idx, url,
+  });
+  // Actualiza ya mismo en local: la query puede tardar un instante en confirmar.
+  const p = [...getPhotos(secId)]; p[idx] = url;
+  state.photos[secId] = p;
+  renderPhotos(secId);
 }
-function removePhoto(secId, idx) {
-  const p = [...(state.photos[secId] || ['', '', ''])]; p[idx] = '';
-  state.photos[secId] = p; persistState();
-  const local = loadLocal();
-  if (local[secId]) { local[secId][idx] = ''; saveLocal(local); }
+async function removePhoto(secId, idx) {
+  await deleteDoc(doc(db, 'inspo', photoDocId(secId, idx))).catch(console.error);
+  const p = [...getPhotos(secId)]; p[idx] = '';
+  state.photos[secId] = p;
   renderPhotos(secId);
 }
 function renderPhotos(secId) {
@@ -746,6 +769,11 @@ function renderPhotos(secId) {
 // ── Fichas (cards) ────────────────────────────────────────
 const IC_DEL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
 
+function formatDate(ms) {
+  if (!ms) return '';
+  return new Date(ms).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
 function buildCard(c, num) {
   const card = document.createElement('div');
   card.className = 'card'; card.dataset.id = c.id;
@@ -754,7 +782,7 @@ function buildCard(c, num) {
       <button class="ctrl-btn" data-delete="${c.id}" title="Eliminar ficha">${IC_DEL}</button>
     </div>
     <div class="card-left">
-      <div class="card-num">${num}</div>
+      <div class="card-num">${num}${c.createdAt ? ` · ${formatDate(c.createdAt)}` : ''}</div>
       <div class="card-title">${c.title}</div>
       ${c.label ? `<div class="card-label">${c.label}</div>` : ''}
       <div class="notes" contenteditable="true" data-id="${c.id}" data-ph="Notas…" spellcheck="false">${state.notes[c.id] || ''}</div>
@@ -765,17 +793,17 @@ function buildCard(c, num) {
 
   const notesEl = card.querySelector('.notes');
   let nt; notesEl.addEventListener('input', () => {
-    clearTimeout(nt); nt = setTimeout(() => { state.notes[c.id] = notesEl.innerHTML; persistState(); }, 400);
+    clearTimeout(nt); nt = setTimeout(() => { state.notes[c.id] = notesEl.innerHTML; persistNotes(); }, 400);
   });
   return card;
 }
 
 function deleteCard(id) {
-  if (!confirm('¿Eliminar esta ficha?')) return;
+  if (!confirm('¿Eliminar esta ficha? También se borrarán sus fotos.')) return;
   state.cards = state.cards.filter(c => c.id !== id);
   delete state.notes[id]; delete state.photos[id];
-  const local = loadLocal(); delete local[id]; saveLocal(local);
-  bumpSv(); persistState();
+  bumpSv(); persistCards();
+  [0, 1, 2].forEach(i => deleteDoc(doc(db, 'inspo', photoDocId(id, i))).catch(() => {}));
   document.querySelector(`.card[data-id="${id}"]`)?.remove();
   lastFp = cardsFp();
   renderTabs();
@@ -820,8 +848,8 @@ function showAddForm(container) {
     const title = document.getElementById('nt').value.trim(); if (!title) return;
     const fieldLabel = document.getElementById('nl').value.trim();
     const id = 'm_' + Date.now();
-    state.cards.push({ id, momento: activeMomento, title, label: fieldLabel });
-    bumpSv(); persistState(); renderAll();
+    state.cards.push({ id, momento: activeMomento, title, label: fieldLabel, createdAt: Date.now() });
+    bumpSv(); persistCards(); renderAll();
   });
   document.getElementById('nt').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('nl').focus(); });
   document.getElementById('nl').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('nc-ok').click(); });
