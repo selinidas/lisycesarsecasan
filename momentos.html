@@ -344,6 +344,52 @@
     .ctrl-btn:hover { border-color: var(--mauve); color: var(--text); }
     .ctrl-btn svg { width: 14px; height: 14px; pointer-events: none; }
 
+    /* ── ITINERARIO ──────────────────────────── */
+    .itin-list { display: flex; flex-direction: column; gap: 12px; }
+    .itin-row {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      box-shadow: 0 2px 14px rgba(44,58,40,.08);
+    }
+    .itin-hora {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.3rem;
+      color: var(--rust);
+      background: none;
+      border: none;
+      outline: none;
+      width: 100px;
+      flex-shrink: 0;
+    }
+    .itin-main { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .itin-evento, .itin-nota {
+      background: var(--input-bg);
+      border: 1.5px solid var(--light);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-family: 'Lato', sans-serif;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+      width: 100%;
+    }
+    .itin-evento { font-size: 0.92rem; font-weight: 700; }
+    .itin-nota { font-size: 0.82rem; color: var(--muted); }
+    .itin-evento:focus, .itin-nota:focus { border-color: var(--mauve); }
+    .itin-evento::placeholder, .itin-nota::placeholder { color: var(--muted); opacity: .5; }
+    .itin-del { flex-shrink: 0; }
+
+    @media (max-width: 680px) {
+      .itin-row { flex-wrap: wrap; }
+      .itin-hora { width: auto; }
+      .itin-main { flex-basis: 100%; order: 3; }
+    }
+
     /* ── ADD / NEW CARD FORM ──────────────────── */
     .add-section-area {
       display: flex;
@@ -439,7 +485,7 @@
       @page { size: A4; margin: 12mm 14mm; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 
-      .export-btn, .card-controls, .add-section-area, .momento-tabs, #modal { display: none !important; }
+      .export-btn, .card-controls, .add-section-area, .momento-tabs, .itin-del, #modal { display: none !important; }
 
       body { background: #F7F2EA !important; }
 
@@ -546,12 +592,17 @@ const MOMENTOS = [
   { id: 'fiesta',     label: 'Fiesta'     },
   { id: 'otros',      label: 'Otros'      },
 ];
+// El itinerario es una pestaña más, pero no es una ficha libre: es una
+// lista de hora+evento+nota que se ordena sola por hora.
+const ITINERARIO_ID = 'itinerario';
+const ALL_TABS = [...MOMENTOS, { id: ITINERARIO_ID, label: 'Itinerario' }];
 let activeMomento = MOMENTOS[0].id;
 
 // ── Estado ────────────────────────────────────────────────
 // cards: [{ id, momento, title, label, createdAt }]
+// itinerary: [{ id, hora, evento, nota }]
 // photos: { [cardId]: [url0, url1, url2] } — viene de la query de fotos, no se persiste aquí
-let state = { notes: {}, photos: {}, cards: [], _sv: 0 };
+let state = { notes: {}, photos: {}, cards: [], itinerary: [], _sv: 0 };
 let firstLoad = true;
 let lastFp = '';
 
@@ -565,6 +616,9 @@ function bumpSv() { state._sv = (state._sv || 0) + 1; }
 function persistCards() {
   setDoc(MOMENTOS_REF, { cards: state.cards, _sv: state._sv }, { merge: true }).catch(console.error);
 }
+function persistItinerary() {
+  setDoc(MOMENTOS_REF, { itinerary: state.itinerary }, { merge: true }).catch(console.error);
+}
 // Las notas sí lo son a cada tecleo, así que van con debounce.
 let notesSaveTimer;
 function persistNotes() {
@@ -577,9 +631,10 @@ function persistNotes() {
 onSnapshot(MOMENTOS_REF, snap => {
   if (snap.exists()) {
     const d = snap.data();
-    state.notes = d.notes || {};
-    state.cards = d.cards || [];
-    state._sv   = d._sv   || 0;
+    state.notes     = d.notes     || {};
+    state.cards     = d.cards     || [];
+    state.itinerary = d.itinerary || [];
+    state._sv       = d._sv       || 0;
   }
   const fp = cardsFp();
   if (firstLoad || fp !== lastFp) {
@@ -608,6 +663,7 @@ onSnapshot(photosQuery, snap => {
 }, err => console.error('Error cargando fotos:', err));
 
 function cardsFp() {
+  if (activeMomento === ITINERARIO_ID) return 'itin:' + state.itinerary.map(r => r.id).join(',');
   return cardsForActive().map(c => c.id).join(',');
 }
 
@@ -626,8 +682,10 @@ function cardsForActive() {
 
 function renderTabs() {
   const nav = document.getElementById('momento-tabs');
-  nav.innerHTML = MOMENTOS.map(m => {
-    const n = state.cards.filter(c => c.momento === m.id).length;
+  nav.innerHTML = ALL_TABS.map(m => {
+    const n = m.id === ITINERARIO_ID
+      ? state.itinerary.length
+      : state.cards.filter(c => c.momento === m.id).length;
     return `<button class="momento-tab ${m.id === activeMomento ? 'active' : ''}" data-momento="${m.id}">
       ${m.label} <span class="count">${n ? '· ' + n : ''}</span>
     </button>`;
@@ -860,22 +918,106 @@ function renderAll() {
   renderTabs();
   const container = document.getElementById('container');
   container.innerHTML = '';
-  const cards = cardsForActive();
-  if (!cards.length) {
+  if (activeMomento === ITINERARIO_ID) {
+    renderItinerario(container);
+  } else {
+    const cards = cardsForActive();
+    if (!cards.length) {
+      const hint = document.createElement('div');
+      hint.className = 'empty-hint';
+      const label = MOMENTOS.find(m => m.id === activeMomento)?.label || '';
+      hint.innerHTML = `<strong>Nada por aquí todavía</strong>Añade la primera ficha de ${label} — fotos, ideas, notas…`;
+      container.appendChild(hint);
+    } else {
+      cards.forEach((c, i) => {
+        const card = buildCard(c, String(i + 1).padStart(2, '0'));
+        container.appendChild(card);
+        renderPhotos(c.id);
+      });
+    }
+    renderAddSection(container);
+  }
+  lastFp = cardsFp();
+}
+
+// ── Itinerario ──────────────────────────────────────────────
+function buildItinRow(r) {
+  const row = document.createElement('div');
+  row.className = 'itin-row'; row.dataset.id = r.id;
+  row.innerHTML = `
+    <input type="time" class="itin-hora" value="${r.hora || ''}" />
+    <div class="itin-main">
+      <input type="text" class="itin-evento" placeholder="Evento (ej. Entrada de los novios)" value="${(r.evento || '').replace(/"/g, '&quot;')}" />
+      <input type="text" class="itin-nota" placeholder="Nota (opcional)" value="${(r.nota || '').replace(/"/g, '&quot;')}" />
+    </div>
+    <button class="ctrl-btn itin-del" title="Eliminar">${IC_DEL}</button>`;
+
+  const horaEl = row.querySelector('.itin-hora');
+  horaEl.addEventListener('change', () => { updateItinField(r.id, 'hora', horaEl.value); renderAll(); });
+
+  const evEl = row.querySelector('.itin-evento');
+  let et; evEl.addEventListener('input', () => {
+    clearTimeout(et); et = setTimeout(() => updateItinField(r.id, 'evento', evEl.value), 400);
+  });
+
+  const noEl = row.querySelector('.itin-nota');
+  let nt; noEl.addEventListener('input', () => {
+    clearTimeout(nt); nt = setTimeout(() => updateItinField(r.id, 'nota', noEl.value), 400);
+  });
+
+  row.querySelector('.itin-del').addEventListener('click', () => deleteItinRow(r.id));
+  return row;
+}
+
+function updateItinField(id, field, value) {
+  const row = state.itinerary.find(r => r.id === id);
+  if (!row) return;
+  row[field] = value;
+  persistItinerary();
+}
+
+function deleteItinRow(id) {
+  if (!confirm('¿Eliminar esta fila del itinerario?')) return;
+  state.itinerary = state.itinerary.filter(r => r.id !== id);
+  persistItinerary();
+  renderAll();
+}
+
+function renderItinerario(container) {
+  const rows = [...state.itinerary].sort((a, b) => (a.hora || '99:99').localeCompare(b.hora || '99:99'));
+  if (!rows.length) {
     const hint = document.createElement('div');
     hint.className = 'empty-hint';
-    const label = MOMENTOS.find(m => m.id === activeMomento)?.label || '';
-    hint.innerHTML = `<strong>Nada por aquí todavía</strong>Añade la primera ficha de ${label} — fotos, ideas, notas…`;
+    hint.innerHTML = `<strong>Nada por aquí todavía</strong>Añade la primera hora del itinerario`;
     container.appendChild(hint);
   } else {
-    cards.forEach((c, i) => {
-      const card = buildCard(c, String(i + 1).padStart(2, '0'));
-      container.appendChild(card);
-      renderPhotos(c.id);
-    });
+    const list = document.createElement('div');
+    list.className = 'itin-list';
+    rows.forEach(r => list.appendChild(buildItinRow(r)));
+    container.appendChild(list);
   }
-  renderAddSection(container);
-  lastFp = cardsFp();
+
+  const wrap = document.createElement('div');
+  wrap.className = 'add-section-area';
+  wrap.innerHTML = `
+    <button class="add-btn" id="add-itin-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="16"/>
+        <line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+      Añadir hora
+    </button>`;
+  wrap.querySelector('#add-itin-btn').addEventListener('click', () => {
+    const id = 'i_' + Date.now();
+    state.itinerary.push({ id, hora: '', evento: '', nota: '' });
+    persistItinerary();
+    renderAll();
+    requestAnimationFrame(() => {
+      document.querySelector(`.itin-row[data-id="${id}"] .itin-evento`)?.focus();
+    });
+  });
+  container.appendChild(wrap);
 }
 
 renderAll();
